@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PhoenixApp</string>
+    <string name="balance_text">Текущий баланс</string>
+    <string name="internet_text">Интернет</string>
 </resources>

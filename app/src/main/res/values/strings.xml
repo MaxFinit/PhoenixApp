@@ -3,4 +3,11 @@
     <string name="balance_text">Текущий баланс</string>
     <string name="internet_text">Интернет</string>
     <string name="call_internet_text">Звонки через\n интернет</string>
+    <string name="setting_call">Настройки звонков</string>
+    <string name="call_recorded">Записи звонков</string>
+    <string name="black_list">Черный список</string>
+    <string name="call_text">Звонки</string>
+    <string name="home_text">Домой</string>
+    <string name="message_text">Сообщения</string>
+    <string name="search_text">Поиск</string>
 </resources>

@@ -14,6 +14,7 @@ import java.util.List;
 public class ContactManager {
     private final String TAG = "Загружаем контакты";
     private List<Contact> mContactList;
+    private static ContactManager sContactManager;
     private Contact mContact;
     private Context mContext;
 
@@ -22,7 +23,16 @@ public class ContactManager {
         uploadContacts();
     }
 
+    public static ContactManager get(Context context) {
+        if (sContactManager == null) {
+            sContactManager = new ContactManager(context);
+        }
+        return sContactManager;
+    }
+
     private void uploadContacts() {
+        String idLast;
+        String idPrev = "";
         int i = 0;
 
         mContactList = new ArrayList<>();
@@ -34,10 +44,17 @@ public class ContactManager {
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                 mContact.setId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                mContactList.add(mContact);
+                /*
+                Ужасный костыль, из-за дублирования номеров, пофиксить потом
+                */
+                idLast = mContact.getId();
+                if (!idPrev.equals(idLast))
+                    mContactList.add(mContact);
+                idPrev = idLast;
                 i++;
-                Log.i(TAG,""+i);
+                Log.i(TAG, mContact.getName());
             } while (cursor.moveToNext());
+            Log.i(TAG, "" + mContactList.size());
             cursor.close();
         }
 

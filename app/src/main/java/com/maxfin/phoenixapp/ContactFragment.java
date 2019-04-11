@@ -1,5 +1,8 @@
 package com.maxfin.phoenixapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,11 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Objects;
 
 public class ContactFragment extends Fragment {
+    private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;
@@ -26,19 +31,38 @@ public class ContactFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        updateUi();
+
+            updateUi();
+
         return view;
     }
 
     private void updateUi() {
-        ContactManager contactManager = new ContactManager(Objects.requireNonNull(getActivity()));
-        List<Contact> contactList = contactManager.getContactList();
-        if (mAdapter == null) {
-            mAdapter = new ContactAdapter(contactList);
-            mContactsRecyclerView.setAdapter(mAdapter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
+                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
-            mAdapter.setCrimes(contactList);
-            mAdapter.notifyDataSetChanged();
+            ContactManager contactManager = ContactManager.get(getContext());
+            List<Contact> contactList = contactManager.getContactList();
+            if (mAdapter == null) {
+                mAdapter = new ContactAdapter(contactList);
+                mContactsRecyclerView.setAdapter(mAdapter);
+            } else {
+                mAdapter.setContacts(contactList);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS){
+            if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                updateUi();
+            }else {
+                Toast.makeText(getActivity(), "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -67,7 +91,7 @@ public class ContactFragment extends Fragment {
             mContactList = contacts;
         }
 
-        public void setCrimes(List<Contact> contacts) {
+        public void setContacts(List<Contact> contacts) {
             mContactList = contacts;
         }
 

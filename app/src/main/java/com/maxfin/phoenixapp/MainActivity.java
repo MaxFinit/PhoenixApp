@@ -23,10 +23,14 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.menu_call:
-                        Intent intent = new Intent(MainActivity.this,CallActivity.class);
-                        startActivity(intent);
+                        Intent callIntent = new Intent(MainActivity.this, CallActivity.class);
+                        startActivity(callIntent);
+                        break;
+                    case R.id.menu_message:
+                        Intent messageIntent = new Intent(MainActivity.this, MessageActivity.class);
+                        startActivity(messageIntent);
                         break;
                 }
                 return false;

@@ -19,6 +19,8 @@ public class CallActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,15 +42,19 @@ public class CallActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.menu_home:
-                        Intent intent2 = new Intent(CallActivity.this,MainActivity.class);
-                        startActivity(intent2);
+                        Intent homeIntent = new Intent(CallActivity.this, MainActivity.class);
+                        startActivity(homeIntent);
+                        break;
+                    case R.id.menu_message:
+                        Intent messageIntent = new Intent(CallActivity.this, MessageActivity.class);
+                        startActivity(messageIntent);
+                        break;
                 }
                 return false;
             }
         });
-
 
 
     }

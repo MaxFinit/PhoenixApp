@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.Models;
 
 public class Contact {
     private String mName;

@@ -44,6 +44,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_message_edit" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_dialog_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_message2"
+        app:backgroundTint="@color/colorPurple100"/>
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
@@ -58,6 +69,8 @@
 
 
     </android.support.design.widget.BottomNavigationView>
+    
+    
 
 
 </android.support.constraint.ConstraintLayout>

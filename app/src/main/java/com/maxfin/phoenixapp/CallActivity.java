@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CallActivity extends AppCompatActivity {
@@ -48,7 +52,7 @@ public class CallActivity extends AppCompatActivity {
                         startActivity(homeIntent);
                         break;
                     case R.id.menu_message:
-                        Intent messageIntent = new Intent(CallActivity.this, MessageActivity.class);
+                        Intent messageIntent = new Intent(CallActivity.this, MessageListActivity.class);
                         startActivity(messageIntent);
                         break;
                 }
@@ -67,4 +71,31 @@ public class CallActivity extends AppCompatActivity {
 
 
     }
+
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public void addFragment(Fragment fragment) {
+            mFragmentList.add(fragment);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+    }
+
+
+
 }

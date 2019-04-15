@@ -20,7 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".CallActivity"/>
-        <activity android:name=".MessageActivity" />
+        <activity android:name=".MessageListActivity" />
+        <activity android:name=".MessageDialogActivity" />
+        <activity android:name=".AddingDialogActivity" />
+
+        <service android:name=".XMPPConnectionService" />
     </application>
 
 </manifest>

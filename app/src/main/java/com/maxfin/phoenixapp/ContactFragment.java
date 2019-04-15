@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.Managers.ContactManager;
+import com.maxfin.phoenixapp.Models.Contact;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +46,7 @@ public class ContactFragment extends Fragment {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
             ContactManager contactManager = ContactManager.get(getContext());
-            List<Contact> contactList = contactManager.getContactList();
+            List<Contact> contactList = contactManager.getSortedContactList();
             if (mAdapter == null) {
                 mAdapter = new ContactAdapter(contactList);
                 mContactsRecyclerView.setAdapter(mAdapter);
@@ -72,7 +75,7 @@ public class ContactFragment extends Fragment {
         private Contact mContact;
 
         public ContactHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_recucler_call, parent, false));
+            super(inflater.inflate(R.layout.item_recycler_call, parent, false));
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
         }

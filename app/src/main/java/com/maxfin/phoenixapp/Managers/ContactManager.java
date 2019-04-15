@@ -1,14 +1,17 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.Managers;
 
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.support.design.widget.TabItem;
 import android.util.Log;
 
+import com.maxfin.phoenixapp.Models.Contact;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ContactManager {
@@ -18,7 +21,7 @@ public class ContactManager {
     private Contact mContact;
     private Context mContext;
 
-    public ContactManager(Context context) {
+    private ContactManager(Context context) {
         mContext = context.getApplicationContext();
         uploadContacts();
     }
@@ -61,6 +64,18 @@ public class ContactManager {
 
     }
 
+    public class ContactNameComparator implements Comparator<Contact>
+    {
+        public int compare(Contact left, Contact right) {
+            return left.getName().compareTo(right.getName());
+        }
+    }
+
+    public List<Contact> getSortedContactList(){
+        Collections.sort(mContactList,new ContactNameComparator());
+
+       return  mContactList;
+    }
 
     public List<Contact> getContactList() {
         return mContactList;

@@ -1,8 +1,10 @@
 package com.maxfin.phoenixapp.Managers;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -47,6 +49,9 @@ public class ContactManager {
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                 mContact.setId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,Long.parseLong(mContact.getId()));
+                mContact.setPhoto(Uri.withAppendedPath(u,ContactsContract.Contacts.Photo.DISPLAY_PHOTO));
+                Log.d(TAG, "" + mContact.getPhoto());
                 /*
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
                 */

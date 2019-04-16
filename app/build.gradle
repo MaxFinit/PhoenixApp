@@ -32,4 +32,5 @@ dependencies {
     implementation 'org.igniterealtime.smack:smack-experimental:4.4.0-alpha1'
     implementation 'org.igniterealtime.smack:smack-android:4.4.0-alpha1'
     implementation 'com.github.stfalcon:chatkit:0.3.3'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 }

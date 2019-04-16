@@ -2,6 +2,7 @@ package com.maxfin.phoenixapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,15 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.Managers.ContactManager;
+import com.maxfin.phoenixapp.Managers.MessageManager;
 import com.maxfin.phoenixapp.Models.Contact;
 
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Objects;
 
 public class AddingDialogActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
@@ -30,8 +35,8 @@ public class AddingDialogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_contacts);
-        mRecyclerView = findViewById(R.id.contact_recycler_view);
+        setContentView(R.layout.activity_adding_dialog);
+        mRecyclerView = findViewById(R.id.add_dialog_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         updateUi();
@@ -69,22 +74,41 @@ public class AddingDialogActivity extends AppCompatActivity {
 
 
 
-    private class DialogHolder extends RecyclerView.ViewHolder {
+    private class DialogHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
         private ImageView mNumberContactImageView;
         private Contact mContact;
 
-        public DialogHolder(LayoutInflater inflater, ViewGroup parent) {
+        public DialogHolder(LayoutInflater inflater, ViewGroup parent)  {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
+            itemView.setOnClickListener(this);
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
             mNumberContactImageView = itemView.findViewById(R.id.image_contact_item);
         }
 
         public void bind(Contact contact) {
+            mContact =contact;
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
+            try {
+                AssetFileDescriptor fd = getContentResolver().
+                        openAssetFileDescriptor(contact.getPhoto(), "r");
+                mNumberContactImageView.setImageURI(contact.getPhoto());
+            } catch (FileNotFoundException e) {
+                mNumberContactImageView.setImageResource(R.drawable.ic_contact_circle);
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            MessageManager messageManager = MessageManager.getMessageManager(getApplicationContext());
+            messageManager.uploadMessageList(mContact);
+
+
+
         }
     }
 

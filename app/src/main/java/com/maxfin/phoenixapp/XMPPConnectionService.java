@@ -7,14 +7,36 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+
+import java.io.IOException;
+
 public class XMPPConnectionService extends Service {
     private static final String TAG = "XMPPConnectionService";
+    public static XMPPServerConnection.ConnectionState sConnectionState;
+    public static XMPPServerConnection.LoggedInState sLoggedInState;
     private boolean mActive;
     private Thread mThread;
     private Handler mTHandler;
+    private XMPPServerConnection mConnection;
 
     public XMPPConnectionService() {
 
+    }
+
+    public static XMPPServerConnection.ConnectionState getConnectionState() {
+        if (sConnectionState == null) {
+            return XMPPServerConnection.ConnectionState.DISCONNECTED;
+        }
+        return sConnectionState;
+    }
+
+    public static XMPPServerConnection.LoggedInState getLoggedInState() {
+        if (sLoggedInState == null) {
+            return XMPPServerConnection.LoggedInState.LOGGED_OUT;
+        }
+        return sLoggedInState;
     }
 
 
@@ -29,6 +51,27 @@ public class XMPPConnectionService extends Service {
         Log.d(TAG, "OnCreate");
     }
 
+    private void initConnection(){
+
+        Log.d(TAG,"Init connection");
+
+        if (mConnection == null){
+            mConnection = new XMPPServerConnection(this);
+        }
+
+        try {
+            mConnection.connect();
+        }catch (IOException | SmackException | XMPPException e){
+            Log.d(TAG,"Something went wrong while connecting ,make sure the credentials are right and try again");
+            e.printStackTrace();
+            //Stop the service all together.
+            stopSelf();
+        }
+
+    }
+
+
+
     public void start() {
         Log.d(TAG, " Service Start() функция вызвана.");
         if (!mActive) {
@@ -39,7 +82,7 @@ public class XMPPConnectionService extends Service {
                     public void run() {
                         Looper.prepare();
                         mTHandler = new Handler();
-                        //initConnection()
+                        initConnection();
                         Looper.loop();
                     }
                 });
@@ -54,21 +97,23 @@ public class XMPPConnectionService extends Service {
         mTHandler.post(new Runnable() {
             @Override
             public void run() {
-                //Код для дисконекта от сервера
+                if (mConnection != null){
+                    mConnection.disconnect();
+                }
             }
         });
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG,"OnStartCommand()");
+        Log.d(TAG, "OnStartCommand()");
         start();
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG,"onDestroy()");
+        Log.d(TAG, "onDestroy()");
         super.onDestroy();
         stop();
     }

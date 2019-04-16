@@ -2,6 +2,8 @@ package com.maxfin.phoenixapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,12 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.Managers.ContactManager;
 import com.maxfin.phoenixapp.Models.Contact;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +39,7 @@ public class ContactFragment extends Fragment {
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            updateUi();
+        updateUi();
 
         return view;
     }
@@ -60,10 +64,10 @@ public class ContactFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS){
-            if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 updateUi();
-            }else {
+            } else {
                 Toast.makeText(getActivity(), "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
             }
         }
@@ -72,17 +76,29 @@ public class ContactFragment extends Fragment {
     private class ContactHolder extends RecyclerView.ViewHolder {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
+        private ImageView mPhotoContactImageView;
         private Contact mContact;
 
         public ContactHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
+            mPhotoContactImageView = itemView.findViewById(R.id.image_contact_item);
+
         }
 
         public void bind(Contact contact) {
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
+            try {
+                AssetFileDescriptor fd = Objects.requireNonNull(getContext()).getContentResolver().
+                        openAssetFileDescriptor(contact.getPhoto(), "r");
+                mPhotoContactImageView.setImageURI(contact.getPhoto());
+            } catch (FileNotFoundException e) {
+                mPhotoContactImageView.setImageResource(R.drawable.ic_contact_circle);
+                e.printStackTrace();
+            }
+
         }
     }
 

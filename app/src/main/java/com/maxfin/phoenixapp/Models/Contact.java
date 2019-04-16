@@ -1,10 +1,24 @@
 package com.maxfin.phoenixapp.Models;
 
+import android.net.Uri;
+
+import java.net.URI;
+
 public class Contact {
+
+
+    private Uri mPhoto;
     private String mName;
     private String mNumber;
     private String mId;
 
+    public Uri getPhoto() {
+        return mPhoto;
+    }
+
+    public void setPhoto(Uri photo) {
+        mPhoto = photo;
+    }
 
     public String getName() {
         return mName;

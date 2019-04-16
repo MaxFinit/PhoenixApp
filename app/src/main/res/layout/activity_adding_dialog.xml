@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <include
+        android:id="@+id/action_bar"
+        layout="@layout/tab_bar_main" />
+
+    <EditText
+        android:id="@+id/search_message_contact_edit"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/rectangle_shadow"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="8dp"
+
+
+        android:hint="@string/search_text"
+        android:inputType="text"
+        android:paddingStart="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/action_bar" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_dialog_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+
+        android:background="@drawable/rectangle_rounded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_message_contact_edit" />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -11,4 +11,7 @@
     <string name="home_text">Домой</string>
     <string name="message_text">Сообщения</string>
     <string name="search_text">Поиск</string>
+    <string name="input_text">Сообщение</string>
+    <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
+    <string name="empty_dialog">Нет сообщений</string>
 </resources>

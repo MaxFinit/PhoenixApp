@@ -2,7 +2,7 @@ package com.maxfin.phoenixapp.Models;
 
 import android.net.Uri;
 
-import java.net.URI;
+import java.util.Date;
 
 public class Contact {
 
@@ -11,6 +11,10 @@ public class Contact {
     private String mName;
     private String mNumber;
     private String mId;
+    private String mJId;
+    private Date mTime;
+    private String mPreviewMessage;
+    private Message mMessageHistory;
 
     public Uri getPhoto() {
         return mPhoto;
@@ -42,5 +46,33 @@ public class Contact {
 
     public void setId(String id) {
         mId = id;
+    }
+
+    public Date getTime() {
+        return mTime;
+    }
+
+    public void setTime(Date time) {
+        mTime = time;
+    }
+
+    public String getPreviewMessage() {
+        return mPreviewMessage;
+    }
+
+    public void setPreviewMessage(String previewMessage) {
+        mPreviewMessage = previewMessage;
+    }
+
+    public String getJId() {
+        return mJId;
+    }
+
+    public void setJId(String JId) {
+        mJId = JId;
+    }
+
+    public Message getMessageHistory() {
+        return mMessageHistory;
     }
 }

@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ContactFragment extends Fragment {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
@@ -76,7 +78,7 @@ public class ContactFragment extends Fragment {
     private class ContactHolder extends RecyclerView.ViewHolder {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
-        private ImageView mPhotoContactImageView;
+        private CircleImageView mPhotoContactImageView;
         private Contact mContact;
 
         public ContactHolder(LayoutInflater inflater, ViewGroup parent) {

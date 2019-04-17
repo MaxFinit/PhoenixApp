@@ -14,6 +14,12 @@ import java.io.IOException;
 
 public class XMPPConnectionService extends Service {
     private static final String TAG = "XMPPConnectionService";
+
+    public static final String SEND_MESSAGE = "com.maxfin.phoenixapp.sendmessage";
+    public static final String BUNDLE_MESSAGE_BODY = "b_body";
+    public static final String BUNDLE_TO = "b_to";
+
+
     public static XMPPServerConnection.ConnectionState sConnectionState;
     public static XMPPServerConnection.LoggedInState sLoggedInState;
     private boolean mActive;

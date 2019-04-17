@@ -1,8 +1,10 @@
 package com.maxfin.phoenixapp.Managers;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.maxfin.phoenixapp.Models.Contact;
+import com.maxfin.phoenixapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +17,18 @@ public class MessageManager {
 
     private MessageManager(Context context) {
         mContext = context;
+        mContactList = new ArrayList<>();
+        Contact contact = new Contact();
+        contact.setJId("maxfin2@jabber.ru");
+        contact.setName("Max");
+        Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_balance);
+        contact.setPhoto(path);
+
+
+        mContactList.add(contact);
     }
 
-    public static MessageManager getMessageManager(Context context) {
+    public static MessageManager get(Context context) {
         if (sMessageManager == null)
             sMessageManager = new MessageManager(context);
         return sMessageManager;
@@ -25,10 +36,7 @@ public class MessageManager {
 
     public void uploadMessageList(Contact contact) {
 
-        mContactList = new ArrayList<>();
         mContactList.add(contact);
-
-
     }
 
     public List<Contact> getContactList() {

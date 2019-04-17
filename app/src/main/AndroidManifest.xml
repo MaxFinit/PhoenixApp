@@ -22,7 +22,7 @@
         </activity>
         <activity android:name=".CallActivity"/>
         <activity android:name=".MessageListActivity" />
-        <activity android:name=".MessageDialogActivity" />
+        <activity android:name=".DialogActivity" />
         <activity android:name=".AddingDialogActivity" />
 
         <service android:name=".XMPPConnectionService" />

@@ -30,9 +30,9 @@
         tools:text="Василий" />
 
     <TextView
-        android:id="@+id/number_contact_item"
+        android:id="@+id/preview_dialog_item"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="14dp"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/font_pf_display_regular"
         android:textColor="@color/colorGray100"
@@ -42,6 +42,7 @@
 
 
     <TextView
+        android:id="@+id/time_dialog_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

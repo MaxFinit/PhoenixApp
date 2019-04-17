@@ -104,7 +104,7 @@ public class AddingDialogActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            MessageManager messageManager = MessageManager.getMessageManager(getApplicationContext());
+            MessageManager messageManager = MessageManager.get(getApplicationContext());
             messageManager.uploadMessageList(mContact);
 
 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorGray20">
+    android:background="@color/colorGray60">
 
     <include
         android:id="@+id/action_bar"
@@ -39,26 +39,33 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="55dp"
         android:background="@color/colorPurple100"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <EditText
             android:id="@+id/input_text_message"
-            android:padding="8dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:fontFamily="@font/font_pf_display_regular"
             android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
             android:hint="@string/input_text"
+
+            android:background="@null"
             android:textColorHint="@color/colorGray80"/>
 
         <Button
             android:id="@+id/send_message_button"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="@drawable/ic_send"/>
 
 

@@ -19,8 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
-import com.maxfin.phoenixapp.Managers.MessageManager;
-import com.maxfin.phoenixapp.Models.Contact;
+import com.maxfin.phoenixapp.managers.MessageManager;
+import com.maxfin.phoenixapp.models.Contact;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MessageListActivity extends AppCompatActivity {
+public class DialogListActivity extends AppCompatActivity {
 
     private TextView mEmptyDialogsList;
     private EditText mSearchDialogsList;
@@ -59,11 +59,11 @@ public class MessageListActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_home:
-                        Intent homeIntent = new Intent(MessageListActivity.this, MainActivity.class);
+                        Intent homeIntent = new Intent(DialogListActivity.this, MainActivity.class);
                         startActivity(homeIntent);
                         break;
                     case R.id.menu_call:
-                        Intent callIntent = new Intent(MessageListActivity.this, CallActivity.class);
+                        Intent callIntent = new Intent(DialogListActivity.this, CallActivity.class);
                         startActivity(callIntent);
                         break;
                 }
@@ -75,7 +75,7 @@ public class MessageListActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MessageListActivity.this, AddingDialogActivity.class);
+                Intent intent = new Intent(DialogListActivity.this, AddingDialogActivity.class);
                 startActivity(intent);
             }
         });
@@ -146,7 +146,7 @@ public class MessageListActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
-            Intent intent = new Intent(MessageListActivity.this, DialogActivity.class);
+            Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID",mContact.getJId());
             startActivity(intent);
 

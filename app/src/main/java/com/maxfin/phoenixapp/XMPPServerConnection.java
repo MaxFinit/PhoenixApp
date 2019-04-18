@@ -4,11 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.maxfin.phoenixapp.Models.User;
+import com.maxfin.phoenixapp.models.User;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionListener;
@@ -18,6 +17,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
+import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -93,8 +93,44 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             Toast.makeText(mApplicationContext,"Дисконект",Toast.LENGTH_SHORT).show();
         }
 
+        ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
+            @Override
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+
+                Log.d(TAG,"message.getBody() :"+message.getBody());
+                Log.d(TAG,"message.getFrom() :"+message.getFrom());
+
+                String fromWho = message.getFrom().toString();
+
+                String contactJid="";
+
+                if (fromWho.contains("/")){
+                    contactJid = fromWho.split("/")[0];
+                    Log.d(TAG,"The real jid is :" +contactJid);
+                    Log.d(TAG,"The message is from :" +fromWho);
+
+
+                } else {
+                    contactJid=fromWho;
+                }
+
+                Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
+                intent.setPackage(mApplicationContext.getPackageName());
+                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
+                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
+                mApplicationContext.sendBroadcast(intent);
+                Log.d(TAG,"Received message from :"+contactJid+" broadcast sent.");
+
+
+
+
+
+
+            }
+        });
+
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
-        reconnectionManager.setEnabledPerDefault(true);
+        ReconnectionManager.setEnabledPerDefault(true);
         reconnectionManager.enableAutomaticReconnection();
 
     }

@@ -8,7 +8,7 @@
     android:focusableInTouchMode="true">
 
     <EditText
-        android:id="@+id/search_journal_edit"
+        android:contactId="@+contactId/search_journal_edit"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:background="@drawable/rectangle_shadow"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/contact_recycler_view"
+        android:contactId="@+contactId/contact_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
 
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_journal_edit" />
+        app:layout_constraintTop_toBottomOf="@+contactId/search_journal_edit" />
 
 
 </android.support.constraint.ConstraintLayout>

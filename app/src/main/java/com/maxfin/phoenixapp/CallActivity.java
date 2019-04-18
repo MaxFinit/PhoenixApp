@@ -52,7 +52,7 @@ public class CallActivity extends AppCompatActivity {
                         startActivity(homeIntent);
                         break;
                     case R.id.menu_message:
-                        Intent messageIntent = new Intent(CallActivity.this, MessageListActivity.class);
+                        Intent messageIntent = new Intent(CallActivity.this, DialogListActivity.class);
                         startActivity(messageIntent);
                         break;
                 }

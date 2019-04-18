@@ -3,7 +3,6 @@ package com.maxfin.phoenixapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,12 +13,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.maxfin.phoenixapp.Managers.ContactManager;
-import com.maxfin.phoenixapp.Models.Contact;
+import com.maxfin.phoenixapp.managers.ContactManager;
+import com.maxfin.phoenixapp.models.Contact;
 
 import java.io.FileNotFoundException;
 import java.util.List;

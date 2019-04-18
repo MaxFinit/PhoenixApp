@@ -17,13 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.maxfin.phoenixapp.Managers.ContactManager;
-import com.maxfin.phoenixapp.Managers.MessageManager;
-import com.maxfin.phoenixapp.Models.Contact;
+import com.maxfin.phoenixapp.managers.ContactManager;
+import com.maxfin.phoenixapp.managers.MessageManager;
+import com.maxfin.phoenixapp.models.Contact;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Objects;
 
 public class AddingDialogActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(callIntent);
                         break;
                     case R.id.menu_message:
-                        Intent messageIntent = new Intent(MainActivity.this, MessageListActivity.class);
+                        Intent messageIntent = new Intent(MainActivity.this, DialogListActivity.class);
                         startActivity(messageIntent);
                         break;
                 }

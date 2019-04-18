@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.Managers;
+package com.maxfin.phoenixapp.managers;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -8,10 +8,9 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-import com.maxfin.phoenixapp.Models.Contact;
+import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -48,14 +47,14 @@ public class ContactManager {
                 mContact = new Contact();
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-                mContact.setId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,Long.parseLong(mContact.getId()));
+                mContact.setContactId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,Long.parseLong(mContact.getContactId()));
                 mContact.setPhoto(Uri.withAppendedPath(u,ContactsContract.Contacts.Photo.DISPLAY_PHOTO));
                 Log.d(TAG, "" + mContact.getPhoto());
                 /*
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
                 */
-                idLast = mContact.getId();
+                idLast = mContact.getContactId();
                 if (!idPrev.equals(idLast))
                     mContactList.add(mContact);
                 idPrev = idLast;

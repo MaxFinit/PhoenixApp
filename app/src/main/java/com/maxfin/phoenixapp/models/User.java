@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.Models;
+package com.maxfin.phoenixapp.models;
 
 public class User {
 

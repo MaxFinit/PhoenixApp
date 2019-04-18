@@ -1,8 +1,6 @@
-package com.maxfin.phoenixapp.Models;
+package com.maxfin.phoenixapp.models;
 
 import android.net.Uri;
-
-import java.util.Date;
 
 public class Contact {
 
@@ -10,10 +8,8 @@ public class Contact {
     private Uri mPhoto;
     private String mName;
     private String mNumber;
-    private String mId;
+    private String mContactId;
     private String mJId;
-    private Date mTime;
-    private String mPreviewMessage;
     private Message mMessageHistory;
 
     public Uri getPhoto() {
@@ -40,29 +36,14 @@ public class Contact {
         mNumber = number;
     }
 
-    public String getId() {
-        return mId;
+    public String getContactId() {
+        return mContactId;
     }
 
-    public void setId(String id) {
-        mId = id;
+    public void setContactId(String contactId) {
+        mContactId = contactId;
     }
 
-    public Date getTime() {
-        return mTime;
-    }
-
-    public void setTime(Date time) {
-        mTime = time;
-    }
-
-    public String getPreviewMessage() {
-        return mPreviewMessage;
-    }
-
-    public void setPreviewMessage(String previewMessage) {
-        mPreviewMessage = previewMessage;
-    }
 
     public String getJId() {
         return mJId;

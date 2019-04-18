@@ -49,7 +49,7 @@
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/container_vp"
+                android:contactId="@+contactId/container_vp"
                 android:background="@color/colorGray20"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

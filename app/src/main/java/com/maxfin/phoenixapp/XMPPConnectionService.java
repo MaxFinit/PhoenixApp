@@ -19,6 +19,9 @@ public class XMPPConnectionService extends Service {
     public static final String BUNDLE_MESSAGE_BODY = "b_body";
     public static final String BUNDLE_TO = "b_to";
 
+    public static final String NEW_MESSAGE = "com.maxfin.phoenixapp.newmessage";
+    public static final String BUNDLE_FROM_JID = "b_from";
+
 
     public static XMPPServerConnection.ConnectionState sConnectionState;
     public static XMPPServerConnection.LoggedInState sLoggedInState;

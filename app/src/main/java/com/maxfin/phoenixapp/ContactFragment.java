@@ -3,6 +3,7 @@ package com.maxfin.phoenixapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -92,8 +93,8 @@ public class ContactFragment extends Fragment {
             mNumberContactTextView.setText(contact.getNumber());
             try {
                 AssetFileDescriptor fd = Objects.requireNonNull(getContext()).getContentResolver().
-                        openAssetFileDescriptor(contact.getPhoto(), "r");
-                mPhotoContactImageView.setImageURI(contact.getPhoto());
+                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
+                mPhotoContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
                 mPhotoContactImageView.setImageResource(R.drawable.ic_contact_circle);
                 e.printStackTrace();

@@ -7,7 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:contactId="@+contactId/image_dialog_item"
+        android:id="@+id/image_dialog_item"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginStart="8dp"
@@ -18,31 +18,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:contactId="@+contactId/name_dialog_item"
+        android:id="@+id/name_dialog_item"
         style="@style/MainScreenLableStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+contactId/image_dialog_item"
+        app:layout_constraintStart_toEndOf="@+id/image_dialog_item"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Василий" />
 
     <TextView
-        android:contactId="@+contactId/preview_dialog_item"
+        android:id="@+id/preview_dialog_item"
         android:layout_width="wrap_content"
         android:layout_height="14dp"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/font_pf_display_regular"
         android:textColor="@color/colorGray100"
-        app:layout_constraintStart_toEndOf="@+contactId/image_dialog_item"
-        app:layout_constraintTop_toBottomOf="@+contactId/name_dialog_item"
+        app:layout_constraintStart_toEndOf="@+id/image_dialog_item"
+        app:layout_constraintTop_toBottomOf="@+id/name_dialog_item"
         tools:text="Ехал Грека через реку" />
 
 
     <TextView
-        android:contactId="@+contactId/time_dialog_item"
+        android:id="@+id/time_dialog_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

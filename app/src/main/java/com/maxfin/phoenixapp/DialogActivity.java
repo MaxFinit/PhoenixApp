@@ -34,6 +34,7 @@ public class DialogActivity extends AppCompatActivity {
     private Button mSendMessageButton;
     private DialogManager mDialogManager;
     private String JID;
+    private long dbId;
     private BroadcastReceiver mBroadcastReceiver;
 
 
@@ -48,10 +49,13 @@ public class DialogActivity extends AppCompatActivity {
         mMessagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMessagesRecyclerView.setHasFixedSize(true);
 
-        updateUi();
 
         Intent intent = getIntent();
+
+        dbId = intent.getLongExtra("EXTRA_CONTACT_ID",0);
+        updateUi();
         JID = intent.getStringExtra("EXTRA_CONTACT_JID");
+
         setTitle(JID);
 
         mSendMessageButton.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +71,7 @@ public class DialogActivity extends AppCompatActivity {
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, JID);
 
-                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false);
+                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, dbId);
                         mMessageEditText.setText("");
 
 
@@ -95,7 +99,7 @@ public class DialogActivity extends AppCompatActivity {
                 String action = intent.getAction();
                 switch (action) {
                     case XMPPConnectionService.NEW_MESSAGE:
-                        mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true);
+                        mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,dbId);
                         updateUi();
                         break;
                 }
@@ -117,8 +121,7 @@ public class DialogActivity extends AppCompatActivity {
 
     private void updateUi() {
         mDialogManager = DialogManager.getDialogManager(getApplicationContext());
-        List<Message> mMessageList = mDialogManager.getMessageList();
-
+        List<Message> mMessageList = mDialogManager.getMessageList(dbId);
 
 
         if (mMessageList.size() > 0) {
@@ -130,7 +133,7 @@ public class DialogActivity extends AppCompatActivity {
             } else {
                 mAdapter.setContacts(mMessageList);
                 mAdapter.notifyDataSetChanged();
-                mMessagesRecyclerView.smoothScrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount()-1);
+                mMessagesRecyclerView.smoothScrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);
             }
         } else {
             mMessagesRecyclerView.setVisibility(View.GONE);

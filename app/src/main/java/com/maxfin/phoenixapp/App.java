@@ -11,12 +11,14 @@ public class App extends Application {
 
     private ContactsDatabase database;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        database = Room.databaseBuilder(this, ContactsDatabase.class, "database")
+        database = Room.databaseBuilder(this, ContactsDatabase.class, "database").allowMainThreadQueries()
                 .build();
+
     }
 
     public static App getInstance() {
@@ -26,6 +28,8 @@ public class App extends Application {
     public ContactsDatabase getDatabase() {
         return database;
     }
+
+
 
 
 }

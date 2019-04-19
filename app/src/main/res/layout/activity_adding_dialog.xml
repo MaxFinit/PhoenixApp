@@ -24,9 +24,14 @@
         android:inputType="text"
         android:paddingStart="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/action_bar" />
+
+
+
+
+
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/add_dialog_recycler_view"

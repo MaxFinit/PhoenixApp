@@ -27,10 +27,12 @@ public class MessageManager {
         contact.setJId("maxfin2@jabber.ru");
         contact.setName("Max");
         Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_balance);
-        contact.setPhoto(path);
+        contact.setPhoto(path.toString());
+
+        uploadMessageList(contact);
 
 
-        mContactList.add(contact);
+      //  mContactList.add(contact);
     }
 
     public static MessageManager get(Context context) {
@@ -43,11 +45,18 @@ public class MessageManager {
         mContactsDatabase = App.getInstance().getDatabase();
         mContactsDao = mContactsDatabase.mContactsDao();
 
+        mContactsDao.insert(contact);
 
-        mContactList.add(contact);
+
+ //       mContactList.add(contact);
     }
 
     public List<Contact> getContactList() {
-        return mContactList;
+
+        mContactList = mContactsDao.getAll();
+
+       return mContactList;
+
+
     }
 }

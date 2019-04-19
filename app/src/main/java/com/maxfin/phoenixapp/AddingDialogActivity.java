@@ -3,6 +3,7 @@ package com.maxfin.phoenixapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -93,8 +94,8 @@ public class AddingDialogActivity extends AppCompatActivity {
             mNumberContactTextView.setText(contact.getNumber());
             try {
                 AssetFileDescriptor fd = getContentResolver().
-                        openAssetFileDescriptor(contact.getPhoto(), "r");
-                mNumberContactImageView.setImageURI(contact.getPhoto());
+                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
+                mNumberContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
                 mNumberContactImageView.setImageResource(R.drawable.ic_contact_circle);
                 e.printStackTrace();

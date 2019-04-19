@@ -48,9 +48,9 @@ public class ContactManager {
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                 mContact.setContactId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,Long.parseLong(mContact.getContactId()));
-                mContact.setPhoto(Uri.withAppendedPath(u,ContactsContract.Contacts.Photo.DISPLAY_PHOTO));
-                Log.d(TAG, "" + mContact.getPhoto());
+                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(mContact.getContactId()));
+                mContact.setPhoto(Uri.withAppendedPath(u, ContactsContract.Contacts.Photo.DISPLAY_PHOTO).toString());
+                Log.d(TAG, "" + Uri.parse(mContact.getPhoto()));
                 /*
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
                 */
@@ -68,17 +68,16 @@ public class ContactManager {
 
     }
 
-    public class ContactNameComparator implements Comparator<Contact>
-    {
+    public class ContactNameComparator implements Comparator<Contact> {
         public int compare(Contact left, Contact right) {
             return left.getName().compareTo(right.getName());
         }
     }
 
-    public List<Contact> getSortedContactList(){
-        Collections.sort(mContactList,new ContactNameComparator());
+    public List<Contact> getSortedContactList() {
+        Collections.sort(mContactList, new ContactNameComparator());
 
-       return  mContactList;
+        return mContactList;
     }
 
     public List<Contact> getContactList() {

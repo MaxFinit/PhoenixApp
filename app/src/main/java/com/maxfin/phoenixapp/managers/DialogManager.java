@@ -1,9 +1,13 @@
 package com.maxfin.phoenixapp.managers;
 
 import android.content.Context;
+import android.util.Log;
 
 
-
+import com.maxfin.phoenixapp.App;
+import com.maxfin.phoenixapp.database.ContactsDao;
+import com.maxfin.phoenixapp.database.ContactsDatabase;
+import com.maxfin.phoenixapp.database.MessagesDao;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.ArrayList;
@@ -12,9 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class DialogManager {
+    private static final String TAG="DialogManager";
     private Message mMessage;
     private List<Message> mMessageList;
     private static DialogManager sDialogManager;
+    private ContactsDatabase mContactsDatabase;
+    private ContactsDao mContactsDao;
+    private MessagesDao mMessagesDao;
+
 
 
     private DialogManager(Context context) {
@@ -28,20 +37,37 @@ public class DialogManager {
     }
 
 
-    public void addMessage(String messagesText, boolean messageType) {
+    public void addMessage(String messagesText, boolean messageType,long id) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dMMMHH:mm");
 
         String date = dateFormat.format(Calendar.getInstance().getTime());
 
+        mMessage = new Message(messagesText, messageType, date,id);
 
-        mMessage = new Message(messagesText, messageType, date);
 
-        mMessageList.add(mMessage);
+        mContactsDatabase = App.getInstance().getDatabase();
+        mMessagesDao =mContactsDatabase.mMessagesDao();
+
+        mMessagesDao.insertMessage(mMessage);
+
+
+    //    mMessageList.add(mMessage);
     }
 
 
-    public List<Message> getMessageList() {
+    public List<Message> getMessageList(long id) {
+        mContactsDatabase = App.getInstance().getDatabase();
+        mMessagesDao =mContactsDatabase.mMessagesDao();
+
+        try {
+            mMessageList = mMessagesDao.loadHistory(id);
+        } catch (Exception e){
+            Log.d(TAG,"fail");
+            e.getStackTrace();
+        }
+
+
         return mMessageList;
 
     }

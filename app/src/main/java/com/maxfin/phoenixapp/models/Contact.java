@@ -1,22 +1,35 @@
 package com.maxfin.phoenixapp.models;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.net.Uri;
 
+@Entity(indices = {
+        @Index("mName"),
+        @Index("mNumber")
+})
 public class Contact {
 
+    @PrimaryKey(autoGenerate = true)
+    public long id;
 
-    private Uri mPhoto;
+    private String mPhoto;
     private String mName;
     private String mNumber;
     private String mContactId;
     private String mJId;
-    private Message mMessageHistory;
 
-    public Uri getPhoto() {
+    public long getId() {
+        return id;
+    }
+
+    public String getPhoto() {
         return mPhoto;
     }
 
-    public void setPhoto(Uri photo) {
+    public void setPhoto(String photo) {
         mPhoto = photo;
     }
 
@@ -53,7 +66,5 @@ public class Contact {
         mJId = JId;
     }
 
-    public Message getMessageHistory() {
-        return mMessageHistory;
-    }
+
 }

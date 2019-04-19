@@ -2,6 +2,7 @@ package com.maxfin.phoenixapp;
 
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -135,8 +136,8 @@ public class DialogListActivity extends AppCompatActivity {
             mDialogNameTextView.setText(contact.getName());
             try {
                 AssetFileDescriptor fd = getContentResolver().
-                        openAssetFileDescriptor(contact.getPhoto(), "r");
-                mDialogImageView.setImageURI(contact.getPhoto());
+                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
+                mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
                 mDialogImageView.setImageResource(R.drawable.ic_contact_circle);
                 e.printStackTrace();
@@ -148,6 +149,7 @@ public class DialogListActivity extends AppCompatActivity {
 
             Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID",mContact.getJId());
+            intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
             startActivity(intent);
 
         }

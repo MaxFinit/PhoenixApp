@@ -7,11 +7,11 @@
     android:background="@color/colorGray20">
 
     <include
-        android:contactId="@+contactId/action_bar"
+        android:id="@+id/action_bar"
         layout="@layout/tab_bar_main" />
 
     <android.support.constraint.ConstraintLayout
-        android:contactId="@+contactId/balance"
+        android:id="@+id/balance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -21,10 +21,10 @@
         android:background="@drawable/rectangle_rounded"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+contactId/action_bar">
+        app:layout_constraintTop_toBottomOf="@+id/action_bar">
 
         <TextView
-            android:contactId="@+contactId/balance_tv"
+            android:id="@+id/balance_tv"
             style="@style/MainScreenLableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:contactId="@+contactId/balance_value_tv"
+            android:id="@+id/balance_value_tv"
             style="@style/MainScreenValueStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+contactId/balance_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/balance_tv" />
 
 
 
@@ -71,7 +71,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
-        android:contactId="@+contactId/internet_tariff"
+        android:id="@+id/internet_tariff"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -80,17 +80,17 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+contactId/balance">
+        app:layout_constraintTop_toBottomOf="@+id/balance">
 
         <android.support.constraint.ConstraintLayout
-            android:contactId="@+contactId/internet"
+            android:id="@+id/internet"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/rectangle_rounded">
 
             <TextView
-                android:contactId="@+contactId/internet_tv"
+                android:id="@+id/internet_tv"
                 style="@style/MainScreenLableStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,12 +99,12 @@
                 android:text="@string/internet_text"
                 android:textAlignment="textStart"
                 android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+contactId/internet_ic"
+                app:layout_constraintStart_toEndOf="@+id/internet_ic"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
-                android:contactId="@+contactId/internet_value_tv"
+                android:id="@+id/internet_value_tv"
                 style="@style/MainScreenValueStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,10 +115,10 @@
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+contactId/internet_ic" />
+                app:layout_constraintTop_toBottomOf="@+id/internet_ic" />
 
             <ImageView
-                android:contactId="@+contactId/internet_ic"
+                android:id="@+id/internet_ic"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="8dp"
@@ -133,14 +133,14 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:contactId="@+contactId/tariff"
+            android:id="@+id/tariff"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/rectangle_rounded">
 
             <TextView
-                android:contactId="@+contactId/tariff_tv"
+                android:id="@+id/tariff_tv"
                 style="@style/MainScreenLableStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,11 +148,11 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/call_internet_text"
                 android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+contactId/tariff_ic"
+                app:layout_constraintStart_toEndOf="@+id/tariff_ic"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:contactId="@+contactId/tariff_value_tv"
+                android:id="@+id/tariff_value_tv"
                 style="@style/MainScreenValueStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -164,10 +164,10 @@
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+contactId/tariff_ic" />
+                app:layout_constraintTop_toBottomOf="@+id/tariff_ic" />
 
             <ImageView
-                android:contactId="@+contactId/tariff_ic"
+                android:id="@+id/tariff_ic"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="8dp"
@@ -184,7 +184,7 @@
 
 
     <TextView
-        android:contactId="@+contactId/setting_call"
+        android:id="@+id/setting_call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -195,7 +195,7 @@
         android:textSize="20sp"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+contactId/internet_tariff" />
+        app:layout_constraintTop_toBottomOf="@+id/internet_tariff" />
 
     <LinearLayout
         android:layout_marginTop="8dp"
@@ -203,10 +203,10 @@
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+contactId/setting_call">
+        app:layout_constraintTop_toBottomOf="@+id/setting_call">
 
         <Button
-            android:contactId="@+contactId/recorded_call_button"
+            android:id="@+id/recorded_call_button"
             style="@style/MainScreenButtonStyle"
             android:drawableStart="@drawable/ic_call_recorded"
             android:drawablePadding="8dp"
@@ -216,7 +216,7 @@
             android:textSize="18sp" />
 
         <Button
-            android:contactId="@+contactId/black_list_button"
+            android:id="@+id/black_list_button"
             style="@style/MainScreenButtonStyle"
             android:drawableStart="@drawable/ic_black_list"
             android:drawablePadding="8dp"
@@ -229,7 +229,7 @@
 
 
     <android.support.design.widget.BottomNavigationView
-        android:contactId="@+contactId/bottom_navigation_view"
+        android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPurple100"

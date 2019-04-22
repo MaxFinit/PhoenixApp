@@ -37,5 +37,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Intent i1 = new Intent(this,XMPPConnectionService.class);
+        startService(i1);
+
+
     }
 }

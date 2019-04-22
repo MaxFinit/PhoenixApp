@@ -34,7 +34,6 @@ public class DialogActivity extends AppCompatActivity {
     private Button mSendMessageButton;
     private DialogManager mDialogManager;
     private String JID;
-    private long dbId;
     private BroadcastReceiver mBroadcastReceiver;
 
 
@@ -52,9 +51,8 @@ public class DialogActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        dbId = intent.getLongExtra("EXTRA_CONTACT_ID",0);
-        updateUi();
         JID = intent.getStringExtra("EXTRA_CONTACT_JID");
+        updateUi();
 
         setTitle(JID);
 
@@ -71,7 +69,7 @@ public class DialogActivity extends AppCompatActivity {
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, JID);
 
-                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, dbId);
+                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, JID);
                         mMessageEditText.setText("");
 
 
@@ -99,9 +97,12 @@ public class DialogActivity extends AppCompatActivity {
                 String action = intent.getAction();
                 switch (action) {
                     case XMPPConnectionService.NEW_MESSAGE:
-                        mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,dbId);
+                    //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,JID);
                         updateUi();
                         break;
+                        default:
+                            updateUi();
+                            break;
                 }
 
 
@@ -109,7 +110,7 @@ public class DialogActivity extends AppCompatActivity {
         };
         IntentFilter filter = new IntentFilter(XMPPConnectionService.NEW_MESSAGE);
         registerReceiver(mBroadcastReceiver, filter);
-
+        updateUi();
 
     }
 
@@ -121,7 +122,7 @@ public class DialogActivity extends AppCompatActivity {
 
     private void updateUi() {
         mDialogManager = DialogManager.getDialogManager(getApplicationContext());
-        List<Message> mMessageList = mDialogManager.getMessageList(dbId);
+        List<Message> mMessageList = mDialogManager.getMessageList(JID);
 
 
         if (mMessageList.size() > 0) {
@@ -133,7 +134,7 @@ public class DialogActivity extends AppCompatActivity {
             } else {
                 mAdapter.setContacts(mMessageList);
                 mAdapter.notifyDataSetChanged();
-                mMessagesRecyclerView.smoothScrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);
+                mMessagesRecyclerView.smoothScrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);  //Прокрутка списка в конец
             }
         } else {
             mMessagesRecyclerView.setVisibility(View.GONE);

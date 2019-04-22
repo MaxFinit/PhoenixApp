@@ -78,11 +78,20 @@ public class DialogListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(DialogListActivity.this, AddingDialogActivity.class);
                 startActivity(intent);
+
+
+                MessageManager messageManager = MessageManager.get(getApplicationContext());
+                Contact contact = new Contact();
+                contact.setJId("maxfin2@jabber.ru");
+                contact.setName("Max");
+                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_balance);
+                contact.setPhoto(path.toString());
+                messageManager.uploadMessageList(contact);
+
             }
         });
 
-         Intent i1 = new Intent(this,XMPPConnectionService.class);
-         startService(i1);
+
 
     }
 
@@ -149,7 +158,7 @@ public class DialogListActivity extends AppCompatActivity {
 
             Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID",mContact.getJId());
-            intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
+          //  intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
             startActivity(intent);
 
         }

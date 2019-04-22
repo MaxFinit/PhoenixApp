@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.models.User;
 
 import org.jivesoftware.smack.ConnectionListener;
@@ -114,11 +115,20 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                     contactJid=fromWho;
                 }
 
+                DialogManager dialogManager = DialogManager.getDialogManager(mApplicationContext);
+                dialogManager.addMessage(message.getBody(),true,contactJid);
+
+
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
                 intent.setPackage(mApplicationContext.getPackageName());
-                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
-                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
+//                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
+//                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
                 mApplicationContext.sendBroadcast(intent);
+
+
+
+
+
                 Log.d(TAG,"Received message from :"+contactJid+" broadcast sent.");
 
 

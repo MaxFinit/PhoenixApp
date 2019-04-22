@@ -2,6 +2,7 @@ package com.maxfin.phoenixapp.managers;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.maxfin.phoenixapp.App;
 import com.maxfin.phoenixapp.database.ContactsDao;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageManager {
-    private static final String TAG = "Закгружаем список диалогов";
+    private static final String TAG = "MessageManager";
     private List<Contact> mContactList;
     private static MessageManager sMessageManager;
     private Context mContext;
@@ -23,13 +24,8 @@ public class MessageManager {
     private MessageManager(Context context) {
         mContext = context;
         mContactList = new ArrayList<>();
-        Contact contact = new Contact();
-        contact.setJId("maxfin2@jabber.ru");
-        contact.setName("Max");
-        Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_balance);
-        contact.setPhoto(path.toString());
 
-        uploadMessageList(contact);
+
 
 
       //  mContactList.add(contact);
@@ -53,7 +49,19 @@ public class MessageManager {
 
     public List<Contact> getContactList() {
 
-        mContactList = mContactsDao.getAll();
+
+        mContactsDatabase = App.getInstance().getDatabase();
+        mContactsDao = mContactsDatabase.mContactsDao();
+
+
+
+        try {
+            mContactList = mContactsDao.getAll();
+        } catch (Exception e){
+            Log.d(TAG,"fail");
+            e.getStackTrace();
+        }
+        
 
        return mContactList;
 

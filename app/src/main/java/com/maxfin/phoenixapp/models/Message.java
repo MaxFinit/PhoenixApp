@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(entity = Contact.class, parentColumns = "id", childColumns = "contact_id", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Contact.class, parentColumns = "mJId", childColumns = "contact_id", onDelete = CASCADE))
 public class Message {
     @PrimaryKey(autoGenerate = true)
     public long id;
@@ -15,17 +15,17 @@ public class Message {
     private boolean mTypeMessage;
     private String mDateMessage;
     @ColumnInfo(name = "contact_id")
-    private long mContactId;
+    private String mContactId;
 
-    public long getContactId() {
+    public String getContactId() {
         return mContactId;
     }
 
-    public void setContactId(long contactId) {
+    public void setContactId(String contactId) {
         mContactId = contactId;
     }
 
-    public Message(String textMessage, boolean typeMessage, String dateMessage, long contactId) {
+    public Message(String textMessage, boolean typeMessage, String dateMessage, String contactId) {
         mTextMessage = textMessage;
         mTypeMessage = typeMessage;
         mDateMessage = dateMessage;

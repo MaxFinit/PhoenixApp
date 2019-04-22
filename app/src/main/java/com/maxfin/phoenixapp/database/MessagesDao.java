@@ -12,7 +12,7 @@ import java.util.List;
 public interface MessagesDao {
 
     @Query("SELECT * FROM Message WHERE contact_id = :contactId")
-    List<Message> loadHistory(long contactId);
+    List<Message> loadHistory(String contactId);
 
 
     @Insert

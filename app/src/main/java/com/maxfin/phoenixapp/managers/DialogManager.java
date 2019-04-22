@@ -37,7 +37,7 @@ public class DialogManager {
     }
 
 
-    public void addMessage(String messagesText, boolean messageType,long id) {
+    public void addMessage(String messagesText, boolean messageType,String id) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dMMMHH:mm");
 
@@ -56,7 +56,7 @@ public class DialogManager {
     }
 
 
-    public List<Message> getMessageList(long id) {
+    public List<Message> getMessageList(String id) {
         mContactsDatabase = App.getInstance().getDatabase();
         mMessagesDao =mContactsDatabase.mMessagesDao();
 

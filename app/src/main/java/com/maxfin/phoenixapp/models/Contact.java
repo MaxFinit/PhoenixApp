@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 @Entity(indices = {
         @Index("mName"),
@@ -12,18 +13,15 @@ import android.net.Uri;
 })
 public class Contact {
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+    @PrimaryKey @NonNull
+    private String mJId;
 
     private String mPhoto;
     private String mName;
     private String mNumber;
     private String mContactId;
-    private String mJId;
 
-    public long getId() {
-        return id;
-    }
+
 
     public String getPhoto() {
         return mPhoto;

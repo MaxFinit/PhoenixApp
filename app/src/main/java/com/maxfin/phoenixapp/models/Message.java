@@ -3,19 +3,22 @@ package com.maxfin.phoenixapp.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(entity = Contact.class, parentColumns = "mJId", childColumns = "contact_id", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Contact.class, parentColumns = "mJId", childColumns = "contact_id", onDelete = CASCADE),
+        indices = {@Index("contact_id")})
 public class Message {
     @PrimaryKey(autoGenerate = true)
     public long id;
+    @ColumnInfo(name = "contact_id")
+    private String mContactId;
     private String mTextMessage;
     private boolean mTypeMessage;
     private String mDateMessage;
-    @ColumnInfo(name = "contact_id")
-    private String mContactId;
+
 
     public String getContactId() {
         return mContactId;

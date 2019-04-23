@@ -1,6 +1,7 @@
 package com.maxfin.phoenixapp.database;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
@@ -17,6 +18,9 @@ public interface MessagesDao {
 
     @Insert
     void insertMessage(Message message);
+
+    @Delete
+    void deleteMessage(Message message);
 
 
 }

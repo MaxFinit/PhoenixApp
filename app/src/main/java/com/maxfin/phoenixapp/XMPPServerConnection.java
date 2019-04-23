@@ -39,11 +39,11 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private BroadcastReceiver uiThreadMessageReceiver;
 
 
-    public static enum ConnectionState {
+    public enum ConnectionState {
         CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED
     }
 
-    public static enum LoggedInState {
+    public enum LoggedInState {
         LOGGED_IN, LOGGED_OUT
     }
 

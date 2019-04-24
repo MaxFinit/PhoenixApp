@@ -6,14 +6,48 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-<style name="MainScreenButtonStyle">
-    <item name="android:paddingStart">16dp</item>
-    <item name="android:fontFamily">@font/font_pf_display_regular</item>
-    <item name="android:background">@color/colorWhite</item>
-    <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">60dp</item>
-</style>
+    <style name="MainScreenButtonStyle">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:fontFamily">@font/font_pf_display_regular</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+    </style>
+
+    <style name="Toolbar">
+
+        <item name="android:background">@color/colorPurple100</item>
+        <item name="android:textColorPrimary">@color/colorPurple100</item>
+        <item name="android:windowBackground">@color/colorGray20</item>
+        <item name="android:colorForeground">@color/colorPurple100</item>
+        <item name="android:textColorHint">@color/colorGray20</item>
+
+
+
+
+        <item name="android:textColorSecondary">@color/colorGray20</item>
+        <item name="android:textColorSecondaryInverse">@color/colorGray20</item>
+        <item name="android:textColorTertiary">@color/colorGray20</item>
+
+
+
+        <item name="android:textColorHintInverse">@color/colorGray20</item>
+
+
+
+
+
+
+
+
+    </style>
     
+    
+    <style name="test">
+        <item name="android:background">@color/colorGray20</item>
+    </style>
+
+
     <style name="MainScreenLableStyle">
         <item name="android:fontFamily">@font/font_pf_display_regular</item>
         <item name="android:textColor">@color/colorPurple100</item>

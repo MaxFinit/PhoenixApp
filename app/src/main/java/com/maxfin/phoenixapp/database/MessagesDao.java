@@ -15,6 +15,9 @@ public interface MessagesDao {
     @Query("SELECT * FROM Message WHERE contact_id = :contactId")
     List<Message> loadHistory(String contactId);
 
+    @Query("DELETE FROM Message WHERE contact_id = :contactId")
+    void clearHistory(String contactId);
+
 
     @Insert
     void insertMessage(Message message);

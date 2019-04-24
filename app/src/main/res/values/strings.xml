@@ -14,4 +14,10 @@
     <string name="input_text">Сообщение</string>
     <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
     <string name="empty_dialog">Нет сообщений</string>
+    <string name="make_call_text">Позвонить</string>
+    <string name="block_contact_text">Заблокировать</string>
+    <string name="delete_dialog_history_text">Очистить историю</string>
+    <string name="disable_notification_text">Отключить уведомения</string>
+    <string name="add_contact_text">Отключить уведомения</string>
+    <string name="change_contact_text">Отключить уведомения</string>
 </resources>

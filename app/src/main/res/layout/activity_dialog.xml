@@ -6,10 +6,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorGray20">
 
-    <include
-        android:id="@+id/action_bar"
-        layout="@layout/tab_bar_main"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/dialog_tool_bar"
+        app:theme="@style/Toolbar"
+        app:popupTheme="@style/test"
+
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+
+
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circleImageView"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@mipmap/ic_launcher_round"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/font_pf_text_bold"
+                android:text="@string/app_name"
+                android:textSize="18sp"
+                android:textColor="@color/colorPurple20"
+                app:layout_constraintStart_toEndOf="@+id/circleImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+
+    </android.support.v7.widget.Toolbar>
+
+
+
+
 
     <TextView
         android:id="@+id/empty_dialog"
@@ -21,7 +67,7 @@
         android:textColor="@color/colorPurple100"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintTop_toBottomOf="@+id/action_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/dialog_tool_bar" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -29,9 +75,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintTop_toBottomOf="@+id/action_bar"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_tool_bar"
         tools:layout_editor_absoluteX="0dp">
 
 

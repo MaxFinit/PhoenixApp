@@ -20,11 +20,13 @@ public interface ContactsDao {
     Contact getById(String mJId);
 
 
+
     @Insert
     void insert(Contact contact);
 
     @Update
     void update(Contact contact);
+
 
     @Delete
     void delete(Contact contact);

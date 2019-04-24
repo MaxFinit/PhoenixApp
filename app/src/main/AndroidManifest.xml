@@ -27,7 +27,8 @@
         <activity android:name=".DialogListActivity" />
         <activity
             android:name=".DialogActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".DialogListActivity"/>
         <activity android:name=".AddingDialogActivity" />
 
         <service android:name=".XMPPConnectionService" />

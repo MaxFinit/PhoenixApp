@@ -65,6 +65,16 @@ public class DialogManager {
 
     }
 
+
+    public void deleteMessageList(String id){
+
+        mContactsDatabase = App.getInstance().getDatabase();
+        mMessagesDao =mContactsDatabase.mMessagesDao();
+        mMessagesDao.clearHistory(id);
+
+
+    }
+
     public List<Message> getMessageList(String id) {
         mContactsDatabase = App.getInstance().getDatabase();
         mMessagesDao =mContactsDatabase.mMessagesDao();

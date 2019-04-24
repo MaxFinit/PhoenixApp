@@ -10,8 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DialogActivity extends AppCompatActivity {
     private static final String TAG = "DialogActivity";
@@ -36,19 +40,25 @@ public class DialogActivity extends AppCompatActivity {
     private DialogManager mDialogManager;
     private String JID;
     private BroadcastReceiver mBroadcastReceiver;
+    private Toolbar mDialogToolbar;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog);
+        mDialogToolbar = findViewById(R.id.dialog_tool_bar);
+        setSupportActionBar(mDialogToolbar);
+
         mEmptyDialogTextView = findViewById(R.id.empty_dialog);
         mMessageEditText = findViewById(R.id.input_text_message);
         mSendMessageButton = findViewById(R.id.send_message_button);
         mMessagesRecyclerView = findViewById(R.id.messages_recycler_view);
-        mMessagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mMessagesRecyclerView.setHasFixedSize(true);
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true); // Отображает список с конца.
+        mMessagesRecyclerView.setLayoutManager(linearLayoutManager);
+        mMessagesRecyclerView.setHasFixedSize(true);
 
 
         Intent intent = getIntent();
@@ -56,41 +66,76 @@ public class DialogActivity extends AppCompatActivity {
         JID = intent.getStringExtra("EXTRA_CONTACT_JID");
         updateUi();
 
-        setTitle(JID);
 
         mSendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-//                for (int i=0; i < 50; i++) {
 
-                    if (!mMessageEditText.getText().toString().equals("")) {
+                if (!mMessageEditText.getText().toString().equals("")) {
 
-                        if (XMPPConnectionService.getConnectionState().equals(XMPPServerConnection.ConnectionState.CONNECTED)) {
-                            Log.d(TAG, "Отправка сообщения, клиент подключен ");
+                    if (XMPPConnectionService.getConnectionState().equals(XMPPServerConnection.ConnectionState.CONNECTED)) {
+                        Log.d(TAG, "Отправка сообщения, клиент подключен ");
 
-                            Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
-                            intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
-                            intent.putExtra(XMPPConnectionService.BUNDLE_TO, JID);
+                        Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
+                        intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
+                        intent.putExtra(XMPPConnectionService.BUNDLE_TO, JID);
 
-                            mDialogManager.addMessage(mMessageEditText.getText().toString(), false, JID);
-                            mMessageEditText.setText("");
+                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, JID);
+                        mMessageEditText.setText("");
 
 
-                            sendBroadcast(intent);
-                            updateUi();
+                        sendBroadcast(intent);
+                        updateUi();
 
-                        } else {
-                            Toast.makeText(getApplicationContext(),
-                                    "Client not connected to server ,Message not sent!",
-                                    Toast.LENGTH_LONG).show();
-                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "Client not connected to server ,Message not sent!",
+                                Toast.LENGTH_LONG).show();
                     }
-
                 }
-//            }
+
+
+            }
         });
 
+        mMessagesRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    mMessagesRecyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMessagesRecyclerView.scrollToPosition((mMessagesRecyclerView.getAdapter().getItemCount() - 1));
+
+                        }
+                    });
+                }
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dialog_tool_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_history_dialog_menu:
+                mDialogManager.deleteMessageList(JID);
+                break;
+                case android.R.id.home:
+                    onBackPressed();
+                    break;
+        }
+        return true;
     }
 
     @Override
@@ -102,12 +147,12 @@ public class DialogActivity extends AppCompatActivity {
                 String action = intent.getAction();
                 switch (action) {
                     case XMPPConnectionService.NEW_MESSAGE:
-                    //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,JID);
+                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,JID);
                         updateUi();
                         break;
-                        default:
-                            updateUi();
-                            break;
+                    default:
+                        updateUi();
+                        break;
                 }
 
 
@@ -139,7 +184,8 @@ public class DialogActivity extends AppCompatActivity {
             } else {
                 mAdapter.setContacts(mMessageList);
                 mAdapter.notifyDataSetChanged();
-                mMessagesRecyclerView.smoothScrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);  //Прокрутка списка в конец
+                mMessagesRecyclerView.scrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);//Прокрутка списка в конец
+                Log.d(TAG, mMessageList.size() + "" + (mMessagesRecyclerView.getAdapter().getItemCount() - 1));
             }
         } else {
             mMessagesRecyclerView.setVisibility(View.GONE);
@@ -172,12 +218,12 @@ public class DialogActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             mDialogManager.deleteMessage(mMessage);
-            Log.d(TAG,"Delete message");
+            Log.d(TAG, "Delete message");
             updateUi();
         }
     }
 
-    private class DialogInputHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class DialogInputHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView mInputMessageTextView;
         TextView mInputTimeTextView;
         Message mMessage;
@@ -199,7 +245,7 @@ public class DialogActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             mDialogManager.deleteMessage(mMessage);
-            Log.d(TAG,"Delete message");
+            Log.d(TAG, "Delete message");
             updateUi();
         }
     }
@@ -259,9 +305,6 @@ public class DialogActivity extends AppCompatActivity {
                     DialogOutputHolder dialogOutputHolder = (DialogOutputHolder) viewHolder;
                     dialogOutputHolder.bind(message);
                     break;
-
-
-
 
 
             }

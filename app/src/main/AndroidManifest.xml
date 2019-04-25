@@ -30,6 +30,7 @@
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".DialogListActivity"/>
         <activity android:name=".AddingDialogActivity" />
+        <activity android:name=".InputCallActivity" />
 
         <service android:name=".XMPPConnectionService" />
 

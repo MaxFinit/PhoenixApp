@@ -72,8 +72,6 @@ public class AddingDialogActivity extends AppCompatActivity {
     }
 
 
-
-
     private class DialogHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
@@ -97,7 +95,7 @@ public class AddingDialogActivity extends AppCompatActivity {
                         openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
                 mNumberContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
-                mNumberContactImageView.setImageResource(R.drawable.ic_contact_circle);
+                mNumberContactImageView.setImageResource(R.drawable.ic_contact_circle_api);
                 e.printStackTrace();
             }
         }

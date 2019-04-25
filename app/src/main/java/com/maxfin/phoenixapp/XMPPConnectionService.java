@@ -31,7 +31,6 @@ public class XMPPConnectionService extends Service {
     private XMPPServerConnection mConnection;
 
     public XMPPConnectionService() {
-
     }
 
     public static XMPPServerConnection.ConnectionState getConnectionState() {

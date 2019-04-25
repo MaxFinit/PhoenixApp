@@ -101,6 +101,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 Log.d(TAG,"message.getBody() :"+message.getBody());
                 Log.d(TAG,"message.getFrom() :"+message.getFrom());
 
+
                 String fromWho = message.getFrom().toString();
 
                 String contactJid="";

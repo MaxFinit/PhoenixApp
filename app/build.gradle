@@ -17,6 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    configurations {
+        all
+                {
+                    exclude group: 'org.bouncycastle'
+                    exclude module: 'xpp3'
+                }
+    }
 }
 
 dependencies {

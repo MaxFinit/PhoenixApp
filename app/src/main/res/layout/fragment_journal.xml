@@ -16,7 +16,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/rectangle_rounded"
-        android:drawableStart="@drawable/ic_search"
+        android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="8dp"
 
         android:hint="@string/search_text"
@@ -48,8 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        app:srcCompat="@drawable/ic_call"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

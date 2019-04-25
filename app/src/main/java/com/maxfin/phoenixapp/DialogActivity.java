@@ -1,9 +1,12 @@
 package com.maxfin.phoenixapp;
 
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,10 +15,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,7 +31,8 @@ import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.List;
-import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DialogActivity extends AppCompatActivity {
     private static final String TAG = "DialogActivity";
@@ -38,7 +43,9 @@ public class DialogActivity extends AppCompatActivity {
     private EditText mMessageEditText;
     private Button mSendMessageButton;
     private DialogManager mDialogManager;
-    private String JID;
+    private String contactJID;
+    private String contactName;
+    private String contactPhoto;
     private BroadcastReceiver mBroadcastReceiver;
     private Toolbar mDialogToolbar;
 
@@ -49,6 +56,7 @@ public class DialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dialog);
         mDialogToolbar = findViewById(R.id.dialog_tool_bar);
         setSupportActionBar(mDialogToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mEmptyDialogTextView = findViewById(R.id.empty_dialog);
         mMessageEditText = findViewById(R.id.input_text_message);
@@ -63,7 +71,9 @@ public class DialogActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        JID = intent.getStringExtra("EXTRA_CONTACT_JID");
+        contactName = intent.getStringExtra("EXTRA_CONTACT_NAME");
+        contactPhoto = intent.getStringExtra("EXTRA_CONTACT_PHOTO");
+        contactJID = intent.getStringExtra("EXTRA_CONTACT_JID");
         updateUi();
 
 
@@ -79,9 +89,9 @@ public class DialogActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
-                        intent.putExtra(XMPPConnectionService.BUNDLE_TO, JID);
+                        intent.putExtra(XMPPConnectionService.BUNDLE_TO, contactJID);
 
-                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, JID);
+                        mDialogManager.addMessage(mMessageEditText.getText().toString(), false, contactJID);
                         mMessageEditText.setText("");
 
 
@@ -119,9 +129,16 @@ public class DialogActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dialog_tool_bar_menu, menu);
+        CircleImageView imageView = findViewById(R.id.contact_photo_toolbar);
+        TextView textView = findViewById(R.id.contact_name_toolbar);
+
+        imageView.setImageURI(Uri.parse(contactPhoto));
+        textView.setText(contactName);
+
         return true;
     }
 
@@ -129,11 +146,12 @@ public class DialogActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_history_dialog_menu:
-                mDialogManager.deleteMessageList(JID);
+                mDialogManager.deleteMessageList(contactJID);
+                updateUi();
                 break;
-                case android.R.id.home:
-                    onBackPressed();
-                    break;
+            case android.R.id.home:
+                onBackPressed();
+                break;
         }
         return true;
     }
@@ -147,7 +165,7 @@ public class DialogActivity extends AppCompatActivity {
                 String action = intent.getAction();
                 switch (action) {
                     case XMPPConnectionService.NEW_MESSAGE:
-                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,JID);
+                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,contactJID);
                         updateUi();
                         break;
                     default:
@@ -172,8 +190,7 @@ public class DialogActivity extends AppCompatActivity {
 
     private void updateUi() {
         mDialogManager = DialogManager.getDialogManager(getApplicationContext());
-        List<Message> mMessageList = mDialogManager.getMessageList(JID);
-
+        List<Message> mMessageList = mDialogManager.getMessageList(contactJID);
 
         if (mMessageList.size() > 0) {
             mMessagesRecyclerView.setVisibility(View.VISIBLE);
@@ -195,7 +212,7 @@ public class DialogActivity extends AppCompatActivity {
 
     }
 
-    private class DialogOutputHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class DialogOutputHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView mOutputMessageTextView;
         TextView mOutputTimeTextView;
         Message mMessage;
@@ -203,7 +220,7 @@ public class DialogActivity extends AppCompatActivity {
 
         public DialogOutputHolder(View view) {
             super(view);
-            itemView.setOnClickListener(this);
+            view.setOnCreateContextMenuListener(this);
             mOutputMessageTextView = itemView.findViewById(R.id.text_output_message);
             mOutputTimeTextView = itemView.findViewById(R.id.time_output_message);
         }
@@ -216,21 +233,46 @@ public class DialogActivity extends AppCompatActivity {
 
 
         @Override
-        public void onClick(View view) {
-            mDialogManager.deleteMessage(mMessage);
-            Log.d(TAG, "Delete message");
-            updateUi();
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.context_dialog_menu, contextMenu);
+            MenuItem delete = contextMenu.getItem(0);
+            MenuItem copy = contextMenu.getItem(1);
+            delete.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            copy.setOnMenuItemClickListener(mOnMenuItemClickListener);
         }
+
+        private final MenuItem.OnMenuItemClickListener mOnMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.delete_message_context_menu:
+                        mDialogManager.deleteMessage(mMessage);
+                        Log.d(TAG, "Delete message");
+                        updateUi();
+                        break;
+                    case R.id.copy_to_buffer_context_menu:
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("", mOutputMessageTextView.getText().toString());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getApplicationContext(), "Сообщение скопированно", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        };
+
+
     }
 
-    private class DialogInputHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class DialogInputHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView mInputMessageTextView;
         TextView mInputTimeTextView;
         Message mMessage;
 
         public DialogInputHolder(View view) {
             super(view);
-            itemView.setOnClickListener(this);
+            view.setOnCreateContextMenuListener(this);
             mInputMessageTextView = itemView.findViewById(R.id.text_input_message);
             mInputTimeTextView = itemView.findViewById(R.id.time_input_message);
         }
@@ -243,11 +285,34 @@ public class DialogActivity extends AppCompatActivity {
 
 
         @Override
-        public void onClick(View view) {
-            mDialogManager.deleteMessage(mMessage);
-            Log.d(TAG, "Delete message");
-            updateUi();
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.context_dialog_menu, contextMenu);
+            MenuItem delete = contextMenu.getItem(0);
+            MenuItem copy = contextMenu.getItem(1);
+            delete.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            copy.setOnMenuItemClickListener(mOnMenuItemClickListener);
         }
+
+        private final MenuItem.OnMenuItemClickListener mOnMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.delete_message_context_menu:
+                        mDialogManager.deleteMessage(mMessage);
+                        Log.d(TAG, "Delete message");
+                        updateUi();
+                        break;
+                    case R.id.copy_to_buffer_context_menu:
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("", mInputMessageTextView.getText().toString());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getApplicationContext(), "Сообщение скопированно", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        };
     }
 
 

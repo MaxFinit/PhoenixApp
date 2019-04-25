@@ -8,6 +8,8 @@
     <color name="colorPurple60">#A06ED2</color>
     <color name="colorPurple40">#BEA0E1</color>
     <color name="colorPurple20">#E1D2F5</color>
+    <color name="colorPurpleAlternative">#7D3393</color>
+    <color name="colorPurpleAlternative2">#913A96</color>
     <color name="colorGray100">#9D9FA2</color>
     <color name="colorGray80">#B1B3B6</color>
     <color name="colorGray60">#C7C8CA</color>

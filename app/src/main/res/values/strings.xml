@@ -20,4 +20,6 @@
     <string name="disable_notification_text">Отключить уведомения</string>
     <string name="add_contact_text">Отключить уведомения</string>
     <string name="change_contact_text">Отключить уведомения</string>
+    <string name="delete_text">Удалить</string>
+    <string name="copy_to_buffer_text">Скопировать текст</string>
 </resources>

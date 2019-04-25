@@ -33,7 +33,7 @@
         android:layout_height="46dp"
         android:visibility="gone"
         android:background="@drawable/rectangle_shadow"
-        android:drawableStart="@drawable/ic_search"
+        android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="12dp"
 
 

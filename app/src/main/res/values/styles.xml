@@ -4,6 +4,8 @@
         <item name="colorPrimary">@color/colorPurple100</item>
         <item name="colorPrimaryDark">@color/colorPurple100</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:itemBackground">@color/colorGray20</item>
+        <item name="android:textColorPrimary">@color/colorPurple100</item>
     </style>
 
     <style name="MainScreenButtonStyle">

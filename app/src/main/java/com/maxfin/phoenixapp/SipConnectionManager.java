@@ -18,6 +18,8 @@ public class SipConnectionManager {
     private SipProfile mSipProfile;
     private SipAudioCall mCall;
     private Context mContext;
+    private ConnectionState mConnectionState;
+    private LoggedInState mLoggedInState;
 
 
     public enum ConnectionState {
@@ -46,13 +48,10 @@ public class SipConnectionManager {
         if (mSipManager == null) {
             mSipManager = SipManager.newInstance(context);
         }
-
-
     }
 
 
     public void setSipProfile(String username, String domain, String password) throws ParseException, SipException {
-
         SipProfile.Builder builder = new SipProfile.Builder(username, domain);
         builder.setPassword(password);
         mSipProfile = builder.build();
@@ -66,18 +65,23 @@ public class SipConnectionManager {
             @Override
             public void onRegistering(String s) {
                 Log.d(TAG, "Registration on SIP server");
-
+                mConnectionState = ConnectionState.CONNECTING;
             }
 
             @Override
             public void onRegistrationDone(String s, long l) {
                 Log.d(TAG, "Registration on SIP server done");
+                mConnectionState = ConnectionState.AUTHENTICATED;
+                mLoggedInState = LoggedInState.LOGGED_IN;
 
             }
 
             @Override
             public void onRegistrationFailed(String s, int i, String s1) {
                 Log.d(TAG, "Registration on SIP server fail");
+                mConnectionState = ConnectionState.DISCONNECTING;
+                mLoggedInState = LoggedInState.LOGGED_OUT;
+                closeSipProfile();
             }
         });
     }

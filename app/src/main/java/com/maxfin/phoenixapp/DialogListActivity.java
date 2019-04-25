@@ -84,7 +84,7 @@ public class DialogListActivity extends AppCompatActivity {
                 Contact contact = new Contact();
                 contact.setJId("maxfin2@jabber.ru");
                 contact.setName("Max");
-                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_balance);
+                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
                 contact.setPhoto(path.toString());
                 messageManager.uploadMessageList(contact);
 
@@ -148,7 +148,7 @@ public class DialogListActivity extends AppCompatActivity {
                         openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
                 mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
-                mDialogImageView.setImageResource(R.drawable.ic_contact_circle);
+                mDialogImageView.setImageResource(R.drawable.ic_contact_circle_api);
                 e.printStackTrace();
             }
         }
@@ -158,6 +158,8 @@ public class DialogListActivity extends AppCompatActivity {
 
             Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID",mContact.getJId());
+            intent.putExtra("EXTRA_CONTACT_NAME",mContact.getName());
+            intent.putExtra("EXTRA_CONTACT_PHOTO",mContact.getPhoto());
           //  intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
             startActivity(intent);
 

@@ -22,18 +22,19 @@
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circleImageView"
+                android:id="@+id/contact_photo_toolbar"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:src="@mipmap/ic_launcher_round"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/colorGray20"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/contact_name_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -41,8 +42,8 @@
                 android:fontFamily="@font/font_pf_text_bold"
                 android:text="@string/app_name"
                 android:textSize="18sp"
-                android:textColor="@color/colorPurple20"
-                app:layout_constraintStart_toEndOf="@+id/circleImageView"
+                android:textColor="@color/colorGray20"
+                app:layout_constraintStart_toEndOf="@+id/contact_photo_toolbar"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -85,7 +86,9 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="wrap_content"
+        android:minHeight="55dp"
+        android:maxHeight="128dp"
         android:background="@color/colorPurple100"
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
@@ -110,10 +113,11 @@
 
         <Button
             android:layout_marginStart="8dp"
+            android:layout_gravity="center"
             android:id="@+id/send_message_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/ic_send"/>
+            android:background="@drawable/ic_send_api"/>
 
 
     </LinearLayout>

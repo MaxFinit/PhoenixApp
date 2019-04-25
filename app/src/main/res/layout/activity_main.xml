@@ -208,7 +208,7 @@
         <Button
             android:id="@+id/recorded_call_button"
             style="@style/MainScreenButtonStyle"
-            android:drawableStart="@drawable/ic_call_recorded"
+            android:drawableStart="@drawable/ic_contact_api"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:text="@string/call_recorded"
@@ -218,7 +218,7 @@
         <Button
             android:id="@+id/black_list_button"
             style="@style/MainScreenButtonStyle"
-            android:drawableStart="@drawable/ic_black_list"
+            android:drawableStart="@drawable/ic_black_list_api"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:text="@string/black_list"

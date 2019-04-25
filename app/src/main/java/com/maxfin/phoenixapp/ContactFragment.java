@@ -96,7 +96,7 @@ public class ContactFragment extends Fragment {
                         openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
                 mPhotoContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
             } catch (FileNotFoundException e) {
-                mPhotoContactImageView.setImageResource(R.drawable.ic_contact_circle);
+                mPhotoContactImageView.setImageResource(R.drawable.ic_contact_circle_api);
                 e.printStackTrace();
             }
 

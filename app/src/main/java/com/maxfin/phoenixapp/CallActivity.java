@@ -31,8 +31,13 @@ public class CallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_call);
 
 
+
         mViewPager = findViewById(R.id.container_vp);
         setUpViewPager(mViewPager);
+
+
+
+
         TabLayout tabLayout = findViewById(R.id.call_tabs);
         tabLayout.setupWithViewPager(mViewPager);
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.call_text);

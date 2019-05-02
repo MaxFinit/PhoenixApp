@@ -36,16 +36,16 @@
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".DialogListActivity"/>
         <activity android:name=".AddingDialogActivity" />
-        <activity android:name=".InputCallActivity" />
+        <activity android:name=".OutputCallActivity" />
 
         <service android:name=".XMPPConnectionService" />
 
-        <receiver
-            android:name=".IncomingCallReceiver"
-            android:enabled="true"
-            android:exported="true">
+        <!--<receiver-->
+            <!--android:name=".IncomingCallReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true">-->
+        <!--</receiver>-->
 
-        </receiver>
     </application>
 
 </manifest>

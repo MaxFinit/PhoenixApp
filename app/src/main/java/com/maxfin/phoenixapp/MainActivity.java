@@ -24,20 +24,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
-                checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
-        }else {
-            mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-            mSipConnectionManager.setSipProfile("76920", "172.16.13.223", "238219325823bd838c23d9db90ee32cd");
-        }
-
-
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.Sip.INCOMING_CALL");
         callReceiver = new IncomingCallReceiver();
         registerReceiver(callReceiver, filter);
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
+                checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
+        }else {
+            mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
+            mSipConnectionManager.setSipProfile("76920", "172.16.13.223",
+                    "238219325823bd838c23d9db90ee32cd");
+        }
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);

@@ -1,11 +1,6 @@
 package com.maxfin.phoenixapp;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.net.sip.SipException;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,10 +9,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.text.ParseException;
-import java.util.Objects;
 
 public class JournalFragment extends Fragment {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
@@ -32,7 +23,7 @@ public class JournalFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getActivity(), InputCallActivity.class);
+                Intent intent = new Intent(getActivity(), OutputCallActivity.class);
                 startActivity(intent);
 
             }

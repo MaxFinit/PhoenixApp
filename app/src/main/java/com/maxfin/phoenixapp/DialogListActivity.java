@@ -61,10 +61,14 @@ public class DialogListActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_home:
                         Intent homeIntent = new Intent(DialogListActivity.this, MainActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(homeIntent);
                         break;
                     case R.id.menu_call:
                         Intent callIntent = new Intent(DialogListActivity.this, CallActivity.class);
+                        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        callIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(callIntent);
                         break;
                 }

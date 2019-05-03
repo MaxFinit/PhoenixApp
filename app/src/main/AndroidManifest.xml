@@ -4,7 +4,8 @@
     package="com.maxfin.phoenixapp">
 
 
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -40,11 +41,27 @@
 
         <service android:name=".XMPPConnectionService" />
 
-        <!--<receiver-->
-            <!--android:name=".IncomingCallReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true">-->
-        <!--</receiver>-->
+        <receiver
+            android:name=".IncomingCallReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
+
+        <receiver android:name=".testBroadcast" >
+            <intent-filter>
+
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+
+
+            </intent-filter>
+        </receiver>
+
+
+
 
     </application>
 

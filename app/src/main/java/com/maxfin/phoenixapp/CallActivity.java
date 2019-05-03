@@ -54,10 +54,14 @@ public class CallActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_home:
                         Intent homeIntent = new Intent(CallActivity.this, MainActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(homeIntent);
                         break;
                     case R.id.menu_message:
                         Intent messageIntent = new Intent(CallActivity.this, DialogListActivity.class);
+                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(messageIntent);
                         break;
                 }

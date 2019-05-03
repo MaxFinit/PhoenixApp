@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
                 checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
         }else {
-            mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-            mSipConnectionManager.setSipProfile("76920", "172.16.13.223",
-                    "238219325823bd838c23d9db90ee32cd");
+//            mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
+//            mSipConnectionManager.setSipProfile("76920", "172.16.13.223",
+//                    "238219325823bd838c23d9db90ee32cd");
         }
 
 
@@ -51,10 +51,14 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_call:
                         Intent callIntent = new Intent(MainActivity.this, CallActivity.class);
+                        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        callIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(callIntent);
                         break;
                     case R.id.menu_message:
                         Intent messageIntent = new Intent(MainActivity.this, DialogListActivity.class);
+                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(messageIntent);
                         break;
                 }
@@ -71,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_USE_SIP) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-                mSipConnectionManager.setSipProfile("76920", "172.16.13.223", "238219325823bd838c23d9db90ee32cd");
+//                mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
+//                mSipConnectionManager.setSipProfile("76920", "172.16.13.223", "238219325823bd838c23d9db90ee32cd");
             } else {
                 Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
             }

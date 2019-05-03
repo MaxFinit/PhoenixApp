@@ -1,9 +1,14 @@
 package com.maxfin.phoenixapp;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.Person;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ import java.io.IOException;
 
 public class XMPPServerConnection implements ConnectionListener, ReconnectionListener {
     private static final String TAG = "XMPPServerConnection";
+    private static final int NOTIFY_ID = 42;
     private final Context mApplicationContext;
     private final String mUsername;
     private final String mPassword;
@@ -73,7 +79,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     public void connect() throws IOException, XMPPException, SmackException {
         Log.d(TAG, "Connection to server");
-        XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
+        final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setXmppDomain(mServiceName);
         builder.setUsernameAndPassword(mUsername, mPassword);
         //builder.setHostAddress()
@@ -115,6 +121,29 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 } else {
                     contactJid=fromWho;
                 }
+
+
+                Intent intent2 = new Intent(mApplicationContext, DialogListActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(mApplicationContext,
+                        0, intent2, 0);
+
+
+
+
+
+
+
+
+                NotificationCompat.Builder builder1 = new NotificationCompat.Builder(mApplicationContext)
+                        .setSmallIcon(R.drawable.ic_message_notification)
+                        .setContentTitle("Новое сообщение от "+fromWho)
+                        .setContentIntent(pendingIntent)
+                        .setContentText(message.getBody())
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mApplicationContext);
+                notificationManager.notify(NOTIFY_ID, builder1.build());
+
 
                 DialogManager dialogManager = DialogManager.getDialogManager(mApplicationContext);
                 dialogManager.addMessage(message.getBody(),true,contactJid);

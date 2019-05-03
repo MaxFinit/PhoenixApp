@@ -18,25 +18,31 @@ public class OutputCallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_output_call);
         mEndCallButton = findViewById(R.id.end_call_button);
 
-        mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-        mSipConnectionManager.initCall("+380713222303@172.16.13.223");
 
 
-        mEndCallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSipConnectionManager.endCall();
-                onBackPressed();
-            }
-        });
 
-        mSipConnectionManager.setCustomEventListener(new SipConnectionManager.onCustomEventListener() {
-            @Override
-            public void onEvent() {
-                mSipConnectionManager.endCall();
-                onBackPressed();
-            }
-        });
 
+
+
+//        mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
+//        mSipConnectionManager.initCall("+380713222303@172.16.13.223");
+
+
+//        mEndCallButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSipConnectionManager.endCall();
+//                onBackPressed();
+//            }
+//        });
+//
+//        mSipConnectionManager.setCustomEventListener(new SipConnectionManager.onCustomEventListener() {
+//            @Override
+//            public void onEvent() {
+//                mSipConnectionManager.endCall();
+//                onBackPressed();
+//            }
+//        });
+//
     }
 }

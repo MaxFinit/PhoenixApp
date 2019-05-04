@@ -47,7 +47,6 @@ public class DialogListActivity extends AppCompatActivity {
         mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-
         updateUI();
 
         BottomNavigationView mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -84,17 +83,9 @@ public class DialogListActivity extends AppCompatActivity {
                 startActivity(intent);
 
 
-                MessageManager messageManager = MessageManager.get(getApplicationContext());
-                Contact contact = new Contact();
-                contact.setJId("maxfin2@jabber.ru");
-                contact.setName("Max");
-                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
-                contact.setPhoto(path.toString());
-                messageManager.uploadMessageList(contact);
 
             }
         });
-
 
 
     }
@@ -135,7 +126,7 @@ public class DialogListActivity extends AppCompatActivity {
         Contact mContact;
 
 
-        public DialogsHolder(LayoutInflater inflater, ViewGroup parent)  {
+        public DialogsHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_dialog, parent, false));
             itemView.setOnClickListener(this);
             mDialogImageView = itemView.findViewById(R.id.image_dialog_item);
@@ -161,10 +152,10 @@ public class DialogListActivity extends AppCompatActivity {
         public void onClick(View view) {
 
             Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
-            intent.putExtra("EXTRA_CONTACT_JID",mContact.getJId());
-            intent.putExtra("EXTRA_CONTACT_NAME",mContact.getName());
-            intent.putExtra("EXTRA_CONTACT_PHOTO",mContact.getPhoto());
-          //  intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
+            intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
+            intent.putExtra("EXTRA_CONTACT_NAME", mContact.getName());
+            intent.putExtra("EXTRA_CONTACT_PHOTO", mContact.getPhoto());
+            //  intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
             startActivity(intent);
 
         }

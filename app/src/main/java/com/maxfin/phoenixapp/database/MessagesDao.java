@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public interface MessagesDao {
 
     @Query("DELETE FROM Message WHERE contact_id = :contactId")
     void clearHistory(String contactId);
+
+    @Query("SELECT * FROM Contact WHERE mJId = :contactId")
+    Contact getContact(String contactId);
 
 
     @Insert

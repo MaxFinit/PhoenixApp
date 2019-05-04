@@ -1,5 +1,6 @@
 package com.maxfin.phoenixapp;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.List;
@@ -71,9 +73,17 @@ public class DialogActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+
         contactName = intent.getStringExtra("EXTRA_CONTACT_NAME");
         contactPhoto = intent.getStringExtra("EXTRA_CONTACT_PHOTO");
         contactJID = intent.getStringExtra("EXTRA_CONTACT_JID");
+
+        mDialogManager = DialogManager.getDialogManager(getApplicationContext());
+        Contact contact = mDialogManager.getContact(contactJID);
+
+
+
+
         updateUi();
 
 
@@ -136,8 +146,8 @@ public class DialogActivity extends AppCompatActivity {
         CircleImageView imageView = findViewById(R.id.contact_photo_toolbar);
         TextView textView = findViewById(R.id.contact_name_toolbar);
 
-        imageView.setImageURI(Uri.parse(contactPhoto));
-        textView.setText(contactName);
+        //imageView.setImageURI(Uri.parse(contactPhoto));
+        //textView.setText(contactName);
 
         return true;
     }
@@ -189,7 +199,6 @@ public class DialogActivity extends AppCompatActivity {
     }
 
     private void updateUi() {
-        mDialogManager = DialogManager.getDialogManager(getApplicationContext());
         List<Message> mMessageList = mDialogManager.getMessageList(contactJID);
 
         if (mMessageList.size() > 0) {

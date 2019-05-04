@@ -1,11 +1,13 @@
 package com.maxfin.phoenixapp;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.Person;
@@ -36,7 +38,9 @@ import java.io.IOException;
 public class XMPPServerConnection implements ConnectionListener, ReconnectionListener {
     private static final String TAG = "XMPPServerConnection";
     private static final int NOTIFY_ID = 42;
+    private static final String CHANEL_ID = "new message";
     private final Context mApplicationContext;
+    private final Context mContext;
     private final String mUsername;
     private final String mPassword;
     private final String mServiceName;
@@ -57,6 +61,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     public XMPPServerConnection(Context context) {
         Log.d(TAG, "XMPPServerConnection constructor вызван");
         mApplicationContext = context.getApplicationContext();
+        mContext = context;
 //        String jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext)
 //                .getString("xmpp_jid", null);
 //        mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext)
@@ -97,73 +102,66 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             Log.d(TAG, "Залогинились, ура");
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Toast.makeText(mApplicationContext,"Дисконект",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mApplicationContext, "Дисконект", Toast.LENGTH_SHORT).show();
         }
 
         ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
             @Override
             public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
 
-                Log.d(TAG,"message.getBody() :"+message.getBody());
-                Log.d(TAG,"message.getFrom() :"+message.getFrom());
+                Log.d(TAG, "message.getBody() :" + message.getBody());
+                Log.d(TAG, "message.getFrom() :" + message.getFrom());
 
 
                 String fromWho = message.getFrom().toString();
 
-                String contactJid="";
+                String contactJid = "";
 
-                if (fromWho.contains("/")){
+                if (fromWho.contains("/")) {
                     contactJid = fromWho.split("/")[0];
-                    Log.d(TAG,"The real jid is :" +contactJid);
-                    Log.d(TAG,"The message is from :" +fromWho);
+                    Log.d(TAG, "The real jid is :" + contactJid);
+                    Log.d(TAG, "The message is from :" + fromWho);
 
 
                 } else {
-                    contactJid=fromWho;
+                    contactJid = fromWho;
                 }
 
+                createNotificationChannel(contactJid,"test");
 
-                Intent intent2 = new Intent(mApplicationContext, DialogListActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(mApplicationContext,
-                        0, intent2, 0);
+                Intent dialogIntent = new Intent(mContext, DialogActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                dialogIntent.setAction("NEW_MESSAGE");
+
+                dialogIntent.putExtra("EXTRA_CONTACT_JID", contactJid);
+                PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
+                        0, dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
 
-
-
-
-
-
-                NotificationCompat.Builder builder1 = new NotificationCompat.Builder(mApplicationContext)
+                NotificationCompat.Builder builder1 = new NotificationCompat.Builder(mContext, CHANEL_ID)
                         .setSmallIcon(R.drawable.ic_message_notification)
-                        .setContentTitle("Новое сообщение от "+fromWho)
-                        .setContentIntent(pendingIntent)
+                        .setContentTitle("Новое сообщение от " + fromWho)
                         .setContentText(message.getBody())
-                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setContentIntent(pendingIntent);
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mApplicationContext);
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
                 notificationManager.notify(NOTIFY_ID, builder1.build());
 
 
-                DialogManager dialogManager = DialogManager.getDialogManager(mApplicationContext);
-                dialogManager.addMessage(message.getBody(),true,contactJid);
+                DialogManager dialogManager = DialogManager.getDialogManager(mContext);
+                dialogManager.addMessage(message.getBody(), true, contactJid);
 
 
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
-                intent.setPackage(mApplicationContext.getPackageName());
+                intent.setPackage(mContext.getPackageName());
 //                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
 //                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
-                mApplicationContext.sendBroadcast(intent);
+                mContext.sendBroadcast(intent);
 
 
-
-
-
-                Log.d(TAG,"Received message from :"+contactJid+" broadcast sent.");
-
-
-
-
+                Log.d(TAG, "Received message from :" + contactJid + " broadcast sent.");
 
 
             }
@@ -174,6 +172,24 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         reconnectionManager.enableAutomaticReconnection();
 
     }
+
+    private void createNotificationChannel(String nameD, String desc) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = nameD;
+            String description = desc;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = mApplicationContext.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
 
 
     public void disconnect() {
@@ -201,12 +217,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(XMPPConnectionService.SEND_MESSAGE);
-        mApplicationContext.registerReceiver(uiThreadMessageReceiver,filter);
-        
+        mApplicationContext.registerReceiver(uiThreadMessageReceiver, filter);
+
     }
 
     private void sendMessage(String stringBody, String stringJId) {
-        Log.d(TAG,"Sending message to :"+ stringJId);
+        Log.d(TAG, "Sending message to :" + stringJId);
 
         EntityBareJid jid = null;
 
@@ -229,10 +245,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
-
-
 
 
     }

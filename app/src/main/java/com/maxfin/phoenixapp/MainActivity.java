@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.maxfin.phoenixapp.managers.MessageManager;
+import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
 
@@ -65,6 +69,31 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        //*Временный контакт пока нет back-end
+        MessageManager messageManager = MessageManager.get(getApplicationContext());
+        if (messageManager.getContactList().size() == 0) {
+            Contact contact = new Contact();
+            contact.setJId("maxfin2@jabber.ru");
+            contact.setName("Max");
+            Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
+            contact.setPhoto(path.toString());
+            messageManager.uploadMessageList(contact);
+            Contact contact1 = new Contact();
+            contact1.setJId("maxfin3@jabber.ru");
+            contact1.setName("Max");
+            Uri path1 = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
+            contact1.setPhoto(path1.toString());
+            messageManager.uploadMessageList(contact1);
+        }
+        //*
+
+
+
+
+
+
 
         Intent i1 = new Intent(this,XMPPConnectionService.class);
         startService(i1);

@@ -8,6 +8,7 @@ import com.maxfin.phoenixapp.App;
 import com.maxfin.phoenixapp.database.ContactsDao;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.database.MessagesDao;
+import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.ArrayList;
@@ -88,6 +89,16 @@ public class DialogManager {
 
 
         return mMessageList;
+
+    }
+
+
+    public Contact getContact(String id){
+        mContactsDatabase = App.getInstance().getDatabase();
+        mMessagesDao =mContactsDatabase.mMessagesDao();
+
+        return mMessagesDao.getContact(id);
+
 
     }
 

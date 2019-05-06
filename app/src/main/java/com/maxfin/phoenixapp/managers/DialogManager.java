@@ -40,7 +40,7 @@ public class DialogManager {
 
     public void addMessage(String messagesText, boolean messageType,String id) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dMMMHH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
 
         String date = dateFormat.format(Calendar.getInstance().getTime());
 

@@ -1,7 +1,6 @@
 package com.maxfin.phoenixapp;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.models.Contact;
 
-import java.io.FileNotFoundException;
+
 import java.util.List;
 
 
@@ -80,8 +79,8 @@ public class DialogListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DialogListActivity.this, AddingDialogActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
-
 
 
             }
@@ -126,7 +125,7 @@ public class DialogListActivity extends AppCompatActivity {
         Contact mContact;
 
 
-        public DialogsHolder(LayoutInflater inflater, ViewGroup parent) {
+        DialogsHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_dialog, parent, false));
             itemView.setOnClickListener(this);
             mDialogImageView = itemView.findViewById(R.id.image_dialog_item);
@@ -135,17 +134,10 @@ public class DialogListActivity extends AppCompatActivity {
             mDialogTimeTextView = itemView.findViewById(R.id.time_dialog_item);
         }
 
-        public void bind(Contact contact) {
+        void bind(Contact contact) {
             mContact = contact;
             mDialogNameTextView.setText(contact.getName());
-            try {
-                AssetFileDescriptor fd = getContentResolver().
-                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
-                mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
-            } catch (FileNotFoundException e) {
-                mDialogImageView.setImageResource(R.drawable.ic_contact_circle_api);
-                e.printStackTrace();
-            }
+            mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
         }
 
         @Override
@@ -153,9 +145,7 @@ public class DialogListActivity extends AppCompatActivity {
 
             Intent intent = new Intent(DialogListActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
-            intent.putExtra("EXTRA_CONTACT_NAME", mContact.getName());
-            intent.putExtra("EXTRA_CONTACT_PHOTO", mContact.getPhoto());
-            //  intent.putExtra("EXTRA_CONTACT_ID",mContact.getId());
+
             startActivity(intent);
 
         }
@@ -164,11 +154,11 @@ public class DialogListActivity extends AppCompatActivity {
     public class DialogsAdapter extends RecyclerView.Adapter<DialogsHolder> {
         private List<Contact> mContactList;
 
-        public DialogsAdapter(List<Contact> contacts) {
+        DialogsAdapter(List<Contact> contacts) {
             mContactList = contacts;
         }
 
-        public void setContacts(List<Contact> contacts) {
+        void setContacts(List<Contact> contacts) {
             mContactList = contacts;
         }
 

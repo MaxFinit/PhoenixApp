@@ -3,13 +3,17 @@ package com.maxfin.phoenixapp.managers;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.models.Contact;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,19 +41,20 @@ public class ContactManager {
     private void uploadContacts() {
         String idLast;
         String idPrev = "";
-        int i = 0;
 
         mContactList = new ArrayList<>();
         ContentResolver contentResolver = mContext.getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+                null, null);
+        assert cursor != null;
         if (cursor.moveToFirst()) {
             do {
                 mContact = new Contact();
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                 mContact.setContactId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(mContact.getContactId()));
-                mContact.setPhoto(Uri.withAppendedPath(u, ContactsContract.Contacts.Photo.DISPLAY_PHOTO).toString());
+                mContact.setPhoto(uploadImage());
+                mContact.setIsLoaded(false);
                 Log.d(TAG, "" + Uri.parse(mContact.getPhoto()));
                 /*
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
@@ -58,7 +63,6 @@ public class ContactManager {
                 if (!idPrev.equals(idLast))
                     mContactList.add(mContact);
                 idPrev = idLast;
-                i++;
                 Log.i(TAG, mContact.getName());
             } while (cursor.moveToNext());
             Log.i(TAG, "" + mContactList.size());
@@ -67,6 +71,27 @@ public class ContactManager {
 
 
     }
+
+    private String uploadImage() {
+        String imageUri;
+        Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(mContact.getContactId()));
+        imageUri = Uri.withAppendedPath(u, ContactsContract.Contacts.Photo.DISPLAY_PHOTO).toString();
+        try {
+            AssetFileDescriptor fd = mContext.getContentResolver().
+                    openAssetFileDescriptor(Uri.parse(imageUri), "r");
+        } catch (FileNotFoundException e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageUri = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_avatar)
+                        .toString();
+            } else {
+                imageUri = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2)
+                        .toString();
+            }
+            e.printStackTrace();
+        }
+        return imageUri;
+    }
+
 
     public class ContactNameComparator implements Comparator<Contact> {
         public int compare(Contact left, Contact right) {

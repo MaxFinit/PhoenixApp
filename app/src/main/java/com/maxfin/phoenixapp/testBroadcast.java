@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import com.maxfin.phoenixapp.XMPPConnectionService;
 
 public class testBroadcast extends BroadcastReceiver {
     private final String BOOT_ACTION = "android.intent.action.BOOT_COMPLETED";

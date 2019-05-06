@@ -8,7 +8,6 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
-import android.net.sip.SipSession;
 import android.util.Log;
 
 import java.text.ParseException;

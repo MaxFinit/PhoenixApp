@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class CallActivity extends AppCompatActivity {
-    private ViewPagerAdapter mViewPagerAdapter;
-    private ViewPager mViewPager;
-
-
 
 
     @Override
@@ -31,15 +27,12 @@ public class CallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_call);
 
 
-
-        mViewPager = findViewById(R.id.container_vp);
-        setUpViewPager(mViewPager);
-
-
+        ViewPager viewPager = findViewById(R.id.container_vp);
+        setUpViewPager(viewPager);
 
 
         TabLayout tabLayout = findViewById(R.id.call_tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setupWithViewPager(viewPager);
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.call_text);
         Objects.requireNonNull(tabLayout.getTabAt(1)).setText(R.string.contact_text);
 
@@ -73,10 +66,10 @@ public class CallActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager(ViewPager viewPager) {
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new JournalFragment());
-        mViewPagerAdapter.addFragment(new ContactFragment());
-        viewPager.setAdapter(mViewPagerAdapter);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new JournalFragment());
+        viewPagerAdapter.addFragment(new ContactFragment());
+        viewPager.setAdapter(viewPagerAdapter);
 
 
     }
@@ -86,11 +79,11 @@ public class CallActivity extends AppCompatActivity {
         private final List<Fragment> mFragmentList = new ArrayList<>();
 
 
-        public ViewPagerAdapter(FragmentManager fm) {
+        private ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void addFragment(Fragment fragment) {
+        private void addFragment(Fragment fragment) {
             mFragmentList.add(fragment);
         }
 
@@ -104,7 +97,6 @@ public class CallActivity extends AppCompatActivity {
             return mFragmentList.size();
         }
     }
-
 
 
 }

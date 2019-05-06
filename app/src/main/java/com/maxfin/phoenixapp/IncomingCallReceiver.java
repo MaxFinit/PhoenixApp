@@ -7,7 +7,6 @@ import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipProfile;
 
-import java.text.ParseException;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
     @Override

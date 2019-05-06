@@ -2,7 +2,6 @@ package com.maxfin.phoenixapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import android.widget.Toast;
 import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.models.Contact;
 
-import java.io.FileNotFoundException;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -78,9 +77,8 @@ public class ContactFragment extends Fragment {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
         private CircleImageView mPhotoContactImageView;
-        private Contact mContact;
 
-        public ContactHolder(LayoutInflater inflater, ViewGroup parent) {
+        ContactHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
@@ -88,18 +86,10 @@ public class ContactFragment extends Fragment {
 
         }
 
-        public void bind(Contact contact) {
+        void bind(Contact contact) {
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
-            try {
-                AssetFileDescriptor fd = Objects.requireNonNull(getContext()).getContentResolver().
-                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
-                mPhotoContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
-            } catch (FileNotFoundException e) {
-                mPhotoContactImageView.setImageResource(R.drawable.ic_contact_circle_api);
-                e.printStackTrace();
-            }
-
+            mPhotoContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
         }
     }
 
@@ -107,11 +97,11 @@ public class ContactFragment extends Fragment {
 
         private List<Contact> mContactList;
 
-        public ContactAdapter(List<Contact> contacts) {
+        ContactAdapter(List<Contact> contacts) {
             mContactList = contacts;
         }
 
-        public void setContacts(List<Contact> contacts) {
+        void setContacts(List<Contact> contacts) {
             mContactList = contacts;
         }
 

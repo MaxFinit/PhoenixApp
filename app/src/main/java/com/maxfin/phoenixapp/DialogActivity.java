@@ -1,6 +1,5 @@
 package com.maxfin.phoenixapp;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -33,6 +32,7 @@ import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -46,10 +46,9 @@ public class DialogActivity extends AppCompatActivity {
     private Button mSendMessageButton;
     private DialogManager mDialogManager;
     private String contactJID;
-    private String contactName;
-    private String contactPhoto;
     private BroadcastReceiver mBroadcastReceiver;
     private Toolbar mDialogToolbar;
+    private Contact mContact;
 
 
     @Override
@@ -58,7 +57,7 @@ public class DialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dialog);
         mDialogToolbar = findViewById(R.id.dialog_tool_bar);
         setSupportActionBar(mDialogToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mEmptyDialogTextView = findViewById(R.id.empty_dialog);
         mMessageEditText = findViewById(R.id.input_text_message);
@@ -72,17 +71,10 @@ public class DialogActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-
-
-        contactName = intent.getStringExtra("EXTRA_CONTACT_NAME");
-        contactPhoto = intent.getStringExtra("EXTRA_CONTACT_PHOTO");
         contactJID = intent.getStringExtra("EXTRA_CONTACT_JID");
 
         mDialogManager = DialogManager.getDialogManager(getApplicationContext());
-        Contact contact = mDialogManager.getContact(contactJID);
-
-
-
+        mContact = mDialogManager.getContact(contactJID);
 
         updateUi();
 
@@ -127,7 +119,8 @@ public class DialogActivity extends AppCompatActivity {
                     mMessagesRecyclerView.post(new Runnable() {
                         @Override
                         public void run() {
-                            mMessagesRecyclerView.scrollToPosition((mMessagesRecyclerView.getAdapter().getItemCount() - 1));
+                            mMessagesRecyclerView.scrollToPosition((Objects.requireNonNull(mMessagesRecyclerView.getAdapter()).
+                                    getItemCount() - 1));
 
                         }
                     });
@@ -146,8 +139,8 @@ public class DialogActivity extends AppCompatActivity {
         CircleImageView imageView = findViewById(R.id.contact_photo_toolbar);
         TextView textView = findViewById(R.id.contact_name_toolbar);
 
-        //imageView.setImageURI(Uri.parse(contactPhoto));
-        //textView.setText(contactName);
+        imageView.setImageURI(Uri.parse(mContact.getPhoto()));
+        textView.setText(mContact.getName());
 
         return true;
     }
@@ -173,7 +166,7 @@ public class DialogActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                switch (action) {
+                switch (Objects.requireNonNull(action)) {
                     case XMPPConnectionService.NEW_MESSAGE:
                         //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,contactJID);
                         updateUi();
@@ -210,7 +203,8 @@ public class DialogActivity extends AppCompatActivity {
             } else {
                 mAdapter.setContacts(mMessageList);
                 mAdapter.notifyDataSetChanged();
-                mMessagesRecyclerView.scrollToPosition(mMessagesRecyclerView.getAdapter().getItemCount() - 1);//Прокрутка списка в конец
+                mMessagesRecyclerView.scrollToPosition(Objects.requireNonNull(mMessagesRecyclerView.getAdapter())
+                        .getItemCount() - 1);//Прокрутка списка в конец
                 Log.d(TAG, mMessageList.size() + "" + (mMessagesRecyclerView.getAdapter().getItemCount() - 1));
             }
         } else {
@@ -227,14 +221,14 @@ public class DialogActivity extends AppCompatActivity {
         Message mMessage;
 
 
-        public DialogOutputHolder(View view) {
+        DialogOutputHolder(View view) {
             super(view);
             view.setOnCreateContextMenuListener(this);
             mOutputMessageTextView = itemView.findViewById(R.id.text_output_message);
             mOutputTimeTextView = itemView.findViewById(R.id.time_output_message);
         }
 
-        public void bind(Message message) {
+        void bind(Message message) {
             mMessage = message;
             mOutputMessageTextView.setText(message.getTextMessage());
             mOutputTimeTextView.setText(message.getDateMessage());
@@ -279,14 +273,14 @@ public class DialogActivity extends AppCompatActivity {
         TextView mInputTimeTextView;
         Message mMessage;
 
-        public DialogInputHolder(View view) {
+        DialogInputHolder(View view) {
             super(view);
             view.setOnCreateContextMenuListener(this);
             mInputMessageTextView = itemView.findViewById(R.id.text_input_message);
             mInputTimeTextView = itemView.findViewById(R.id.time_input_message);
         }
 
-        public void bind(Message message) {
+        void bind(Message message) {
             mMessage = message;
             mInputMessageTextView.setText(message.getTextMessage());
             mInputTimeTextView.setText(message.getDateMessage());
@@ -331,11 +325,11 @@ public class DialogActivity extends AppCompatActivity {
 
         List<Message> mMessageList;
 
-        public DialogAdapter(List<Message> messages) {
+        DialogAdapter(List<Message> messages) {
             mMessageList = messages;
         }
 
-        public void setContacts(List<Message> messages) {
+        void setContacts(List<Message> messages) {
             mMessageList = messages;
         }
 

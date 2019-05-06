@@ -1,5 +1,6 @@
 package com.maxfin.phoenixapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,14 +8,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.Person;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.User;
 
 import org.jivesoftware.smack.ConnectionListener;
@@ -32,6 +39,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 
 import java.io.IOException;
 
@@ -127,31 +135,15 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                     contactJid = fromWho;
                 }
 
-                createNotificationChannel(contactJid,"test");
-
-                Intent dialogIntent = new Intent(mContext, DialogActivity.class);
-                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                dialogIntent.setAction("NEW_MESSAGE");
-
-                dialogIntent.putExtra("EXTRA_CONTACT_JID", contactJid);
-                PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
-                        0, dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-
-                NotificationCompat.Builder builder1 = new NotificationCompat.Builder(mContext, CHANEL_ID)
-                        .setSmallIcon(R.drawable.ic_message_notification)
-                        .setContentTitle("Новое сообщение от " + fromWho)
-                        .setContentText(message.getBody())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setContentIntent(pendingIntent);
-
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
-                notificationManager.notify(NOTIFY_ID, builder1.build());
-
-
                 DialogManager dialogManager = DialogManager.getDialogManager(mContext);
                 dialogManager.addMessage(message.getBody(), true, contactJid);
+                Contact contact = dialogManager.getContact(contactJid);
+
+
+                createNotificationChannel(contactJid, "test");
+
+
+                createNotification(contactJid, message.getBody(), contact.getName(), contact.getPhoto());
 
 
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
@@ -173,6 +165,34 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     }
 
+    private void createNotification(String jId, String messageBody, String name, String photo) {
+
+        Intent dialogIntent = new Intent(mContext, DialogActivity.class);
+        dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        dialogIntent.setAction("NEW_MESSAGE");
+
+        dialogIntent.putExtra("EXTRA_CONTACT_JID", jId);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
+                0, dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Notification notification = new NotificationCompat.Builder(mContext, CHANEL_ID)
+                .setSmallIcon(R.drawable.ic_message_notification)
+                .setContentTitle("Новое сообщение от " + name)
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent).build();
+
+
+        // notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
+        notificationManager.notify(NOTIFY_ID, notification);
+
+
+    }
+
+
     private void createNotificationChannel(String nameD, String desc) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -188,8 +208,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             notificationManager.createNotificationChannel(channel);
         }
     }
-
-
 
 
     public void disconnect() {

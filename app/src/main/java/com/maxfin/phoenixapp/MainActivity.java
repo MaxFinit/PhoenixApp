@@ -21,8 +21,8 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
-    SipConnectionManager mSipConnectionManager;
     IncomingCallReceiver callReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,10 +37,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
                 checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
-        }else {
-//            mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-//            mSipConnectionManager.setSipProfile("76920", "172.16.13.223",
-//                    "238219325823bd838c23d9db90ee32cd");
         }
 
 
@@ -90,12 +86,7 @@ public class MainActivity extends AppCompatActivity {
         //*
 
 
-
-
-
-
-
-        Intent i1 = new Intent(this,XMPPConnectionService.class);
+        Intent i1 = new Intent(this, XMPPConnectionService.class);
         startService(i1);
     }
 
@@ -103,10 +94,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_USE_SIP) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                mSipConnectionManager = SipConnectionManager.getSipConnectionManager(getApplicationContext());
-//                mSipConnectionManager.setSipProfile("76920", "172.16.13.223", "238219325823bd838c23d9db90ee32cd");
-            } else {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
             }
         }

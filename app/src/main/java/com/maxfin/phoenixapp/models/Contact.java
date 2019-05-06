@@ -20,8 +20,15 @@ public class Contact {
     private String mName;
     private String mNumber;
     private String mContactId;
+    private Boolean mIsLoaded;
 
+    public Boolean getIsLoaded() {
+        return mIsLoaded;
+    }
 
+    public void setIsLoaded(Boolean loaded) {
+        mIsLoaded = loaded;
+    }
 
     public String getPhoto() {
         return mPhoto;

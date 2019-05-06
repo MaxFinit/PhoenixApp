@@ -1,6 +1,7 @@
 package com.maxfin.phoenixapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class AddingDialogActivity extends AppCompatActivity {
+    private static final String TAG = "AddingDialogActivity";
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
     private RecyclerView mRecyclerView;
@@ -42,6 +45,7 @@ public class AddingDialogActivity extends AppCompatActivity {
         updateUi();
     }
 
+
     private void updateUi() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getApplicationContext().
                 checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -49,6 +53,7 @@ public class AddingDialogActivity extends AppCompatActivity {
         } else {
             ContactManager contactManager = ContactManager.get(getApplicationContext());
             List<Contact> contactList = contactManager.getSortedContactList();
+            contactList = updateList(contactList);
             if (mAdapter == null) {
                 mAdapter = new AddingDialogActivity.DialogAdapter(contactList);
                 mRecyclerView.setAdapter(mAdapter);
@@ -59,13 +64,24 @@ public class AddingDialogActivity extends AppCompatActivity {
         }
     }
 
+    private List<Contact> updateList(List<Contact> contactList) {
+        List<Contact> mContactList = contactList;
+        Log.d(TAG, "Размер массива" + mContactList.size());
+        for (int i = 0; i < contactList.size() - 1; i++) {
+            if (mContactList.get(i).getIsLoaded())
+                mContactList.remove(i);
+        }
+        Log.d(TAG, "Размер массива" + mContactList.size());
+        return mContactList;
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS){
-            if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 updateUi();
-            }else {
+            } else {
                 Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
             }
         }
@@ -78,69 +94,68 @@ public class AddingDialogActivity extends AppCompatActivity {
         private ImageView mNumberContactImageView;
         private Contact mContact;
 
-        public DialogHolder(LayoutInflater inflater, ViewGroup parent)  {
+        public DialogHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
             itemView.setOnClickListener(this);
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
             mNumberContactImageView = itemView.findViewById(R.id.image_contact_item);
+
         }
 
         public void bind(Contact contact) {
-            mContact =contact;
+            mContact = contact;
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
-            try {
-                AssetFileDescriptor fd = getContentResolver().
-                        openAssetFileDescriptor(Uri.parse(contact.getPhoto()), "r");
-                mNumberContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
-            } catch (FileNotFoundException e) {
-                mNumberContactImageView.setImageResource(R.drawable.ic_contact_circle_api);
-                e.printStackTrace();
-            }
+            mNumberContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
+
+
         }
 
         @Override
         public void onClick(View view) {
             MessageManager messageManager = MessageManager.get(getApplicationContext());
+            mContact.setJId(mContact.getName() + "@jabber.ru");
+            mContact.setIsLoaded(true);
             messageManager.uploadMessageList(mContact);
-
+            Intent intent = new Intent(AddingDialogActivity.this, DialogActivity.class);
+            intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
+            startActivity(intent);
 
 
         }
     }
 
-  private class DialogAdapter extends RecyclerView.Adapter<DialogHolder>{
+    private class DialogAdapter extends RecyclerView.Adapter<DialogHolder> {
 
-      private List<Contact> mContactList;
+        private List<Contact> mContactList;
 
-      public DialogAdapter(List<Contact> contacts) {
-          mContactList = contacts;
-      }
+        public DialogAdapter(List<Contact> contacts) {
+            mContactList = contacts;
+        }
 
-      public void setContacts(List<Contact> contacts) {
-          mContactList = contacts;
-      }
+        public void setContacts(List<Contact> contacts) {
+            mContactList = contacts;
+        }
 
-      @NonNull
-      @Override
-      public DialogHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-          LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
-          return new DialogHolder(layoutInflater,parent);
-      }
+        @NonNull
+        @Override
+        public DialogHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
+            return new DialogHolder(layoutInflater, parent);
+        }
 
-      @Override
-      public void onBindViewHolder(@NonNull DialogHolder dialogHolder, int position) {
-          Contact contact = mContactList.get(position);
-          dialogHolder.bind(contact);
-      }
+        @Override
+        public void onBindViewHolder(@NonNull DialogHolder dialogHolder, int position) {
+            Contact contact = mContactList.get(position);
+            dialogHolder.bind(contact);
+        }
 
-      @Override
-      public int getItemCount() {
-          return mContactList.size();
-      }
-  }
-
+        @Override
+        public int getItemCount() {
+            return mContactList.size();
+        }
+    }
 
 
 }

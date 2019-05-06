@@ -4,12 +4,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+
 
 public class OutputCallActivity extends AppCompatActivity {
     private static final String TAG = "OutputCallActivity";
     public static SipConnectionManager.CallingState sCallingState;
-    private SipConnectionManager mSipConnectionManager;
     private FloatingActionButton mEndCallButton;
 
     @Override

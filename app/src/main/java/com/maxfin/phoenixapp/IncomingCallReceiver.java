@@ -25,13 +25,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             }
         };
 
-        SipConnectionManager sipConnectionManager = SipConnectionManager.getSipConnectionManager(context);
+        SipServerManager sipConnectionManager = SipServerManager.getSipServerManager(context);
         try {
-            sipAudioCall = sipConnectionManager.getSipManager().takeAudioCall(intent, listener);
+            sipAudioCall = sipConnectionManager.getManager().takeAudioCall(intent, listener);
             sipAudioCall.answerCall(30);
             sipAudioCall.startAudio();
             sipAudioCall.setSpeakerMode(true);
-            sipConnectionManager.setCall(sipAudioCall);
 
         } catch (SipException e) {
             if (sipAudioCall != null)

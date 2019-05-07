@@ -8,6 +8,7 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
+import android.net.sip.SipSession;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,43 +17,66 @@ import java.text.ParseException;
 public class SipServerManager {
     private static final String TAG = "SipServerManager";
 
-    public SipManager mManager = null;
-    public SipProfile mLocalProfile = null;
-    public SipAudioCall mCall = null;
+    private SipManager mManager = null;
+    private SipProfile mLocalProfile = null;
+    private SipAudioCall mCall = null;
+    private SipSession mSipSession = null;
+    public static SipServerManager sSipServerManager;
     private Context mContext;
-    private static connectionState sConnectionState;
-    private static loggedInState sLoggedInState;
-    private static callState sCallState;
+    private static ConnectionState sConnectionState;
+    private static LoggedInState sLoggedInState;
+    private static CallState sCallState;
 
-    public static connectionState getConnectionState() {
+    public static ConnectionState getConnectionState() {
         return sConnectionState;
     }
 
-    public static loggedInState getLoggedInState() {
+    public static LoggedInState getLoggedInState() {
         return sLoggedInState;
     }
 
-    public static callState getCallState() {
+    public static CallState getCallState() {
         return sCallState;
     }
 
-    public enum connectionState {
+
+    private OnStateCallback mListener; //listener field
+
+    //setting the listener
+    public void onStateChanged(OnStateCallback eventListener) {
+        OutputCallActivity.sCallingState = sCallState;
+        this.mListener = eventListener;
+        this.mListener.onStateChanged();
+    }
+
+
+    public enum ConnectionState {
         CONNECTED, CONNECTION, FAILED
     }
 
-    public enum loggedInState {
+    public enum LoggedInState {
         AUTHENTICATION, DONE, FAILED
     }
 
-    public enum callState {
+    public enum CallState {
         BUSE, ENDED, ERROR, ESTABLISHED, CALLING, HELD, RINGING, RINGINGBACK, CHANGED
     }
 
     public SipServerManager(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         initializeManager(context);
     }
 
+    public static SipServerManager getSipServerManager(Context context) {
+        if (sSipServerManager == null) {
+            sSipServerManager = new SipServerManager(context);
+        }
+        return sSipServerManager;
+    }
+
+    public SipManager getManager() {
+        return mManager;
+    }
 
     private void initializeManager(Context context) {
         if (mManager == null) {
@@ -72,6 +96,7 @@ public class SipServerManager {
             closeLocalProfile();
         }
 
+
         try {
             SipProfile.Builder builder = new SipProfile.Builder("76920", "172.16.13.223");
             builder.setPassword("238219325823bd838c23d9db90ee32cd");
@@ -81,20 +106,20 @@ public class SipServerManager {
             SipRegistrationListener listener = new SipRegistrationListener() {
                 @Override
                 public void onRegistering(String localProfileUri) {
-                    sLoggedInState = loggedInState.AUTHENTICATION;
+                    sLoggedInState = LoggedInState.AUTHENTICATION;
                     logger("AUTHENTICATION..." + localProfileUri);
                 }
 
                 @Override
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    sLoggedInState = loggedInState.DONE;
+                    sLoggedInState = LoggedInState.DONE;
                     logger("AUTHENTICATION DONE " + expiryTime);
 
                 }
 
                 @Override
                 public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
-                    sLoggedInState = loggedInState.FAILED;
+                    sLoggedInState = LoggedInState.FAILED;
                     logger("AUTHENTICATION FAILED " + errorCode + errorMessage);
                 }
             };
@@ -138,6 +163,7 @@ public class SipServerManager {
 
     public void initiateCall() {
 
+        sCallState = CallState.CALLING;
         logger("INIT CALL");
 
         if (mCall != null && mCall.isInCall()) {
@@ -151,18 +177,66 @@ public class SipServerManager {
             public void onCallEstablished(SipAudioCall call) {
                 call.startAudio();
                 call.setSpeakerMode(true);
-                call.toggleMute();
-                sCallState = callState.ESTABLISHED;
+                //          call.toggleMute();
+                sCallState = CallState.ESTABLISHED;
                 logger("CALL ESTABLISHED");
+                onStateChanged(mListener);
+            }
+
+            @Override
+            public void onCalling(SipAudioCall call) {
+                super.onCalling(call);
+                sCallState = CallState.CALLING;
+                onStateChanged(mListener);
+            }
+
+            @Override
+            public void onCallEnded(SipAudioCall call) {
+                logger("onCallEnded");
+                sCallState = CallState.ENDED;
+                onStateChanged(mListener);
+                super.onCallEnded(call);
+                endCall();
             }
 
             @Override
             public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                 super.onError(call, errorCode, errorMessage);
                 call.close();
-                sCallState = callState.ERROR;
+                sCallState = CallState.ERROR;
                 logger("CALL ERROR" + errorCode + errorMessage);
+                onStateChanged(mListener);
 
+            }
+
+            @Override
+            public void onReadyToCall(SipAudioCall call) {
+                logger("onReadyToCall");
+            }
+
+            @Override
+            public void onRinging(SipAudioCall call, SipProfile caller) {
+                logger("onRinging");
+            }
+
+            @Override
+            public void onRingingBack(SipAudioCall call) {
+                logger("onRingingBack");
+            }
+
+            @Override
+            public void onCallBusy(SipAudioCall call) {
+                logger("onCallBusy");
+            }
+
+            @Override
+            public void onCallHeld(SipAudioCall call) {
+                logger("onCallHeld");
+            }
+
+            @Override
+            public void onChanged(SipAudioCall call) {
+                logger("onChanged");
             }
         };
 
@@ -172,6 +246,8 @@ public class SipServerManager {
 
             mCall = mManager.makeAudioCall(mLocalProfile,
                     profile, listener, 20);
+
+
         } catch (SipException e) {
             logger("ERROR WHEN TRYING CALL");
             e.printStackTrace();
@@ -184,6 +260,16 @@ public class SipServerManager {
             e.printStackTrace();
         }
 
+    }
+
+    public void endCall() {
+
+        try {
+            mCall.endCall();
+        } catch (SipException e) {
+            e.printStackTrace();
+        }
+        mCall.close();
     }
 
 

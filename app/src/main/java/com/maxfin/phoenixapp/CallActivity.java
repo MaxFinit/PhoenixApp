@@ -65,6 +65,24 @@ public class CallActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu) {
+        getMenuInflater().inflate( R.menu.contacts_tool_bar, menu);
+
+        MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+
+        return true;
+    }
+
+
+
+
+
+
+
+
+
+
     private void setUpViewPager(ViewPager viewPager) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new JournalFragment());

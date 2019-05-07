@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    tools:ignore="Autofill">
 
     <EditText
         android:id="@+id/search_journal_edit"
@@ -16,10 +17,11 @@
         android:drawablePadding="8dp"
         android:hint="@string/search_text"
         android:inputType="text"
-        android:visibility="gone"
-
-
         android:paddingStart="12dp"
+
+
+        android:paddingEnd="0dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

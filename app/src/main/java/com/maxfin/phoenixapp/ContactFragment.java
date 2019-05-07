@@ -44,6 +44,10 @@ public class ContactFragment extends Fragment {
         return view;
     }
 
+
+
+
+
     private void updateUi() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
                 checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {

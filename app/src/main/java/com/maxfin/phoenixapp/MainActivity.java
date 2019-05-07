@@ -21,17 +21,17 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
-    IncomingCallReceiver callReceiver;
+    //IncomingCallReceiver callReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.Sip.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        registerReceiver(callReceiver, filter);
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("android.Sip.INCOMING_CALL");
+//        callReceiver = new IncomingCallReceiver();
+//        registerReceiver(callReceiver, filter);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).

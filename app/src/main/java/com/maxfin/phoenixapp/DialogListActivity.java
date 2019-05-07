@@ -10,12 +10,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.TextView;
 
 
@@ -23,6 +26,7 @@ import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.models.Contact;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +38,7 @@ public class DialogListActivity extends AppCompatActivity {
     private EditText mSearchDialogsList;
     private RecyclerView mDialogsRecyclerView;
     private DialogsAdapter mAdapter;
+    private List<Contact> dialogList;
 
 
     @Override
@@ -79,10 +84,26 @@ public class DialogListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DialogListActivity.this, AddingDialogActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
 
+            }
+        });
+
+        mSearchDialogsList.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
             }
         });
 
@@ -97,7 +118,7 @@ public class DialogListActivity extends AppCompatActivity {
 
     private void updateUI() {
         MessageManager messageManager = MessageManager.get(this);
-        List<Contact> dialogList = messageManager.getContactList();
+        dialogList = messageManager.getContactList();
         if (dialogList.size() > 0) {
             mDialogsRecyclerView.setVisibility(View.VISIBLE);
             mSearchDialogsList.setVisibility(View.VISIBLE);
@@ -114,6 +135,19 @@ public class DialogListActivity extends AppCompatActivity {
             mSearchDialogsList.setVisibility(View.GONE);
             mEmptyDialogsList.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    private void filter(String text) {
+        List<Contact> filteredList = new ArrayList<>();
+
+        for (Contact item : dialogList) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        mAdapter.filterList(filteredList);
     }
 
 
@@ -181,6 +215,14 @@ public class DialogListActivity extends AppCompatActivity {
         public int getItemCount() {
             return mContactList.size();
         }
+
+        public void filterList(List<Contact> filteredList) {
+            mContactList = filteredList;
+            notifyDataSetChanged();
+        }
+
+
     }
+
 
 }

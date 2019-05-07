@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -181,10 +182,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 .setContentTitle("Новое сообщение от " + name)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
+                .setPriority(5)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setContentIntent(pendingIntent).build();
 
 
-        // notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
+      //  ? notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(NOTIFY_ID, notification);

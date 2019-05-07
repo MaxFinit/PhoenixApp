@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorGray20">
+    android:background="@color/colorGray20"
+    tools:ignore="Autofill" >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/dialog_tool_bar"
@@ -109,7 +110,7 @@
             android:hint="@string/input_text"
 
             android:background="@null"
-            android:textColorHint="@color/colorPurple20"/>
+            android:textColorHint="@color/colorPurple20" />
 
         <Button
             android:layout_marginStart="8dp"

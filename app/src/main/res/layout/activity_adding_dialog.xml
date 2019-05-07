@@ -5,11 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    tools:ignore="Autofill">
 
-    <include
+    <android.support.v7.widget.Toolbar
         android:id="@+id/action_bar"
-        layout="@layout/tab_bar_main" />
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/test"
+        app:theme="@style/Toolbar" />
+
 
     <EditText
         android:id="@+id/search_message_contact_edit"
@@ -23,9 +31,11 @@
         android:hint="@string/search_text"
         android:inputType="text"
         android:paddingStart="12dp"
+        android:paddingEnd="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/action_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/action_bar"
+         />
 
 
 

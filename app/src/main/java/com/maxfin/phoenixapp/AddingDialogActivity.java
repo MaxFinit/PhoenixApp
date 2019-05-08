@@ -14,10 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddingDialogActivity extends AppCompatActivity {
     private static final String TAG = "AddingDialogActivity";
@@ -43,18 +40,16 @@ public class AddingDialogActivity extends AppCompatActivity {
     private DialogAdapter mAdapter;
     private EditText mSearchDialogsList;
     private Toolbar mDialogToolbar;
-    List<Contact> mContactList;
+    List<Contact> mDialogList;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding_dialog);
-        mDialogToolbar = findViewById(R.id.dialog_tool_bar);
+        mDialogToolbar = findViewById(R.id.adding_dialog_tool_bar_menu);
         setSupportActionBar(mDialogToolbar);
-//        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
         mRecyclerView = findViewById(R.id.add_dialog_recycler_view);
@@ -85,11 +80,13 @@ public class AddingDialogActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        setTitle(R.string.add_new_dialog);
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
         return true;
-
     }
 
     private void updateUi() {
@@ -98,13 +95,12 @@ public class AddingDialogActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
             ContactManager contactManager = ContactManager.get(getApplicationContext());
-            List<Contact> contactList = contactManager.getSortedContactList();
-            contactList = updateList(contactList);
+            mDialogList = contactManager.getCheckedLoadList();
             if (mAdapter == null) {
-                mAdapter = new AddingDialogActivity.DialogAdapter(contactList);
+                mAdapter = new AddingDialogActivity.DialogAdapter(mDialogList);
                 mRecyclerView.setAdapter(mAdapter);
             } else {
-                mAdapter.setContacts(contactList);
+                mAdapter.setContacts(mDialogList);
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -114,7 +110,7 @@ public class AddingDialogActivity extends AppCompatActivity {
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
 
-        for (Contact item : mContactList) {
+        for (Contact item : mDialogList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
@@ -123,17 +119,6 @@ public class AddingDialogActivity extends AppCompatActivity {
         mAdapter.filterList(filteredList);
     }
 
-
-    private List<Contact> updateList(List<Contact> contactList) {
-        mContactList = contactList;
-        Log.d(TAG, "Размер массива" + mContactList.size());
-        for (int i = 0; i < contactList.size() - 1; i++) {
-            if (mContactList.get(i).getIsLoaded())
-                mContactList.remove(i);
-        }
-        Log.d(TAG, "Размер массива" + mContactList.size());
-        return mContactList;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -154,7 +139,7 @@ public class AddingDialogActivity extends AppCompatActivity {
         private ImageView mNumberContactImageView;
         private Contact mContact;
 
-        public DialogHolder(LayoutInflater inflater, ViewGroup parent) {
+        DialogHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
             itemView.setOnClickListener(this);
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
@@ -163,7 +148,7 @@ public class AddingDialogActivity extends AppCompatActivity {
 
         }
 
-        public void bind(Contact contact) {
+        void bind(Contact contact) {
             mContact = contact;
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
@@ -175,8 +160,10 @@ public class AddingDialogActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             MessageManager messageManager = MessageManager.get(getApplicationContext());
-            mContact.setJId(mContact.getName() + "@jabber.ru");
+            mContact.setJId(mContact.getNumber() + "@jabber.ru");
             mContact.setIsLoaded(true);
+            mDialogList.remove(mContact);
+            messageManager.updateConact(mContact);
             messageManager.uploadMessageList(mContact);
             Intent intent = new Intent(AddingDialogActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
@@ -220,9 +207,6 @@ public class AddingDialogActivity extends AppCompatActivity {
             mContactList = filteredList;
             notifyDataSetChanged();
         }
-
-
-
 
 
     }

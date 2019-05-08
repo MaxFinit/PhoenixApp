@@ -10,9 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.models.Contact;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,8 +32,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactFragment extends Fragment {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
+    private EditText mSearchContactsEditText;
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;
+    private List<Contact> contactList;
 
 
     @Nullable
@@ -38,14 +44,31 @@ public class ContactFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mSearchContactsEditText = view.findViewById(R.id.search_contact_edit);
+
 
         updateUi();
 
+        mSearchContactsEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+
+
         return view;
     }
-
-
-
 
 
     private void updateUi() {
@@ -54,7 +77,7 @@ public class ContactFragment extends Fragment {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
             ContactManager contactManager = ContactManager.get(getContext());
-            List<Contact> contactList = contactManager.getSortedContactList();
+            contactList = contactManager.getSortedContactList();
             if (mAdapter == null) {
                 mAdapter = new ContactAdapter(contactList);
                 mContactsRecyclerView.setAdapter(mAdapter);
@@ -76,6 +99,20 @@ public class ContactFragment extends Fragment {
             }
         }
     }
+
+
+    private void filter(String text) {
+        List<Contact> filteredList = new ArrayList<>();
+
+        for (Contact item : contactList) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase()) || item.getNumber().contains(text)) {
+                filteredList.add(item);
+            }
+        }
+
+        mAdapter.filterList(filteredList);
+    }
+
 
     private class ContactHolder extends RecyclerView.ViewHolder {
         private TextView mNameContactTextView;
@@ -127,5 +164,11 @@ public class ContactFragment extends Fragment {
         public int getItemCount() {
             return mContactList.size();
         }
+
+        public void filterList(List<Contact> filteredList) {
+            mContactList = filteredList;
+            notifyDataSetChanged();
+        }
+
     }
 }

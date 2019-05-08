@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.models.Contact;
+import com.maxfin.phoenixapp.models.Message;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -22,13 +23,16 @@ import java.util.List;
 public class ContactManager {
     private final String TAG = "Загружаем контакты";
     private List<Contact> mContactList;
+    List<Contact> mDialogContactList;
     private static ContactManager sContactManager;
     private Contact mContact;
     private Context mContext;
+    MessageManager messageManager;
 
     private ContactManager(Context context) {
         mContext = context.getApplicationContext();
         uploadContacts();
+
     }
 
     public static ContactManager get(Context context) {
@@ -42,7 +46,9 @@ public class ContactManager {
         String idLast;
         String idPrev = "";
 
+        mDialogContactList = new ArrayList<>();
         mContactList = new ArrayList<>();
+        messageManager = MessageManager.get(mContext);
         ContentResolver contentResolver = mContext.getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
                 null, null);
@@ -60,8 +66,10 @@ public class ContactManager {
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
                 */
                 idLast = mContact.getContactId();
-                if (!idPrev.equals(idLast))
+                if (!idPrev.equals(idLast)) {
                     mContactList.add(mContact);
+                    uploadDialogContacts(mContact);
+                }
                 idPrev = idLast;
                 Log.i(TAG, mContact.getName());
             } while (cursor.moveToNext());
@@ -71,6 +79,7 @@ public class ContactManager {
 
 
     }
+
 
     private String uploadImage() {
         String imageUri;
@@ -90,6 +99,33 @@ public class ContactManager {
             e.printStackTrace();
         }
         return imageUri;
+    }
+
+
+    private void uploadDialogContacts(Contact contact) {
+        boolean isAdd = false;
+
+        for (Contact item : messageManager.getContactList()) {
+            if (item.getNumber().equals(contact.getNumber())) {
+                isAdd = true;
+                break;
+            }
+        }
+
+        if (!isAdd) {
+            mDialogContactList.add(contact);
+        }
+
+    }
+
+
+    public List<Contact> getCheckedLoadList() {
+
+        Collections.sort(mDialogContactList, new ContactNameComparator());
+
+        return mDialogContactList;
+
+
     }
 
 

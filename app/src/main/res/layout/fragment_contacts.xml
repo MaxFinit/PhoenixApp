@@ -8,20 +8,20 @@
     android:focusableInTouchMode="true"
     tools:ignore="Autofill">
 
+
     <EditText
-        android:id="@+id/search_journal_edit"
+        android:id="@+id/search_contact_edit"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:background="@drawable/rectangle_shadow"
         android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="8dp"
+
+
         android:hint="@string/search_text"
         android:inputType="text"
         android:paddingStart="12dp"
-
-
         android:paddingEnd="0dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,7 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_journal_edit" />
+        app:layout_constraintTop_toBottomOf="@+id/search_contact_edit" />
 
 
 </android.support.constraint.ConstraintLayout>

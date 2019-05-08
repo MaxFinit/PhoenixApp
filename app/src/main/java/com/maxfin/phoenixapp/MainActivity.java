@@ -21,17 +21,17 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
-    //IncomingCallReceiver callReceiver;
+    IncomingCallReceiver callReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("android.Sip.INCOMING_CALL");
-//        callReceiver = new IncomingCallReceiver();
-//        registerReceiver(callReceiver, filter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.Sip.INCOMING_CALL");
+        callReceiver = new IncomingCallReceiver();
+        registerReceiver(callReceiver, filter);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
@@ -73,12 +73,14 @@ public class MainActivity extends AppCompatActivity {
             Contact contact = new Contact();
             contact.setJId("maxfin2@jabber.ru");
             contact.setName("Max");
+            contact.setNumber("+8945554");
             Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
             contact.setPhoto(path.toString());
             messageManager.uploadMessageList(contact);
             Contact contact1 = new Contact();
             contact1.setJId("maxfin3@jabber.ru");
             contact1.setName("Max");
+            contact1.setNumber("+89");
             Uri path1 = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
             contact1.setPhoto(path1.toString());
             messageManager.uploadMessageList(contact1);
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_USE_SIP) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Пока вы не приймите запрос вы не сможете звонить", Toast.LENGTH_SHORT).show();
             }
         }
     }

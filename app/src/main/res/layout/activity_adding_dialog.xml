@@ -9,14 +9,27 @@
     tools:ignore="Autofill">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/action_bar"
+        android:id="@+id/adding_dialog_tool_bar_menu"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/test"
-        app:theme="@style/Toolbar" />
+        app:theme="@style/Toolbar">
+
+        <TextView
+            android:id="@+id/adding_dialog_tool_bar_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/add_new_dialog"
+            android:textColor="@color/colorGray20"
+            android:fontFamily="@font/font_pf_text_bold"
+            android:textSize="18sp"
+            android:gravity="center|start"/>
+
+
+    </android.support.v7.widget.Toolbar>
 
 
     <EditText
@@ -34,12 +47,8 @@
         android:paddingEnd="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/action_bar"
+        app:layout_constraintTop_toBottomOf="@+id/adding_dialog_tool_bar_menu"
          />
-
-
-
-
 
 
 

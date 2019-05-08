@@ -11,10 +11,11 @@
     <style name="MainScreenButtonStyle">
         <item name="android:paddingStart">16dp</item>
         <item name="android:fontFamily">@font/font_pf_display_regular</item>
-        <item name="android:background">@color/colorWhite</item>
+        <item name="android:background">@drawable/list_contacts_states</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">60dp</item>
     </style>
+
 
     <style name="Toolbar">
 

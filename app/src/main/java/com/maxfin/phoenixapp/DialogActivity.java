@@ -191,6 +191,7 @@ public class DialogActivity extends AppCompatActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
+
     private void updateUi() {
         List<Message> mMessageList = mDialogManager.getMessageList(contactJID);
 

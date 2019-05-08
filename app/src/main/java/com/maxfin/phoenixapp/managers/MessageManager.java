@@ -49,11 +49,8 @@ public class MessageManager {
 
     public List<Contact> getContactList() {
 
-
         mContactsDatabase = App.getInstance().getDatabase();
         mContactsDao = mContactsDatabase.mContactsDao();
-
-
 
         try {
             mContactList = mContactsDao.getAll();
@@ -64,7 +61,17 @@ public class MessageManager {
         
 
        return mContactList;
-
-
     }
+
+
+    public void updateConact(Contact contact){
+
+        mContactsDatabase = App.getInstance().getDatabase();
+        mContactsDao = mContactsDatabase.mContactsDao();
+
+        mContactsDao.update(contact);
+    }
+
+
+
 }

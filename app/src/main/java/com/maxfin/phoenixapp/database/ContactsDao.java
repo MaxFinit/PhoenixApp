@@ -20,7 +20,6 @@ public interface ContactsDao {
     Contact getById(String mJId);
 
 
-
     @Insert
     void insert(Contact contact);
 

@@ -27,22 +27,9 @@ public class SipServerManager {
     private static LoggedInState sLoggedInState;
     private static CallState sCallState;
 
-    public static ConnectionState getConnectionState() {
-        return sConnectionState;
-    }
 
-    public static LoggedInState getLoggedInState() {
-        return sLoggedInState;
-    }
+    private OnStateCallback mListener;
 
-    public static CallState getCallState() {
-        return sCallState;
-    }
-
-
-    private OnStateCallback mListener; //listener field
-
-    //setting the listener
     public void onStateChanged(OnStateCallback eventListener) {
         OutputCallActivity.sCallingState = sCallState;
         this.mListener = eventListener;
@@ -250,6 +237,8 @@ public class SipServerManager {
 
         } catch (SipException e) {
             logger("ERROR WHEN TRYING CALL");
+            sCallState = CallState.ERROR;
+            onStateChanged(mListener);
             e.printStackTrace();
             if (mLocalProfile != null)
                 closeLocalProfile();

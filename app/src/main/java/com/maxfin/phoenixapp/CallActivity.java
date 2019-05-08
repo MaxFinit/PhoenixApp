@@ -65,22 +65,6 @@ public class CallActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu) {
-        getMenuInflater().inflate( R.menu.contacts_tool_bar, menu);
-
-        MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
-
-        return true;
-    }
-
-
-
-
-
-
-
-
 
 
     private void setUpViewPager(ViewPager viewPager) {
@@ -88,8 +72,6 @@ public class CallActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new JournalFragment());
         viewPagerAdapter.addFragment(new ContactFragment());
         viewPager.setAdapter(viewPagerAdapter);
-
-
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

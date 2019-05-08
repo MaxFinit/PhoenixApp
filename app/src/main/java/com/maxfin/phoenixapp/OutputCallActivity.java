@@ -70,6 +70,12 @@ public class OutputCallActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
 
+
+
+                    case ERROR:
+                        updateTextView("Ошибка");
+                        break;
+
                 }
 
 

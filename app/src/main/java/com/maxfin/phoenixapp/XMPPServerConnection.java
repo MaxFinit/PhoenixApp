@@ -8,14 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -91,7 +84,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    public void connect() throws IOException, XMPPException, SmackException {
+    void connect() throws IOException, XMPPException, SmackException {
         Log.d(TAG, "Connection to server");
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setXmppDomain(mServiceName);
@@ -176,18 +169,17 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
                 0, dialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
         Notification notification = new NotificationCompat.Builder(mContext, CHANEL_ID)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_message_notification)
                 .setContentTitle("Новое сообщение от " + name)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setPriority(5)
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setContentIntent(pendingIntent).build();
 
 
-      //  ? notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
+        //  ? notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(NOTIFY_ID, notification);
@@ -200,11 +192,9 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = nameD;
-            String description = desc;
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANEL_ID, name, importance);
-            channel.setDescription(description);
+            NotificationChannel channel = new NotificationChannel(CHANEL_ID, nameD, importance);
+            channel.setDescription(desc);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = mApplicationContext.getSystemService(NotificationManager.class);
@@ -213,7 +203,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    public void disconnect() {
+    void disconnect() {
         Log.d(TAG, "Disconnecting from server " + mServiceName);
         if (mConnection != null) {
             mConnection.disconnect();

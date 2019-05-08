@@ -6,7 +6,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -36,8 +35,9 @@
             android:name=".DialogActivity"
             android:parentActivityName=".DialogListActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".AddingDialogActivity"
-            android:parentActivityName=".DialogListActivity"/>
+        <activity
+            android:name=".AddingDialogActivity"
+            android:parentActivityName=".DialogListActivity" />
         <activity android:name=".OutputCallActivity" />
 
         <service android:name=".XMPPConnectionService" />

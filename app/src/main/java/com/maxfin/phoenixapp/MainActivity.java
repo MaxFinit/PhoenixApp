@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
                 checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
+        }else {
+            SipServerManager.getSipServerManager(getApplicationContext());
         }
 
 
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent i1 = new Intent(this, XMPPConnectionService.class);
+
         startService(i1);
     }
 
@@ -98,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_USE_SIP) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Пока вы не приймите запрос вы не сможете звонить", Toast.LENGTH_SHORT).show();
+            }else {
+                SipServerManager.getSipServerManager(getApplicationContext());
             }
         }
     }

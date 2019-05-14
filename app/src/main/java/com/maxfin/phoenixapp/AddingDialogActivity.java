@@ -203,7 +203,7 @@ public class AddingDialogActivity extends AppCompatActivity {
             return mContactList.size();
         }
 
-        public void filterList(List<Contact> filteredList) {
+        void filterList(List<Contact> filteredList) {
             mContactList = filteredList;
             notifyDataSetChanged();
         }

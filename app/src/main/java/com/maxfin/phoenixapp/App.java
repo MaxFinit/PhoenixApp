@@ -5,6 +5,8 @@ import android.arch.persistence.room.Room;
 
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 
+import java.util.Objects;
+
 public class App extends Application {
 
     public static App instance;

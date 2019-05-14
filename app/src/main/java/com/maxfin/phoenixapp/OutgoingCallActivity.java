@@ -8,14 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.maxfin.phoenixapp.managers.StateManager;
 
-public class OutputCallActivity extends AppCompatActivity {
-    private static final String TAG = "OutputCallActivity";
-    public static SipServerManager.CallState sCallingState;
+public class OutgoingCallActivity extends AppCompatActivity {
+    private static final String TAG = "OutgoingCallActivity";
     private FloatingActionButton mEndCallButton;
     private SipServerManager mSipConnectionManager;
     private TextView mStateTextView;
     private TextView mNameTextView;
+    private StateManager manager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class OutputCallActivity extends AppCompatActivity {
         mStateTextView = findViewById(R.id.state_text);
         mNameTextView = findViewById(R.id.name_output_call_text);
 
-
+        manager = StateManager.getStateManager();
         mSipConnectionManager = SipServerManager.getSipServerManager(getApplicationContext());
         mSipConnectionManager.initiateCall();
 
@@ -39,12 +40,13 @@ public class OutputCallActivity extends AppCompatActivity {
         });
 
 
-        mSipConnectionManager.onStateChanged(new OnStateCallback() {
+        mSipConnectionManager.onSipStateCallChanged(new OnStateCallback() {
             @Override
             public void onStateChanged() {
 
 
-                switch (sCallingState) {
+                switch (manager.getCallSIPState()) {
+
                     case BUSE:
                         updateTextView("");
                         break;
@@ -66,10 +68,9 @@ public class OutputCallActivity extends AppCompatActivity {
 
                     case ENDED:
                         updateTextView("Звонок закончен");
-                        Intent intent = new Intent(OutputCallActivity.this, CallActivity.class);
+                        Intent intent = new Intent(OutgoingCallActivity.this, CallActivity.class);
                         startActivity(intent);
                         break;
-
 
 
                     case ERROR:

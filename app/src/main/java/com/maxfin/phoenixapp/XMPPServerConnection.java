@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.User;
 
@@ -49,19 +50,21 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private User mUser;
     private XMPPTCPConnection mConnection;
     private BroadcastReceiver uiThreadMessageReceiver;
+    private StateManager mStateManager;
 
 
-    public enum ConnectionState {
+    public enum ConnectionXMPPState {
         CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED
     }
 
-    public enum LoggedInState {
+    public enum LoggedInXMPPState {
         LOGGED_IN, LOGGED_OUT
     }
 
 
     public XMPPServerConnection(Context context) {
-        Log.d(TAG, "XMPPServerConnection constructor вызван");
+        Log.d(TAG, "XMPPServerConnection CONSTRUCTOR CALLED");
+        mStateManager = StateManager.getStateManager();
         mApplicationContext = context.getApplicationContext();
         mContext = context;
 //        String jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext)
@@ -85,7 +88,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
 
     void connect() throws IOException, XMPPException, SmackException {
-        Log.d(TAG, "Connection to server");
+        Log.d(TAG, "CONNECTION TO SERVER");
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setXmppDomain(mServiceName);
         builder.setUsernameAndPassword(mUsername, mPassword);
@@ -98,31 +101,30 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         mConnection = new XMPPTCPConnection(builder.build());
         mConnection.addConnectionListener(this);
         try {
-            Log.d(TAG, "Попытка подключения");
+            Log.d(TAG, "TRY CONNECTING");
             mConnection.connect();
             mConnection.login();
-            Log.d(TAG, "Залогинились, ура");
+            Log.d(TAG, "LOG IN, YAY");
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Toast.makeText(mApplicationContext, "Дисконект", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mApplicationContext, "DISCONNECT", Toast.LENGTH_SHORT).show();
         }
 
         ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
             @Override
             public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
 
-                Log.d(TAG, "message.getBody() :" + message.getBody());
-                Log.d(TAG, "message.getFrom() :" + message.getFrom());
-
+                Log.d(TAG, "MESSAGES FROM :" + message.getFrom());
+                Log.d(TAG, "MESSAGES TEXT :" + message.getBody());
 
                 String fromWho = message.getFrom().toString();
 
-                String contactJid = "";
+                String contactJid;
 
                 if (fromWho.contains("/")) {
                     contactJid = fromWho.split("/")[0];
-                    Log.d(TAG, "The real jid is :" + contactJid);
-                    Log.d(TAG, "The message is from :" + fromWho);
+                    Log.d(TAG, "THE REAL JID IS :" + contactJid);
+                    Log.d(TAG, "THE MESSAGE IS FROM :" + fromWho);
 
 
                 } else {
@@ -147,7 +149,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 mContext.sendBroadcast(intent);
 
 
-                Log.d(TAG, "Received message from :" + contactJid + " broadcast sent.");
+                Log.d(TAG, "RECEIVED MESSAGE FROM :" + contactJid + " BROADCAST SENT");
 
 
             }
@@ -204,7 +206,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
 
     void disconnect() {
-        Log.d(TAG, "Disconnecting from server " + mServiceName);
+        Log.d(TAG, "DISCONNECTING FROM SERVER" + mServiceName);
         if (mConnection != null) {
             mConnection.disconnect();
         }
@@ -233,7 +235,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
     private void sendMessage(String stringBody, String stringJId) {
-        Log.d(TAG, "Sending message to :" + stringJId);
+        Log.d(TAG, "SENDING MESSAGE TO :" + stringJId);
 
         EntityBareJid jid = null;
 
@@ -263,46 +265,46 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     @Override
     public void connected(XMPPConnection connection) {
-        XMPPConnectionService.sConnectionState = ConnectionState.CONNECTED;
-        Log.d(TAG, "Connected Successfully");
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTED);
+        Log.d(TAG, "CONNECTED SUCCESSFULLY");
 
     }
 
     @Override
     public void authenticated(XMPPConnection connection, boolean resumed) {
-        XMPPConnectionService.sConnectionState = ConnectionState.CONNECTED;
-        Log.d(TAG, "Authenticated Successfully");
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTED);
+        Log.d(TAG, "AUTHENTICATED SUCCESSFULLY");
 
 
     }
 
     @Override
     public void connectionClosed() {
-        XMPPConnectionService.sConnectionState = ConnectionState.DISCONNECTED;
-        Log.d(TAG, "Connectionclosed()");
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        Log.d(TAG, "CONNECTION CLOSED");
 
     }
 
     @Override
     public void connectionClosedOnError(Exception e) {
-        XMPPConnectionService.sConnectionState = ConnectionState.DISCONNECTED;
-        Log.d(TAG, "ConnectionClosedOnError, error " + e.toString());
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
 
     }
 
 
     @Override
     public void reconnectingIn(int seconds) {
-        XMPPConnectionService.sConnectionState = ConnectionState.CONNECTING;
-        Log.d(TAG, "ReconnectingIn() ");
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTING);
+        Log.d(TAG, "RECONNECTION");
 
     }
 
 
     @Override
     public void reconnectionFailed(Exception e) {
-        XMPPConnectionService.sConnectionState = ConnectionState.DISCONNECTED;
-        Log.d(TAG, "ReconnectionFailed()");
+        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        Log.d(TAG, "RECONNECTION FAILED");
 
     }
 

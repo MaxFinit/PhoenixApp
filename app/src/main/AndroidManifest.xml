@@ -14,6 +14,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_SIP" />
 
+
+
+
+
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -38,7 +43,7 @@
         <activity
             android:name=".AddingDialogActivity"
             android:parentActivityName=".DialogListActivity" />
-        <activity android:name=".OutputCallActivity" />
+        <activity android:name=".OutgoingCallActivity" />
 
         <service android:name=".XMPPConnectionService" />
 
@@ -53,6 +58,8 @@
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.SCREEN_ON" />
 
             </intent-filter>
         </receiver>

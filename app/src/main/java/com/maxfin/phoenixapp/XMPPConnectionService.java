@@ -23,8 +23,6 @@ public class XMPPConnectionService extends Service {
 //    public static final String BUNDLE_FROM_JID = "b_from";
 
 
-    public static XMPPServerConnection.ConnectionState sConnectionState;
-    public static XMPPServerConnection.LoggedInState sLoggedInState;
     private boolean mActive;
     private Thread mThread;
     private Handler mTHandler;
@@ -33,19 +31,19 @@ public class XMPPConnectionService extends Service {
     public XMPPConnectionService() {
     }
 
-    public static XMPPServerConnection.ConnectionState getConnectionState() {
-        if (sConnectionState == null) {
-            return XMPPServerConnection.ConnectionState.DISCONNECTED;
-        }
-        return sConnectionState;
-    }
-
-    public static XMPPServerConnection.LoggedInState getLoggedInState() {
-        if (sLoggedInState == null) {
-            return XMPPServerConnection.LoggedInState.LOGGED_OUT;
-        }
-        return sLoggedInState;
-    }
+//    public static XMPPServerConnection.ConnectionXMPPState getConnectionXMPPState() {
+//        if (sConnectionXMPPState == null) {
+//            return XMPPServerConnection.ConnectionXMPPState.DISCONNECTED;
+//        }
+//        return sConnectionXMPPState;
+//    }
+//
+//    public static XMPPServerConnection.LoggedInXMPPState getLoggedInXMPPState() {
+//        if (sLoggedInXMPPState == null) {
+//            return XMPPServerConnection.LoggedInXMPPState.LOGGED_OUT;
+//        }
+//        return sLoggedInXMPPState;
+//    }
 
 
     @Override

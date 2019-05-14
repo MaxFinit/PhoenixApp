@@ -12,6 +12,8 @@ import android.net.sip.SipSession;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.managers.StateManager;
+
 import java.text.ParseException;
 
 public class SipServerManager {
@@ -21,31 +23,43 @@ public class SipServerManager {
     private SipProfile mLocalProfile = null;
     private SipAudioCall mCall = null;
     private SipSession mSipSession = null;
-    public static SipServerManager sSipServerManager;
+    private static SipServerManager sSipServerManager;
     private Context mContext;
-    private static ConnectionState sConnectionState;
-    private static LoggedInState sLoggedInState;
-    private static CallState sCallState;
+    private static ConnectionSIPState sConnectionSIPState;
+    private static LoggedInSIPState sLoggedInSIPState;
+    private static CallSIPState sCallSIPState;
+    private StateManager mStateManager;
 
 
-    private OnStateCallback mListener;
+    private OnStateCallback mOnSIPCallStateCallback;
+    private OnStateCallback mOnSIPConnectionStateCallback;
 
-    public void onStateChanged(OnStateCallback eventListener) {
-        OutputCallActivity.sCallingState = sCallState;
-        this.mListener = eventListener;
-        this.mListener.onStateChanged();
+    public void onSipStateCallChanged(OnStateCallback eventListener) {
+        mStateManager.setCallSIPState(sCallSIPState);
+        mOnSIPCallStateCallback = eventListener;
+        mOnSIPCallStateCallback.onStateChanged();
     }
 
 
-    public enum ConnectionState {
+    public void onSipStateConnectionChanged(OnStateCallback eventListener) {
+        logger("СМЕНА СОСТОЯНИЯ: "+sConnectionSIPState);
+        if (eventListener != null) {
+            mStateManager.setConnectionSIPState(sConnectionSIPState);
+            mOnSIPConnectionStateCallback = eventListener;
+            mOnSIPConnectionStateCallback.onStateChanged();
+        }
+    }
+
+
+    public enum ConnectionSIPState {
         CONNECTED, CONNECTION, FAILED
     }
 
-    public enum LoggedInState {
+    public enum LoggedInSIPState {
         AUTHENTICATION, DONE, FAILED
     }
 
-    public enum CallState {
+    public enum CallSIPState {
         BUSE, ENDED, ERROR, ESTABLISHED, CALLING, HELD, RINGING, RINGINGBACK, CHANGED
     }
 
@@ -68,6 +82,7 @@ public class SipServerManager {
     private void initializeManager(Context context) {
         if (mManager == null) {
             mManager = SipManager.newInstance(context);
+            mStateManager = StateManager.getStateManager();
         }
 
         initializeLocalProfile();
@@ -93,21 +108,27 @@ public class SipServerManager {
             SipRegistrationListener listener = new SipRegistrationListener() {
                 @Override
                 public void onRegistering(String localProfileUri) {
-                    sLoggedInState = LoggedInState.AUTHENTICATION;
+                    //                sLoggedInSIPState = LoggedInSIPState.AUTHENTICATION;
+                    //                 onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
                     logger("AUTHENTICATION..." + localProfileUri);
                 }
 
                 @Override
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    sLoggedInState = LoggedInState.DONE;
+                    sLoggedInSIPState = LoggedInSIPState.DONE;
+                    sConnectionSIPState = ConnectionSIPState.CONNECTED;
                     logger("AUTHENTICATION DONE " + expiryTime);
+                    onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
+
 
                 }
 
                 @Override
                 public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
-                    sLoggedInState = LoggedInState.FAILED;
+                    sLoggedInSIPState = LoggedInSIPState.FAILED;
+                    sConnectionSIPState = ConnectionSIPState.FAILED;
                     logger("AUTHENTICATION FAILED " + errorCode + errorMessage);
+                    onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
                 }
             };
 
@@ -122,9 +143,18 @@ public class SipServerManager {
             mManager.register(mLocalProfile, 30, listener);
 
 
+
+
+            logger(""+SipManager.isSipWifiOnly(mContext));
+
+
+
+
         } catch (SipException e) {
             e.printStackTrace();
             logger("CONNECTION ERROR" + e.getMessage());
+            sConnectionSIPState = ConnectionSIPState.FAILED;
+            onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
         } catch (ParseException e) {
             e.printStackTrace();
             logger("CONNECTION ERROR" + e.getMessage());
@@ -150,7 +180,7 @@ public class SipServerManager {
 
     public void initiateCall() {
 
-        sCallState = CallState.CALLING;
+        sCallSIPState = CallSIPState.CALLING;
         logger("INIT CALL");
 
         if (mCall != null && mCall.isInCall()) {
@@ -165,23 +195,23 @@ public class SipServerManager {
                 call.startAudio();
                 call.setSpeakerMode(true);
                 //          call.toggleMute();
-                sCallState = CallState.ESTABLISHED;
+                sCallSIPState = CallSIPState.ESTABLISHED;
                 logger("CALL ESTABLISHED");
-                onStateChanged(mListener);
+                onSipStateCallChanged(mOnSIPCallStateCallback);
             }
 
             @Override
             public void onCalling(SipAudioCall call) {
                 super.onCalling(call);
-                sCallState = CallState.CALLING;
-                onStateChanged(mListener);
+                sCallSIPState = CallSIPState.CALLING;
+                onSipStateCallChanged(mOnSIPCallStateCallback);
             }
 
             @Override
             public void onCallEnded(SipAudioCall call) {
                 logger("onCallEnded");
-                sCallState = CallState.ENDED;
-                onStateChanged(mListener);
+                sCallSIPState = CallSIPState.ENDED;
+                onSipStateCallChanged(mOnSIPCallStateCallback);
                 super.onCallEnded(call);
                 endCall();
             }
@@ -190,9 +220,9 @@ public class SipServerManager {
             public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                 super.onError(call, errorCode, errorMessage);
                 call.close();
-                sCallState = CallState.ERROR;
+                sCallSIPState = CallSIPState.ERROR;
                 logger("CALL ERROR" + errorCode + errorMessage);
-                onStateChanged(mListener);
+                onSipStateCallChanged(mOnSIPCallStateCallback);
 
             }
 
@@ -237,8 +267,8 @@ public class SipServerManager {
 
         } catch (SipException e) {
             logger("ERROR WHEN TRYING CALL");
-            sCallState = CallState.ERROR;
-            onStateChanged(mListener);
+            sCallSIPState = CallSIPState.ERROR;
+            onSipStateCallChanged(mOnSIPCallStateCallback);
             e.printStackTrace();
             if (mLocalProfile != null)
                 closeLocalProfile();
@@ -259,6 +289,10 @@ public class SipServerManager {
             e.printStackTrace();
         }
         mCall.close();
+    }
+
+    public void refreshConnection() {
+        initializeLocalProfile();
     }
 
 

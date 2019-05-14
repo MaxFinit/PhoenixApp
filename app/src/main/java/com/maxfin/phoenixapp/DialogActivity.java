@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
@@ -49,6 +50,7 @@ public class DialogActivity extends AppCompatActivity {
     private BroadcastReceiver mBroadcastReceiver;
     private Toolbar mDialogToolbar;
     private Contact mContact;
+    private StateManager mStateManager;
 
 
     @Override
@@ -68,6 +70,7 @@ public class DialogActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true); // Отображает список с конца.
         mMessagesRecyclerView.setLayoutManager(linearLayoutManager);
         mMessagesRecyclerView.setHasFixedSize(true);
+        mStateManager = StateManager.getStateManager();
 
 
         Intent intent = getIntent();
@@ -86,8 +89,8 @@ public class DialogActivity extends AppCompatActivity {
 
                 if (!mMessageEditText.getText().toString().equals("")) {
 
-                    if (XMPPConnectionService.getConnectionState().equals(XMPPServerConnection.ConnectionState.CONNECTED)) {
-                        Log.d(TAG, "Отправка сообщения, клиент подключен ");
+                    if (mStateManager.getConnectionXMPPState().equals(XMPPServerConnection.ConnectionXMPPState.CONNECTED)) {
+                        Log.d(TAG, "SEND MESSAGE, CLIENT IS CONNECTING");
 
                         Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
@@ -102,7 +105,7 @@ public class DialogActivity extends AppCompatActivity {
 
                     } else {
                         Toast.makeText(getApplicationContext(),
-                                "Client not connected to server ,Message not sent!",
+                                "CLIENT NOT CONNECTED TO SERVER, MESSAGE NOT SENT!",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
@@ -252,7 +255,7 @@ public class DialogActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.delete_message_context_menu:
                         mDialogManager.deleteMessage(mMessage);
-                        Log.d(TAG, "Delete message");
+                        Log.d(TAG, "DELETE MESSAGE");
                         updateUi();
                         break;
                     case R.id.copy_to_buffer_context_menu:
@@ -304,7 +307,7 @@ public class DialogActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.delete_message_context_menu:
                         mDialogManager.deleteMessage(mMessage);
-                        Log.d(TAG, "Delete message");
+                        Log.d(TAG, "DELETE MESSAGE");
                         updateUi();
                         break;
                     case R.id.copy_to_buffer_context_menu:

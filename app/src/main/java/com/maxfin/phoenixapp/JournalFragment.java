@@ -21,13 +21,13 @@ public class JournalFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_journal, container, false);
-        sipServerManager = SipServerManager.getSipServerManager(Objects.requireNonNull(getContext()).getApplicationContext());
+//        sipServerManager = SipServerManager.getSipServerManager(Objects.requireNonNull(getContext()).getApplicationContext());
         mFloatingActionButton = view.findViewById(R.id.call_button);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getActivity(), OutputCallActivity.class);
+                Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
                 startActivity(intent);
 
             }

@@ -23,4 +23,6 @@
     <string name="delete_text">Удалить</string>
     <string name="copy_to_buffer_text">Скопировать текст</string>
     <string name="add_new_dialog">Добавте новый диалог</string>
+    <string name="sip_connection_error">Подключение отсутсвует</string>
+    <string name="refresh_text">Повторить</string>
 </resources>

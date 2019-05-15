@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.UI.DialogActivity;
 import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
@@ -29,16 +30,21 @@ import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 
 import java.io.IOException;
 
-public class XMPPServerConnection implements ConnectionListener, ReconnectionListener {
+public class XMPPServerConnection implements ConnectionListener, ReconnectionListener, ReceiptReceivedListener {
     private static final String TAG = "XMPPServerConnection";
     private static final int NOTIFY_ID = 42;
     private static final String CHANEL_ID = "new message";
@@ -51,7 +57,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private XMPPTCPConnection mConnection;
     private BroadcastReceiver uiThreadMessageReceiver;
     private StateManager mStateManager;
+    private DeliveryReceiptManager mDeliveryReceiptManager;
 
+
+
+
+    //TODO Беда со статусом отправки сообщения
 
     public enum ConnectionXMPPState {
         CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED
@@ -84,6 +95,10 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             mUsername = "";
             mServiceName = "";
         }
+
+
+
+
     }
 
 
@@ -104,11 +119,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             Log.d(TAG, "TRY CONNECTING");
             mConnection.connect();
             mConnection.login();
+            mDeliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(mConnection);
+            mDeliveryReceiptManager.addReceiptReceivedListener(this);
             Log.d(TAG, "LOG IN, YAY");
         } catch (InterruptedException e) {
             e.printStackTrace();
             Toast.makeText(mApplicationContext, "DISCONNECT", Toast.LENGTH_SHORT).show();
         }
+
+
+
 
         ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
             @Override
@@ -208,6 +228,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     void disconnect() {
         Log.d(TAG, "DISCONNECTING FROM SERVER" + mServiceName);
         if (mConnection != null) {
+            mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
             mConnection.disconnect();
         }
 
@@ -215,7 +236,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    private void setUiThreadMessageReceiver() {
+        private void setUiThreadMessageReceiver() {
         uiThreadMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -250,8 +271,13 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         Chat chat = chatManager.chatWith(jid);
         try {
             Message message = new Message(jid, Message.Type.chat);
+            String s = DeliveryReceiptRequest.addTo(message);
+            message.setType(Message.Type.chat);
             message.setBody(stringBody);
             chat.send(message);
+
+
+            Log.d(TAG, s);
 
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
@@ -260,6 +286,11 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         }
 
 
+    }
+
+    @Override
+    public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
+        Log.d(TAG, "RECEIVER MESSAGE");
     }
 
 

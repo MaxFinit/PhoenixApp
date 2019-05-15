@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,10 +14,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.ConnectWorker;
+import com.maxfin.phoenixapp.IncomingCallReceiver;
+import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.managers.MessageManager;
+import com.maxfin.phoenixapp.managers.SipServerManager;
 import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
@@ -27,20 +38,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.Sip.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        registerReceiver(callReceiver, filter);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
-                checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
-        }else {
-            SipServerManager.getSipServerManager(getApplicationContext());
-        }
-
+        receiverRegistration();
+        sipRegistration();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = bottomNavigationView.getMenu();
@@ -89,10 +88,8 @@ public class MainActivity extends AppCompatActivity {
         }
         //*
 
-
-        Intent i1 = new Intent(this, XMPPConnectionService.class);
-
-        startService(i1);
+        startService();
+        startWorker();
     }
 
     @Override
@@ -101,9 +98,41 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_USE_SIP) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Пока вы не приймите запрос вы не сможете звонить", Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 SipServerManager.getSipServerManager(getApplicationContext());
             }
+        }
+    }
+
+
+    private void startService() {
+        Intent i1 = new Intent(this, XMPPConnectionService.class);
+        startService(i1);
+    }
+
+    private void startWorker() {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(ConnectWorker.class, 15, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build();
+        WorkManager.getInstance().enqueue(myWorkRequest);
+    }
+
+    private void receiverRegistration() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.Sip.INCOMING_CALL");
+        callReceiver = new IncomingCallReceiver();
+        registerReceiver(callReceiver, filter);
+    }
+
+    private void sipRegistration() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
+                checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
+        } else {
+            SipServerManager.getSipServerManager(getApplicationContext());
         }
     }
 

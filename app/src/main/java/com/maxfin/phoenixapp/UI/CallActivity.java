@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.maxfin.phoenixapp.OnStateCallback;
+import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.managers.SipServerManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 
 import java.util.ArrayList;

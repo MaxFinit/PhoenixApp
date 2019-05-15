@@ -7,7 +7,7 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 
 
-public class testBroadcast extends BroadcastReceiver {
+public class StateConnectBroadcast extends BroadcastReceiver {
     private final String BOOT_ACTION = "android.intent.action.BOOT_COMPLETED";
     Context mContext;
 

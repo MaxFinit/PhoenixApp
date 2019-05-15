@@ -11,6 +11,12 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class XMPPConnectionService extends Service {
     private static final String TAG = "XMPPConnectionService";
@@ -122,5 +128,6 @@ public class XMPPConnectionService extends Service {
         Log.d(TAG, "onDestroy()");
         super.onDestroy();
         stop();
+
     }
 }

@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -27,6 +27,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.XMPPConnectionService;
+import com.maxfin.phoenixapp.XMPPServerConnection;
 import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;

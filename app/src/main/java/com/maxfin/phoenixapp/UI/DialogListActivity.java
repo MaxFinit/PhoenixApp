@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,9 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.models.Contact;
 
@@ -152,7 +155,7 @@ public class DialogListActivity extends AppCompatActivity {
 
 
     private class DialogsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        CircleImageView mDialogImageView;
+        ImageView mDialogImageView;
         TextView mDialogNameTextView;
         TextView mDialogPreviewTextView;
         TextView mDialogTimeTextView;
@@ -172,6 +175,16 @@ public class DialogListActivity extends AppCompatActivity {
             mContact = contact;
             mDialogNameTextView.setText(contact.getName());
             mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
+
+            try {
+                String s = DialogManager.getDialogManager(getApplicationContext()).
+                        getLastMessage(mContact.getJId()).getTextMessage();
+                mDialogPreviewTextView.setText(s);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+
         }
 
         @Override

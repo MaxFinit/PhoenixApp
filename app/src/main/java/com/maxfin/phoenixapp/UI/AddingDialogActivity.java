@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.Manifest;
 import android.content.Intent;
@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.models.Contact;

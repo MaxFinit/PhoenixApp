@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp;
+package com.maxfin.phoenixapp.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Objects;
+import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.managers.SipServerManager;
 
 public class JournalFragment extends Fragment {
   //  private static final int PERMISSION_REQUEST_USE_SIP = 50;

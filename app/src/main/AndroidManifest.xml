@@ -27,23 +27,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity android:name=".UI.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CallActivity" />
-        <activity android:name=".DialogListActivity" />
+        <activity android:name=".UI.CallActivity" />
+        <activity android:name=".UI.DialogListActivity" />
         <activity
-            android:name=".DialogActivity"
-            android:parentActivityName=".DialogListActivity"
+            android:name=".UI.DialogActivity"
+            android:parentActivityName=".UI.DialogListActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".AddingDialogActivity"
-            android:parentActivityName=".DialogListActivity" />
-        <activity android:name=".OutgoingCallActivity" />
+            android:name=".UI.AddingDialogActivity"
+            android:parentActivityName=".UI.DialogListActivity" />
+        <activity android:name=".UI.OutgoingCallActivity" />
 
         <service android:name=".XMPPConnectionService" />
 
@@ -54,7 +54,7 @@
         <!--</receiver>-->
 
         <receiver
-            android:name=".testBroadcast"
+            android:name=".StateConnectBroadcast"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />

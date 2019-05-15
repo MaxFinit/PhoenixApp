@@ -2,7 +2,7 @@ package com.maxfin.phoenixapp.managers;
 
 import com.maxfin.phoenixapp.XMPPServerConnection.*;
 
-import static com.maxfin.phoenixapp.SipServerManager.*;
+import static com.maxfin.phoenixapp.managers.SipServerManager.*;
 
 public class StateManager {
 

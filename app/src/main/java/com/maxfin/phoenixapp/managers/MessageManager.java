@@ -26,9 +26,7 @@ public class MessageManager {
         mContactList = new ArrayList<>();
 
 
-
-
-      //  mContactList.add(contact);
+        //  mContactList.add(contact);
     }
 
     public static MessageManager get(Context context) {
@@ -44,8 +42,16 @@ public class MessageManager {
         mContactsDao.insert(contact);
 
 
- //       mContactList.add(contact);
+        //       mContactList.add(contact);
     }
+
+    public void deleteFromMessageList(Contact contact) {
+        mContactsDatabase = App.getInstance().getDatabase();
+        mContactsDao = mContactsDatabase.mContactsDao();
+        mContactsDao.delete(contact);
+
+    }
+
 
     public List<Contact> getContactList() {
 
@@ -54,24 +60,23 @@ public class MessageManager {
 
         try {
             mContactList = mContactsDao.getAll();
-        } catch (Exception e){
-            Log.d(TAG,"fail");
+        } catch (Exception e) {
+            Log.d(TAG, "fail");
             e.getStackTrace();
         }
-        
 
-       return mContactList;
+
+        return mContactList;
     }
 
 
-    public void updateConact(Contact contact){
+    public void updateConact(Contact contact) {
 
         mContactsDatabase = App.getInstance().getDatabase();
         mContactsDao = mContactsDatabase.mContactsDao();
 
         mContactsDao.update(contact);
     }
-
 
 
 }

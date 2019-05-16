@@ -64,7 +64,6 @@
                 android:id="@+id/call_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_below="@id/action_bar"
                 app:tabBackground="@color/colorPurple100"
                 app:tabIndicatorColor="@color/colorRed"
                 app:tabIndicatorFullWidth="true"

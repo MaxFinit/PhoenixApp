@@ -55,12 +55,9 @@
 
         <receiver
             android:name=".StateConnectBroadcast"
-            android:enabled="true">
+            android:enabled="true" >
             <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-                <action android:name="android.intent.action.SCREEN_OFF" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-
+                <action android:name="android.net.wifi.WIFI_STATE_CONNECTED" />
             </intent-filter>
         </receiver>
 

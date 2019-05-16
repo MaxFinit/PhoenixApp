@@ -10,11 +10,49 @@
     android:focusableInTouchMode="true"
     tools:ignore="Autofill">
 
-    <include
-        android:id="@+id/action_bar"
-        layout="@layout/tab_bar_main"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/dialog_list_tool_bar"
+        app:theme="@style/Toolbar"
+        app:popupTheme="@style/test"
+
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/dialog_list_state_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/font_pf_display_medium"
+                android:textColor="@color/colorGray20"
+                android:textSize="20sp"
+                tools:text="@string/refresh_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/dialog_list_refresh_connection_toolbar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/colorPurple100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_refresh" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/empty_list_item"
@@ -35,7 +73,10 @@
         android:background="@drawable/rectangle_shadow"
         android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="12dp"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textSize="16sp"
         android:hint="@string/search_text"
+        android:textColorHint="@color/colorPurple60"
 
 
         android:inputType="text"
@@ -44,7 +85,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/action_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/dialog_list_tool_bar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/message_recycler_view"
@@ -55,7 +96,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_message_edit" />
 

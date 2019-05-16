@@ -24,8 +24,8 @@
             android:layout_height="match_parent"
             android:text="@string/add_new_dialog"
             android:textColor="@color/colorGray20"
-            android:fontFamily="@font/font_pf_text_bold"
-            android:textSize="18sp"
+            android:fontFamily="@font/font_pf_display_medium"
+            android:textSize="20sp"
             android:gravity="center|start"/>
 
 
@@ -40,8 +40,10 @@
         android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="8dp"
 
-
         android:hint="@string/search_text"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textSize="16sp"
+        android:textColorHint="@color/colorPurple60"
         android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="0dp"

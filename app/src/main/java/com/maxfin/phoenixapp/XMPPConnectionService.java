@@ -63,25 +63,24 @@ public class XMPPConnectionService extends Service {
         Log.d(TAG, "OnCreate");
     }
 
-    private void initConnection(){
+    private void initConnection() {
 
-        Log.d(TAG,"Init connection");
+        Log.d(TAG, "Init connection");
 
-        if (mConnection == null){
+        if (mConnection == null) {
             mConnection = new XMPPServerConnection(this);
         }
 
         try {
             mConnection.connect();
-        }catch (IOException | SmackException | XMPPException e){
-            Log.d(TAG,"Something went wrong while connecting ,make sure the credentials are right and try again");
+        } catch (IOException | SmackException | XMPPException e) {
+            Log.d(TAG, "Something went wrong while connecting ,make sure the credentials are right and try again");
             e.printStackTrace();
             //Stop the service all together.
             stopSelf();
         }
 
     }
-
 
 
     public void start() {
@@ -109,7 +108,7 @@ public class XMPPConnectionService extends Service {
         mTHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (mConnection != null){
+                if (mConnection != null) {
                     mConnection.disconnect();
                 }
             }

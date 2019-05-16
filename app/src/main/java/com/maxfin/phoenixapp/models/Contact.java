@@ -4,8 +4,13 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+
+import com.maxfin.phoenixapp.R;
 
 @Entity(indices = {
         @Index("mName"),
@@ -21,6 +26,7 @@ public class Contact {
     private String mNumber;
     private String mContactId;
     private Boolean mIsLoaded;
+
 
     public Boolean getIsLoaded() {
         return mIsLoaded;

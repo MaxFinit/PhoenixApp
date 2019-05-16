@@ -8,7 +8,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -48,6 +55,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private static final String TAG = "XMPPServerConnection";
     private static final int NOTIFY_ID = 42;
     private static final String CHANEL_ID = "new message";
+    private static XMPPServerConnection mXMPPServerConnection;
     private final Context mApplicationContext;
     private final Context mContext;
     private final String mUsername;
@@ -58,8 +66,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private BroadcastReceiver uiThreadMessageReceiver;
     private StateManager mStateManager;
     private DeliveryReceiptManager mDeliveryReceiptManager;
-
-
+    private ConnectionXMPPState mConnectionXMPPState;
+    private OnStateCallback mOnXMPPConnectionStateCallback;
 
 
     //TODO Беда со статусом отправки сообщения
@@ -72,8 +80,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         LOGGED_IN, LOGGED_OUT
     }
 
+    public static XMPPServerConnection getXMPPServerConnection() {
+        return mXMPPServerConnection;
+    }
 
     public XMPPServerConnection(Context context) {
+        mXMPPServerConnection = this;
         Log.d(TAG, "XMPPServerConnection CONSTRUCTOR CALLED");
         mStateManager = StateManager.getStateManager();
         mApplicationContext = context.getApplicationContext();
@@ -96,9 +108,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             mServiceName = "";
         }
 
+    }
 
 
-
+    public void onSipStateConnectionChanged(OnStateCallback eventListener) {
+        Log.d(TAG, "СМЕНА СОСТОЯНИЯ: " + mConnectionXMPPState);
+        if (eventListener != null) {
+            mStateManager.setConnectionXMPPState(mConnectionXMPPState);
+            mOnXMPPConnectionStateCallback = eventListener;
+            mOnXMPPConnectionStateCallback.onStateChanged();
+        }
     }
 
 
@@ -117,6 +136,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         mConnection.addConnectionListener(this);
         try {
             Log.d(TAG, "TRY CONNECTING");
+            mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
+            onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
             mConnection.connect();
             mConnection.login();
             mDeliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(mConnection);
@@ -126,8 +147,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             e.printStackTrace();
             Toast.makeText(mApplicationContext, "DISCONNECT", Toast.LENGTH_SHORT).show();
         }
-
-
 
 
         ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
@@ -155,11 +174,20 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 dialogManager.addMessage(message.getBody(), true, contactJid);
                 Contact contact = dialogManager.getContact(contactJid);
 
+                Bitmap bitmap=null;
+                try {
+
+                    bitmap = MediaStore.Images.Media.getBitmap(mApplicationContext.getContentResolver(), Uri.parse(contact.getPhoto()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 
                 createNotificationChannel(contactJid, "test");
 
 
-                createNotification(contactJid, message.getBody(), contact.getName(), contact.getPhoto());
+
+                createNotification(contactJid, message.getBody(), contact.getName(),bitmap);
 
 
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
@@ -181,7 +209,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     }
 
-    private void createNotification(String jId, String messageBody, String name, String photo) {
+    private void createNotification(String jId, String messageBody, String name,Bitmap bitmap) {
 
         Intent dialogIntent = new Intent(mContext, DialogActivity.class);
         dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -194,10 +222,11 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         Notification notification = new NotificationCompat.Builder(mContext, CHANEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_message_notification)
+                .setColor(mContext.getResources().getColor(R.color.colorPurple100))
+                .setLargeIcon(bitmap)
                 .setContentTitle("Новое сообщение от " + name)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
-                .setPriority(5)
                 .setContentIntent(pendingIntent).build();
 
 
@@ -236,7 +265,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-        private void setUiThreadMessageReceiver() {
+    private void setUiThreadMessageReceiver() {
         uiThreadMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -296,14 +325,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     @Override
     public void connected(XMPPConnection connection) {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTED);
+        mConnectionXMPPState = ConnectionXMPPState.CONNECTED;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTED SUCCESSFULLY");
 
     }
 
     @Override
     public void authenticated(XMPPConnection connection, boolean resumed) {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTED);
+        mConnectionXMPPState = ConnectionXMPPState.CONNECTED;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "AUTHENTICATED SUCCESSFULLY");
 
 
@@ -311,14 +342,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     @Override
     public void connectionClosed() {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTION CLOSED");
 
     }
 
     @Override
     public void connectionClosedOnError(Exception e) {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
 
     }
@@ -326,7 +359,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     @Override
     public void reconnectingIn(int seconds) {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.CONNECTING);
+        mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "RECONNECTION");
 
     }
@@ -334,7 +368,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     @Override
     public void reconnectionFailed(Exception e) {
-        mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
+        mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
+        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "RECONNECTION FAILED");
 
     }

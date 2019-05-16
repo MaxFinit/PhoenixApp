@@ -2,6 +2,8 @@ package com.maxfin.phoenixapp.UI;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -36,7 +38,21 @@ public class OutgoingCallActivity extends AppCompatActivity {
 
         Resources resources = getResources();
 
-        mPhotoImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_avatar));
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mPhotoImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_avatar));
+        } else {
+            mPhotoImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_contact_circle_api2));
+        }
+
+
+
+
+
+
+
+
 
 
 

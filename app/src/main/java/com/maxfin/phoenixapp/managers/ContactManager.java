@@ -119,6 +119,11 @@ public class ContactManager {
     }
 
 
+    public void returnToChekedList(Contact contact){
+        mDialogContactList.add(contact);
+    }
+
+
     public List<Contact> getCheckedLoadList() {
 
         Collections.sort(mDialogContactList, new ContactNameComparator());

@@ -26,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/image_dialog_item"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Василий" />
@@ -35,12 +35,14 @@
     <TextView
         android:id="@+id/preview_dialog_item"
         android:layout_width="wrap_content"
-        android:layout_height="14dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/font_pf_display_regular"
-        android:textColor="@color/colorGray100"
+        android:textColor="@color/colorPurple60"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image_dialog_item"
-        app:layout_constraintTop_toBottomOf="@+id/name_dialog_item"
         tools:text="Ехал Грека через реку" />
 
 
@@ -48,10 +50,11 @@
         android:id="@+id/time_dialog_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/font_pf_display_light"
         android:textColor="@color/colorPurple100"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="15:25" />

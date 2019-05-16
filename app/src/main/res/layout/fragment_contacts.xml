@@ -16,9 +16,10 @@
         android:background="@drawable/rectangle_shadow"
         android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="8dp"
-
-
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textSize="16sp"
         android:hint="@string/search_text"
+        android:textColorHint="@color/colorPurple60"
         android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="0dp"
@@ -32,7 +33,7 @@
         android:layout_height="0dp"
 
 
-        android:background="@drawable/rectangle_shadow"
+        android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -6,8 +6,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,6 +147,7 @@ public class DialogActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.dialog_tool_bar_menu, menu);
         CircleImageView imageView = findViewById(R.id.contact_photo_toolbar);
         TextView textView = findViewById(R.id.contact_name_toolbar);
+
 
         imageView.setImageURI(Uri.parse(mContact.getPhoto()));
         textView.setText(mContact.getName());

@@ -128,7 +128,8 @@ public class AddingDialogActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 updateUi();
             } else {
-                Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -8,27 +8,29 @@ import android.util.Log;
 
 
 public class StateConnectBroadcast extends BroadcastReceiver {
-    private final String BOOT_ACTION = "android.intent.action.BOOT_COMPLETED";
+    private static final String TAG = "StateConnectBroadcast";
     Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        final ConnectivityManager connMgr = (ConnectivityManager) context
+        Log.d(TAG, "Start receiver");
+
+
+        ConnectivityManager connMgr = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        final android.net.NetworkInfo wifi = connMgr
+         android.net.NetworkInfo wifi = connMgr
                 .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        final android.net.NetworkInfo mobile = connMgr
-                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifi.isConnected()) {
 
-        if (wifi.isAvailable() || mobile.isAvailable()) {
 
+            Log.d(TAG, "Restart service");
             Intent i1 = new Intent(context, XMPPConnectionService.class);
             context.startService(i1);
 
-            Log.d("Network Available ", "Flag No 1");
+
         }
 
 

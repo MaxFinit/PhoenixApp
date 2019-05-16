@@ -1,6 +1,12 @@
 package com.maxfin.phoenixapp.UI;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,47 +16,68 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.XMPPConnectionService;
+import com.maxfin.phoenixapp.XMPPServerConnection;
+import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
+import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
+import com.maxfin.phoenixapp.models.Message;
 
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.Objects;
 
 public class DialogListActivity extends AppCompatActivity {
 
     private TextView mEmptyDialogsList;
     private EditText mSearchDialogsList;
+    private TextView mToolBarStateText;
+    private ImageButton mRefreshConnectButton;
     private RecyclerView mDialogsRecyclerView;
     private DialogsAdapter mAdapter;
     private List<Contact> dialogList;
+    private BroadcastReceiver mBroadcastReceiver;
+    private XMPPServerConnection mXMPPServerConnection;
+    private Toolbar mDialogListToolbar;
+    private StateManager mStateManager;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message_list);
+        setContentView(R.layout.activity_dialog_list);
         mSearchDialogsList = findViewById(R.id.search_message_edit);
         mEmptyDialogsList = findViewById(R.id.empty_list_item);
         mDialogsRecyclerView = findViewById(R.id.message_recycler_view);
+        mDialogListToolbar = findViewById(R.id.dialog_list_tool_bar);
+        setSupportActionBar(mDialogListToolbar);
+        mToolBarStateText = findViewById(R.id.dialog_list_state_toolbar);
+        mRefreshConnectButton = findViewById(R.id.dialog_list_refresh_connection_toolbar);
+
+        mStateManager = StateManager.getStateManager();
         mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection();
 
 
         updateUI();
@@ -111,12 +138,69 @@ public class DialogListActivity extends AppCompatActivity {
         });
 
 
+        mXMPPServerConnection.onSipStateConnectionChanged(new OnStateCallback() {
+            @Override
+            public void onStateChanged() {
+                updateState();
+            }
+        });
+
+
+        mRefreshConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isMyServiceRunning(XMPPConnectionService.class)) {
+                    Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
+                    startService(intent);
+                }
+
+            }
+        });
+
+
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        return true;
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                switch (Objects.requireNonNull(action)) {
+                    case XMPPConnectionService.NEW_MESSAGE:
+                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,contactJID);
+                        updateUI();
+                        break;
+                    default:
+                        updateUI();
+                        break;
+                }
+
+
+            }
+        };
+
+
+        IntentFilter filter = new IntentFilter(XMPPConnectionService.NEW_MESSAGE);
+        registerReceiver(mBroadcastReceiver, filter);
         updateUI();
+
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     private void updateUI() {
@@ -141,6 +225,42 @@ public class DialogListActivity extends AppCompatActivity {
     }
 
 
+    private void updateState() {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (mStateManager.getConnectionXMPPState()) {
+
+                    case CONNECTED:
+                        mToolBarStateText.setText("Сообщения");
+                        mRefreshConnectButton.setVisibility(View.GONE);
+                        break;
+                    case CONNECTING:
+                        mToolBarStateText.setText("Подключение");
+                        mRefreshConnectButton.setVisibility(View.GONE);
+                        break;
+                    case DISCONNECTED:
+                        mToolBarStateText.setText("Потеря соединения");
+                        mRefreshConnectButton.setVisibility(View.VISIBLE);
+                        break;
+                    case AUTHENTICATED:
+                        mToolBarStateText.setText("Аутификация");
+                        mRefreshConnectButton.setVisibility(View.GONE);
+                        break;
+                    case DISCONNECTING:
+                        mToolBarStateText.setText("Ожидания подключения");
+                        mRefreshConnectButton.setVisibility(View.VISIBLE);
+                        break;
+
+                }
+            }
+        });
+
+
+    }
+
+
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
 
@@ -154,7 +274,46 @@ public class DialogListActivity extends AppCompatActivity {
     }
 
 
-    private class DialogsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void showDialog(final Contact contact) {
+        AlertDialog.Builder alertDialog;
+
+        alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Удалить диалог");
+        alertDialog.setMessage("Вы уверены?");
+        alertDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MessageManager messageManager = MessageManager.get(getApplicationContext());
+                contact.setIsLoaded(false);
+                messageManager.updateConact(contact);
+                messageManager.deleteFromMessageList(contact);
+                ContactManager.get(getApplicationContext()).returnToChekedList(contact);
+                updateUI();
+
+            }
+        });
+        alertDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+    }
+
+
+    private class DialogsHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         ImageView mDialogImageView;
         TextView mDialogNameTextView;
         TextView mDialogPreviewTextView;
@@ -163,8 +322,9 @@ public class DialogListActivity extends AppCompatActivity {
 
 
         DialogsHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_recycler_dialog, parent, false));
+            super(inflater.inflate(R.layout.item_recycler_dialog_list, parent, false));
             itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
             mDialogImageView = itemView.findViewById(R.id.image_dialog_item);
             mDialogNameTextView = itemView.findViewById(R.id.name_dialog_item);
             mDialogPreviewTextView = itemView.findViewById(R.id.preview_dialog_item);
@@ -177,15 +337,43 @@ public class DialogListActivity extends AppCompatActivity {
             mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
 
             try {
-                String s = DialogManager.getDialogManager(getApplicationContext()).
-                        getLastMessage(mContact.getJId()).getTextMessage();
-                mDialogPreviewTextView.setText(s);
-            }catch (NullPointerException e){
+                Message lastMessage = DialogManager.getDialogManager(getApplicationContext()).
+                        getLastMessage(mContact.getJId());
+                mDialogPreviewTextView.setText(lastMessage.getTextMessage());
+                mDialogTimeTextView.setText(lastMessage.getDateMessage());
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-
-
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.context_dalog_list_menu, contextMenu);
+            MenuItem call = contextMenu.getItem(0);
+            MenuItem delete = contextMenu.getItem(1);
+            MenuItem block = contextMenu.getItem(2);
+            call.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            delete.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            block.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        }
+
+        private final MenuItem.OnMenuItemClickListener mOnMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.make_call_context_menu:
+                        break;
+                    case R.id.block_contact_context_menu:
+                        break;
+                    case R.id.delete_dialog_context_menu:
+                        showDialog(mContact);
+                        break;
+                }
+                return true;
+            }
+        };
+
 
         @Override
         public void onClick(View view) {
@@ -197,6 +385,10 @@ public class DialogListActivity extends AppCompatActivity {
 
         }
     }
+
+
+
+
 
     public class DialogsAdapter extends RecyclerView.Adapter<DialogsHolder> {
         private List<Contact> mContactList;
@@ -229,7 +421,7 @@ public class DialogListActivity extends AppCompatActivity {
             return mContactList.size();
         }
 
-        public void filterList(List<Contact> filteredList) {
+        void filterList(List<Contact> filteredList) {
             mContactList = filteredList;
             notifyDataSetChanged();
         }

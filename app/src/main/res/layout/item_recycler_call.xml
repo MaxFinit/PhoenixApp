@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/image_contact_item"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/message_text" />
@@ -37,8 +37,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:fontFamily="@font/font_pf_display_light_italic"
-        android:textColor="@color/colorGray100"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textColor="@color/colorPurple60"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/image_contact_item"
         app:layout_constraintTop_toBottomOf="@+id/name_contact_item"
         tools:text="@string/message_text" />

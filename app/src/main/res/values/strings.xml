@@ -25,4 +25,5 @@
     <string name="add_new_dialog">Добавте новый диалог</string>
     <string name="sip_connection_error">Подключение отсутсвует</string>
     <string name="refresh_text">Повторить</string>
+    <string name="delete_dialog_text">Удалить диалог</string>
 </resources>

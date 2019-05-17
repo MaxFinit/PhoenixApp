@@ -337,7 +337,7 @@ public class DialogListActivity extends AppCompatActivity {
             mDialogImageView.setImageURI(Uri.parse(contact.getPhoto()));
 
             try {
-                Message lastMessage = DialogManager.getDialogManager(getApplicationContext()).
+                Message lastMessage = DialogManager.getDialogManager().
                         getLastMessage(mContact.getJId());
                 mDialogPreviewTextView.setText(lastMessage.getTextMessage());
                 mDialogTimeTextView.setText(lastMessage.getDateMessage());

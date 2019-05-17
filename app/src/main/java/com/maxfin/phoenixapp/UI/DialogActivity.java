@@ -82,7 +82,7 @@ public class DialogActivity extends AppCompatActivity {
         Intent intent = getIntent();
         contactJID = intent.getStringExtra("EXTRA_CONTACT_JID");
 
-        mDialogManager = DialogManager.getDialogManager(getApplicationContext());
+        mDialogManager = DialogManager.getDialogManager();
         mContact = mDialogManager.getContact(contactJID);
 
         updateUi();

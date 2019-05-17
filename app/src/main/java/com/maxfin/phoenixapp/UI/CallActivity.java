@@ -101,18 +101,6 @@ public class CallActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (checkForInternet()) {
-//            mSipConnectionManager.refreshConnection();
-//        } else {
-//            mStateManager.setConnectionSIPState(SipServerManager.ConnectionSIPState.FAILED);
-//            updateState();
-//        }
-//    }
-
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -125,7 +113,7 @@ public class CallActivity extends AppCompatActivity {
         }
 
 
-        Log.d(TAG, "focus changed");
+        Log.d(TAG, "FOCUS CHANGED");
     }
 
     private void updateState() {
@@ -168,7 +156,6 @@ public class CallActivity extends AppCompatActivity {
     private class ViewPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragmentList = new ArrayList<>();
-
 
         private ViewPagerAdapter(FragmentManager fm) {
             super(fm);

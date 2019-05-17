@@ -21,18 +21,18 @@ public class DialogManager {
     private Message mMessage;
     private List<Message> mMessageList;
     private static DialogManager sDialogManager;
-    private ContactsDatabase mContactsDatabase;
-    private ContactsDao mContactsDao;
     private MessagesDao mMessagesDao;
 
 
-    private DialogManager(Context context) {
+    private DialogManager() {
         mMessageList = new ArrayList<>();
+        ContactsDatabase contactsDatabase = App.getInstance().getDatabase();
+        mMessagesDao = contactsDatabase.mMessagesDao();
     }
 
-    public static DialogManager getDialogManager(Context context) {
+    public static DialogManager getDialogManager() {
         if (sDialogManager == null)
-            sDialogManager = new DialogManager(context);
+            sDialogManager = new DialogManager();
         return sDialogManager;
     }
 
@@ -46,9 +46,6 @@ public class DialogManager {
         mMessage = new Message(messagesText, messageType, date, id);
 
 
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
-
         mMessagesDao.insertMessage(mMessage);
 
 
@@ -57,44 +54,25 @@ public class DialogManager {
 
 
     public void deleteMessage(Message message) {
-
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
         mMessagesDao.deleteMessage(message);
-
-
     }
 
 
     public void deleteMessageList(String id) {
-
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
         mMessagesDao.clearHistory(id);
-
-
     }
 
     public List<Message> getMessageList(String id) {
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
-
         try {
             mMessageList = mMessagesDao.loadHistory(id);
         } catch (Exception e) {
             Log.d(TAG, "fail");
             e.getStackTrace();
         }
-
-
         return mMessageList;
-
     }
 
     public Message getLastMessage(String id) {
-
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
 
         try {
             mMessageList = mMessagesDao.loadHistory(id);
@@ -114,11 +92,8 @@ public class DialogManager {
     }
 
     public Contact getContact(String id) {
-        mContactsDatabase = App.getInstance().getDatabase();
-        mMessagesDao = mContactsDatabase.mMessagesDao();
 
         return mMessagesDao.getContact(id);
-
 
     }
 

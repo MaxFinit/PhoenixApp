@@ -36,22 +36,23 @@
         android:id="@+id/search_message_contact_edit"
         android:layout_width="match_parent"
         android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+
         android:background="@drawable/rectangle_shadow"
         android:drawableStart="@drawable/ic_search_api"
         android:drawablePadding="8dp"
-
-        android:hint="@string/search_text"
         android:fontFamily="@font/font_pf_display_regular"
-        android:textSize="16sp"
-        android:textColorHint="@color/colorPurple60"
+        android:hint="@string/search_text"
         android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="0dp"
+        android:textColorHint="@color/colorPurple60"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adding_dialog_tool_bar_menu"
-         />
-
+        app:layout_constraintTop_toBottomOf="@+id/adding_dialog_tool_bar_menu" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -60,6 +61,9 @@
         android:layout_height="0dp"
 
 
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rectangle_rounded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

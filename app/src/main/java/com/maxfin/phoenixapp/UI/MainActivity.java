@@ -34,15 +34,16 @@ import androidx.work.WorkManager;
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
     IncomingCallReceiver callReceiver;
-    private Toolbar mMainToolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMainToolbar = findViewById(R.id.main_tool_bar_menu);
-        setSupportActionBar(mMainToolbar);
+
+        Toolbar mainToolbar = findViewById(R.id.main_tool_bar_menu);
+        setSupportActionBar(mainToolbar);
+
         receiverRegistration();
         sipRegistration();
 

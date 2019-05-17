@@ -170,11 +170,11 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                     contactJid = fromWho;
                 }
 
-                DialogManager dialogManager = DialogManager.getDialogManager(mContext);
+                DialogManager dialogManager = DialogManager.getDialogManager();
                 dialogManager.addMessage(message.getBody(), true, contactJid);
                 Contact contact = dialogManager.getContact(contactJid);
 
-                Bitmap bitmap=null;
+                Bitmap bitmap = null;
                 try {
 
                     bitmap = MediaStore.Images.Media.getBitmap(mApplicationContext.getContentResolver(), Uri.parse(contact.getPhoto()));
@@ -186,8 +186,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 createNotificationChannel(contactJid, "test");
 
 
-
-                createNotification(contactJid, message.getBody(), contact.getName(),bitmap);
+                createNotification(contactJid, message.getBody(), contact.getName(), bitmap);
 
 
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
@@ -209,7 +208,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     }
 
-    private void createNotification(String jId, String messageBody, String name,Bitmap bitmap) {
+    private void createNotification(String jId, String messageBody, String name, Bitmap bitmap) {
 
         Intent dialogIntent = new Intent(mContext, DialogActivity.class);
         dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

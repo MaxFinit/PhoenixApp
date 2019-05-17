@@ -2,7 +2,6 @@ package com.maxfin.phoenixapp.UI;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,7 +38,6 @@ public class OutgoingCallActivity extends AppCompatActivity {
         Resources resources = getResources();
 
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mPhotoImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_avatar));
         } else {
@@ -47,25 +45,19 @@ public class OutgoingCallActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
-
-
-
-
         manager = StateManager.getStateManager();
         mSipConnectionManager = SipServerManager.getSipServerManager(getApplicationContext());
-        mSipConnectionManager.initiateCall();
+        if (!mSipConnectionManager.isInCall())
+            mSipConnectionManager.initiateCall();
 
 
         mEndCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSipConnectionManager.endCall();
-                onBackPressed();
+                if (mSipConnectionManager.isInCall()) {
+                    mSipConnectionManager.endCall();
+                    onBackPressed();
+                }
             }
         });
 

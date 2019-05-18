@@ -12,7 +12,6 @@ import android.util.Log;
 
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.models.Contact;
-import com.maxfin.phoenixapp.models.Message;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,18 +20,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ContactManager {
-    private final String TAG = "Загружаем контакты";
-    private List<Contact> mContactList;
-    List<Contact> mDialogContactList;
+    private static final String TAG = "Загружаем контакты";
     private static ContactManager sContactManager;
+    private List<Contact> mContactList;
+    private List<Contact> mDialogContactList;
     private Contact mContact;
-    private Context mContext;
-    MessageManager messageManager;
+    private MessageManager messageManager;
 
     private ContactManager(Context context) {
-        mContext = context.getApplicationContext();
-        uploadContacts();
-
+        uploadContacts(context);
     }
 
     public static ContactManager get(Context context) {
@@ -42,13 +38,13 @@ public class ContactManager {
         return sContactManager;
     }
 
-    private void uploadContacts() {
+    public void uploadContacts(Context mContext) {
         String idLast;
         String idPrev = "";
 
         mDialogContactList = new ArrayList<>();
         mContactList = new ArrayList<>();
-        messageManager = MessageManager.get(mContext);
+        messageManager = MessageManager.get();
         ContentResolver contentResolver = mContext.getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
                 null, null);
@@ -59,7 +55,7 @@ public class ContactManager {
                 mContact.setName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
                 mContact.setNumber(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                 mContact.setContactId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                mContact.setPhoto(uploadImage());
+                mContact.setPhoto(uploadImage(mContext));
                 mContact.setIsLoaded(false);
                 Log.d(TAG, "" + Uri.parse(mContact.getPhoto()));
                 /*
@@ -81,7 +77,7 @@ public class ContactManager {
     }
 
 
-    private String uploadImage() {
+    private String uploadImage(Context mContext) {
         String imageUri;
         Uri u = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(mContact.getContactId()));
         imageUri = Uri.withAppendedPath(u, ContactsContract.Contacts.Photo.DISPLAY_PHOTO).toString();
@@ -119,7 +115,7 @@ public class ContactManager {
     }
 
 
-    public void returnToChekedList(Contact contact){
+    public void returnToChekedList(Contact contact) {
         mDialogContactList.add(contact);
     }
 
@@ -146,7 +142,4 @@ public class ContactManager {
         return mContactList;
     }
 
-    public List<Contact> getContactList() {
-        return mContactList;
-    }
 }

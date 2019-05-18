@@ -39,5 +39,17 @@
         app:layout_constraintTop_toBottomOf="@+id/search_contact_edit" />
 
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_contact_in_book_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:backgroundTint="@color/colorPurple100"
+        app:srcCompat="@drawable/ic_person_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
 </android.support.constraint.ConstraintLayout>

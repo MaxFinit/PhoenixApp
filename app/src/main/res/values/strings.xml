@@ -26,4 +26,7 @@
     <string name="sip_connection_error">Подключение отсутсвует</string>
     <string name="refresh_text">Повторить</string>
     <string name="delete_dialog_text">Удалить диалог</string>
+    <string name="edit_contact_text">Редактировать</string>
+    <string name="avatar_text">Аватар</string>
+    <string name="call_type_text">Тип звонка</string>
 </resources>

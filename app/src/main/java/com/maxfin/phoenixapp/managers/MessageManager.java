@@ -17,21 +17,19 @@ public class MessageManager {
     private static final String TAG = "MessageManager";
     private List<Contact> mContactList;
     private static MessageManager sMessageManager;
-    private Context mContext;
     private ContactsDatabase mContactsDatabase;
     private ContactsDao mContactsDao;
 
-    private MessageManager(Context context) {
-        mContext = context;
+    private MessageManager() {
         mContactList = new ArrayList<>();
 
 
         //  mContactList.add(contact);
     }
 
-    public static MessageManager get(Context context) {
+    public static MessageManager get() {
         if (sMessageManager == null)
-            sMessageManager = new MessageManager(context);
+            sMessageManager = new MessageManager();
         return sMessageManager;
     }
 

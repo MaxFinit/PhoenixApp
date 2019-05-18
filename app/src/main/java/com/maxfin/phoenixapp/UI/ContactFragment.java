@@ -1,18 +1,25 @@
 package com.maxfin.phoenixapp.UI;
 
 import android.Manifest;
+import android.content.ContentUris;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -32,11 +39,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactFragment extends Fragment {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
+    private static final String REFRESH_STATE = "refresh state";
 
     private EditText mSearchContactsEditText;
+    private FloatingActionButton mAddContactButton;
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;
     private List<Contact> contactList;
+    private boolean isRefreshing = false;
 
 
     @Nullable
@@ -46,6 +56,11 @@ public class ContactFragment extends Fragment {
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSearchContactsEditText = view.findViewById(R.id.search_contact_edit);
+        mAddContactButton = view.findViewById(R.id.add_contact_in_book_button);
+
+
+        if (savedInstanceState != null)
+            isRefreshing = savedInstanceState.getBoolean(REFRESH_STATE);
 
 
         updateUi();
@@ -67,6 +82,16 @@ public class ContactFragment extends Fragment {
             }
         });
 
+        mAddContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isRefreshing = true;
+                Intent intent = new Intent(Intent.ACTION_INSERT);
+                intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+                startActivity(intent);
+            }
+        });
+
 
         return view;
     }
@@ -78,6 +103,10 @@ public class ContactFragment extends Fragment {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
         } else {
             ContactManager contactManager = ContactManager.get(getContext());
+            if (isRefreshing) {
+                contactManager.uploadContacts(getContext());
+                isRefreshing = false;
+            }
             contactList = contactManager.getSortedContactList();
             if (mAdapter == null) {
                 mAdapter = new ContactAdapter(contactList);
@@ -87,6 +116,12 @@ public class ContactFragment extends Fragment {
                 mAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUi();
     }
 
     @Override
@@ -114,14 +149,21 @@ public class ContactFragment extends Fragment {
         mAdapter.filterList(filteredList);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(REFRESH_STATE, isRefreshing);
+    }
 
-    private class ContactHolder extends RecyclerView.ViewHolder {
+    private class ContactHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         private TextView mNameContactTextView;
         private TextView mNumberContactTextView;
         private CircleImageView mPhotoContactImageView;
+        private Contact mContact;
 
         ContactHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_call, parent, false));
+            itemView.setOnCreateContextMenuListener(this);
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
             mPhotoContactImageView = itemView.findViewById(R.id.image_contact_item);
@@ -129,10 +171,47 @@ public class ContactFragment extends Fragment {
         }
 
         void bind(Contact contact) {
+            mContact = contact;
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
             mPhotoContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.contex_contact_menu, contextMenu);
+            MenuItem call = contextMenu.getItem(0);
+            MenuItem edit = contextMenu.getItem(1);
+            MenuItem block = contextMenu.getItem(2);
+            call.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            edit.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            block.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        }
+
+        private final MenuItem.OnMenuItemClickListener mOnMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.make_call_context_menu:
+                        break;
+                    case R.id.block_contact_context_menu:
+                        break;
+                    case R.id.edit_dialog_context_menu:
+
+                        isRefreshing = true;
+                        Intent intent = new Intent(Intent.ACTION_EDIT);
+                        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(mContact.getContactId()));
+                        intent.setData(contactUri);
+                        intent.putExtra("finishActivityOnSaveCompleted", true);
+                        startActivity(intent);
+                        break;
+                }
+                return true;
+            }
+        };
+
+
     }
 
     private class ContactAdapter extends RecyclerView.Adapter<ContactHolder> {
@@ -166,7 +245,7 @@ public class ContactFragment extends Fragment {
             return mContactList.size();
         }
 
-        public void filterList(List<Contact> filteredList) {
+        void filterList(List<Contact> filteredList) {
             mContactList = filteredList;
             notifyDataSetChanged();
         }

@@ -3,7 +3,6 @@ package com.maxfin.phoenixapp.managers;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -14,8 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.OnStateCallback;
-import com.maxfin.phoenixapp.R;
-import com.maxfin.phoenixapp.models.Contact;
+
 
 import java.text.ParseException;
 
@@ -38,9 +36,12 @@ public class SipServerManager {
     private OnStateCallback mOnSIPConnectionStateCallback;
 
     public void onSipStateCallChanged(OnStateCallback eventListener) {
-        mStateManager.setCallSIPState(sCallSIPState);
-        mOnSIPCallStateCallback = eventListener;
-        mOnSIPCallStateCallback.onStateChanged();
+        if (eventListener != null) {
+            mStateManager.setCallSIPState(sCallSIPState);
+            mOnSIPCallStateCallback = eventListener;
+            mOnSIPCallStateCallback.onStateChanged();
+        }
+
     }
 
 
@@ -167,13 +168,14 @@ public class SipServerManager {
 
     }
 
-    private void closeLocalProfile() {
+    public void closeLocalProfile() {
         if (mManager == null) {
             return;
         }
 
         try {
             mManager.close(mLocalProfile.getUriString());
+            sCallSIPState = null;
         } catch (SipException e) {
             e.printStackTrace();
             logger("FAILED TO CLOSE LOCAL PROFILE" + e.getMessage());
@@ -270,7 +272,7 @@ public class SipServerManager {
             SipProfile profile = builder.build();
 
             mCall = mManager.makeAudioCall(mLocalProfile,
-                    profile, listener, 0);
+                    profile, listener, 30);
 
 
         } catch (SipException e) {
@@ -291,6 +293,8 @@ public class SipServerManager {
 
     public void endCall() {
 
+
+        if (mCall != null) {
             logger("END CALL");
             try {
                 mCall.endCall();
@@ -299,7 +303,7 @@ public class SipServerManager {
             }
             mCall.close();
             mCall = null;
-
+        }
     }
 
 

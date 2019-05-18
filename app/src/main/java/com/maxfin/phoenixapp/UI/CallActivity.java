@@ -100,6 +100,11 @@ public class CallActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSipConnectionManager.closeLocalProfile();
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

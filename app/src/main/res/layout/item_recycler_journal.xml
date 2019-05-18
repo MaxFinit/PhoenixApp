@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/list_contacts_states"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -69,6 +70,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_call_received" />
+        app:srcCompat="@drawable/ic_call_received"
+        android:contentDescription="@string/call_type_text" />
 
 </android.support.constraint.ConstraintLayout>

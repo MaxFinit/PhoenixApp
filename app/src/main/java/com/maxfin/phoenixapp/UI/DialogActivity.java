@@ -1,9 +1,11 @@
 package com.maxfin.phoenixapp.UI;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -32,7 +34,9 @@ import android.widget.Toast;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.XMPPServerConnection;
+import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
@@ -159,8 +163,7 @@ public class DialogActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_history_dialog_menu:
-                mDialogManager.deleteMessageList(contactJID);
-                updateUi();
+                showDialog();
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -225,6 +228,33 @@ public class DialogActivity extends AppCompatActivity {
 
 
     }
+
+
+    private void showDialog() {
+        AlertDialog.Builder alertDialog;
+
+        alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Удалить историю");
+        alertDialog.setMessage("Все сообщения пропадут.Вы уверены?");
+        alertDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mDialogManager.deleteMessageList(contactJID);
+                updateUi();
+            }
+        });
+        alertDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+    }
+
+
+
 
     private class DialogOutputHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView mOutputMessageTextView;

@@ -137,21 +137,30 @@ public class DialogListActivity extends AppCompatActivity {
             }
         });
 
+        OnStateCallback callbacck;
 
-        mXMPPServerConnection.onSipStateConnectionChanged(new OnStateCallback() {
+
+
+
+        mXMPPServerConnection.onXMPPStateConnectionChanged(callbacck = new OnStateCallback() {
             @Override
             public void onStateChanged() {
                 updateState();
             }
         });
 
+        mStateManager.setEventListener(callbacck);
+
+
+
 
         mRefreshConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isMyServiceRunning(XMPPConnectionService.class)) {
+                if (!isMyServiceRunning()) {
                     Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
                     startService(intent);
+
                 }
 
             }
@@ -204,7 +213,7 @@ public class DialogListActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        MessageManager messageManager = MessageManager.get(this);
+        MessageManager messageManager = MessageManager.get();
         dialogList = messageManager.getContactList();
         if (dialogList.size() > 0) {
             mDialogsRecyclerView.setVisibility(View.VISIBLE);
@@ -274,10 +283,10 @@ public class DialogListActivity extends AppCompatActivity {
     }
 
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
+    private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
+            if (XMPPConnectionService.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
@@ -293,7 +302,7 @@ public class DialogListActivity extends AppCompatActivity {
         alertDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MessageManager messageManager = MessageManager.get(getApplicationContext());
+                MessageManager messageManager = MessageManager.get();
                 contact.setIsLoaded(false);
                 messageManager.updateConact(contact);
                 messageManager.deleteFromMessageList(contact);

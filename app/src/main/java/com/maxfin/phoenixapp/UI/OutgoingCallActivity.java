@@ -111,6 +111,12 @@ public class OutgoingCallActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mSipConnectionManager.endCall();
+    }
+
     private void updateTextView(final String string) {
         runOnUiThread(new Runnable() {
             @Override

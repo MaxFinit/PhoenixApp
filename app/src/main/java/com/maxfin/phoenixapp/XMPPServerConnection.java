@@ -9,10 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -111,7 +107,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    public void onSipStateConnectionChanged(OnStateCallback eventListener) {
+    public void onXMPPStateConnectionChanged(OnStateCallback eventListener) {
         Log.d(TAG, "СМЕНА СОСТОЯНИЯ: " + mConnectionXMPPState);
         if (eventListener != null) {
             mStateManager.setConnectionXMPPState(mConnectionXMPPState);
@@ -134,10 +130,17 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
         mConnection = new XMPPTCPConnection(builder.build());
         mConnection.addConnectionListener(this);
+
+
+        if(mOnXMPPConnectionStateCallback == null){
+            mOnXMPPConnectionStateCallback = mStateManager.getEventListener();
+        }
+
+
         try {
             Log.d(TAG, "TRY CONNECTING");
             mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
-            onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+            onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
             mConnection.connect();
             mConnection.login();
             mDeliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(mConnection);
@@ -325,7 +328,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     @Override
     public void connected(XMPPConnection connection) {
         mConnectionXMPPState = ConnectionXMPPState.CONNECTED;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTED SUCCESSFULLY");
 
     }
@@ -333,7 +336,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     @Override
     public void authenticated(XMPPConnection connection, boolean resumed) {
         mConnectionXMPPState = ConnectionXMPPState.CONNECTED;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "AUTHENTICATED SUCCESSFULLY");
 
 
@@ -342,16 +345,25 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     @Override
     public void connectionClosed() {
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
+
+
+
         Log.d(TAG, "CONNECTION CLOSED");
 
+        Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
+        mApplicationContext.stopService(intent);
     }
 
     @Override
     public void connectionClosedOnError(Exception e) {
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
+        Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
+        mApplicationContext.stopService(intent);
+
+
 
     }
 
@@ -359,7 +371,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     @Override
     public void reconnectingIn(int seconds) {
         mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "RECONNECTION");
 
     }
@@ -368,7 +380,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     @Override
     public void reconnectionFailed(Exception e) {
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
-        onSipStateConnectionChanged(mOnXMPPConnectionStateCallback);
+        onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "RECONNECTION FAILED");
 
     }

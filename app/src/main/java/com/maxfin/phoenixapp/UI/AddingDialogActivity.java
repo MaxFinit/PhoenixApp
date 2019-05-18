@@ -161,7 +161,7 @@ public class AddingDialogActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            MessageManager messageManager = MessageManager.get(getApplicationContext());
+            MessageManager messageManager = MessageManager.get();
             mContact.setJId(mContact.getNumber() + "@jabber.ru");
             mContact.setIsLoaded(true);
             mDialogList.remove(mContact);

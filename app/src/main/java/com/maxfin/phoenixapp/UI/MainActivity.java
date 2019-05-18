@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //*Временный контакт пока нет back-end
-        MessageManager messageManager = MessageManager.get(getApplicationContext());
+        MessageManager messageManager = MessageManager.get();
         if (messageManager.getContactList().size() == 0) {
             Contact contact = new Contact();
             contact.setJId("maxfin2@jabber.ru");

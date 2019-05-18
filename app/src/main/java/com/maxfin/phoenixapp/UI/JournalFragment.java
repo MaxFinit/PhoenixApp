@@ -1,11 +1,13 @@
 package com.maxfin.phoenixapp.UI;
 
 import android.Manifest;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +16,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -41,7 +46,6 @@ public class JournalFragment extends Fragment {
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
     private List<Call> mCallList;
-
     private Contact contact;
 
     @Nullable
@@ -52,8 +56,6 @@ public class JournalFragment extends Fragment {
         mJournalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
-
-
         contact = new Contact();
         contact.setJId("maxfin2@jabber.ru");
         contact.setName("Max");
@@ -62,14 +64,10 @@ public class JournalFragment extends Fragment {
         contact.setPhoto(path.toString());
 
 
-
         mFloatingActionButton = view.findViewById(R.id.call_button);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
 
 
                 Call call = new Call();
@@ -79,21 +77,8 @@ public class JournalFragment extends Fragment {
                 mJournalManager.addCall(call);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
             }
@@ -156,17 +141,19 @@ public class JournalFragment extends Fragment {
     }
 
 
-    private class JournalHolder extends RecyclerView.ViewHolder {
+    private class JournalHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         private TextView mNameJournalTextView;
         private TextView mNumberJournalTextView;
         private TextView mDataJournalTextView;
         private CircleImageView mPhotoJournalImageView;
         private ImageView mCallTypeImageView;
+        private Call mCall;
 
 
         JournalHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_recycler_journal, parent,
                     false));
+            itemView.setOnCreateContextMenuListener(this);
             mNameJournalTextView = itemView.findViewById(R.id.journal_name_text_view);
             mNumberJournalTextView = itemView.findViewById(R.id.journal_number_text_view);
             mPhotoJournalImageView = itemView.findViewById(R.id.journal_photo_image_view);
@@ -177,6 +164,7 @@ public class JournalFragment extends Fragment {
 
 
         void bind(Call call) {
+            mCall = call;
             //Contact contact = mJournalManager.getContact(call.getContactId());
             mNameJournalTextView.setText(contact.getName());
             mNumberJournalTextView.setText(contact.getNumber());
@@ -198,7 +186,51 @@ public class JournalFragment extends Fragment {
 
 
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.context_journal_menu, contextMenu);
+            MenuItem call = contextMenu.getItem(0);
+            MenuItem edit = contextMenu.getItem(1);
+            MenuItem block = contextMenu.getItem(2);
+            MenuItem delete = contextMenu.getItem(3);
+            MenuItem deleteAll = contextMenu.getItem(4);
+            call.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            edit.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            block.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            delete.setOnMenuItemClickListener(mOnMenuItemClickListener);
+            deleteAll.setOnMenuItemClickListener(mOnMenuItemClickListener);
+
+        }
+
+
+        private final MenuItem.OnMenuItemClickListener mOnMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.make_call_context_menu:
+                        break;
+                    case R.id.block_contact_context_menu:
+                        break;
+                    case R.id.edit_dialog_context_menu:
+                        break;
+                    case R.id.delete_journal_context_menu:
+                        mJournalManager.clearCall(mCall);
+                        updateUi();
+                        break;
+                    case R.id.delete_all_contact_context_menu:
+                        mJournalManager.clearJournal();
+                        updateUi();
+                        break;
+                }
+                return true;
+            }
+        };
+
+
     }
+
 
     private class JournalAdapter extends RecyclerView.Adapter<JournalHolder> {
 
@@ -233,7 +265,7 @@ public class JournalFragment extends Fragment {
         }
 
         public void filterList(List<Contact> filteredList) {
-        //    mCallList = filteredList;
+            //    mCallList = filteredList;
             notifyDataSetChanged();
         }
 

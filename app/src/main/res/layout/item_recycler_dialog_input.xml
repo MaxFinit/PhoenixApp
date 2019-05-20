@@ -46,6 +46,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="18апр.15:00" />
 
+
+
+
+
+
+
+
+
     </android.support.constraint.ConstraintLayout>
 
 

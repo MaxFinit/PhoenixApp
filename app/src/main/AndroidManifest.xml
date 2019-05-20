@@ -47,11 +47,11 @@
 
         <service android:name=".XMPPConnectionService" />
 
-        <!--<receiver-->
-        <!--android:name=".IncomingCallReceiver"-->
-        <!--android:enabled="true"-->
-        <!--android:exported="true">-->
-        <!--</receiver>-->
+        <receiver
+        android:name=".IncomingCallReceiver"
+        android:enabled="true"
+        android:exported="true">
+        </receiver>
 
         <receiver
             android:name=".StateConnectBroadcast"

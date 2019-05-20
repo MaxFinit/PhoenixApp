@@ -22,6 +22,7 @@ public class XMPPConnectionService extends Service {
     private static final String TAG = "XMPPConnectionService";
 
     public static final String SEND_MESSAGE = "com.maxfin.phoenixapp.sendmessage";
+    public static final String RESEIVED_MESSAGE = "com.maxfin.phoenixapp.reseivedmessage";
     public static final String BUNDLE_MESSAGE_BODY = "b_body";
     public static final String BUNDLE_TO = "b_to";
 
@@ -68,7 +69,7 @@ public class XMPPConnectionService extends Service {
         Log.d(TAG, "Init connection");
 
         if (mConnection == null) {
-            mConnection = new XMPPServerConnection(this);
+            mConnection = XMPPServerConnection.getXMPPServerConnection(this);
         }
 
         try {

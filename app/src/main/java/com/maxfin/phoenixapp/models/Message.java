@@ -18,6 +18,7 @@ public class Message {
     private String mTextMessage;
     private boolean mTypeMessage;
     private String mDateMessage;
+    private boolean mIsReceived = false;
 
 
     public String getContactId() {
@@ -57,5 +58,13 @@ public class Message {
 
     public void setDateMessage(String dateMessage) {
         mDateMessage = dateMessage;
+    }
+
+    public boolean isReceived() {
+        return mIsReceived;
+    }
+
+    public void setIsReceived(boolean received) {
+        mIsReceived = received;
     }
 }

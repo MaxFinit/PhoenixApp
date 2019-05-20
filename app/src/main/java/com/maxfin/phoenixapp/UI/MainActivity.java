@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction("android.Sip.INCOMING_CALL");
         callReceiver = new IncomingCallReceiver();
         registerReceiver(callReceiver, filter);
+
+
     }
 
     private void sipRegistration() {

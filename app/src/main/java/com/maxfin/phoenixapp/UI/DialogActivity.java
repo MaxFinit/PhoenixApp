@@ -106,6 +106,10 @@ public class DialogActivity extends AppCompatActivity {
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, contactJID);
 
+
+
+
+
                         mDialogManager.addMessage(mMessageEditText.getText().toString(), false, contactJID);
                         mMessageEditText.setText("");
 

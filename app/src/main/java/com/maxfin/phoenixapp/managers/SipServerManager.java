@@ -175,7 +175,7 @@ public class SipServerManager {
 
         try {
             mManager.close(mLocalProfile.getUriString());
-            sCallSIPState = null;
+            sSipServerManager = null;
         } catch (SipException e) {
             e.printStackTrace();
             logger("FAILED TO CLOSE LOCAL PROFILE" + e.getMessage());

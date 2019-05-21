@@ -293,16 +293,15 @@ public class SipServerManager {
 
     public void endCall() {
 
-
         if (mCall != null) {
-            logger("END CALL");
+            logger("ENDING CALL");
             try {
                 mCall.endCall();
+                logger("CALL ENDED");
             } catch (SipException e) {
                 e.printStackTrace();
             }
             mCall.close();
-            mCall = null;
         }
     }
 

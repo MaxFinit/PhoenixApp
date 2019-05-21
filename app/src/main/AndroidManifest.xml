@@ -41,7 +41,7 @@
             android:parentActivityName=".UI.DialogListActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".UI.AddingDialogActivity"
+            android:name=".UI.AddDialogActivity"
             android:parentActivityName=".UI.DialogListActivity" />
         <activity android:name=".UI.OutgoingCallActivity" />
 

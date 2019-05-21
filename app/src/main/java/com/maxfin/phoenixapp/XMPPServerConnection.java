@@ -88,9 +88,10 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
     private XMPPServerConnection(Context context) {
 
-        DeliveryReceiptManager.setDefaultAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
-        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
+//        Настройки получения статуса отправки
+//        DeliveryReceiptManager.setDefaultAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
+//        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+//        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
 
 
         Log.d(TAG, "XMPPServerConnection CONSTRUCTOR CALLED");
@@ -401,8 +402,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
         onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
-        Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
-        mApplicationContext.stopService(intent);
+//        Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
+//        mApplicationContext.stopService(intent);
 
 
     }

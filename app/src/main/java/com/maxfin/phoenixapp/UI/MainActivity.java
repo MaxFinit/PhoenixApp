@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         receiverRegistration();
         sipRegistration();
+        startService();
+       // startWorker();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = bottomNavigationView.getMenu();
@@ -94,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //*
 
-        startService();
-        startWorker();
+
     }
 
     @Override

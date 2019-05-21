@@ -1,5 +1,6 @@
 package com.maxfin.phoenixapp.UI;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -28,9 +29,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.XMPPServerConnection;
@@ -61,6 +64,9 @@ public class DialogActivity extends AppCompatActivity {
     private Toolbar mDialogToolbar;
     private Contact mContact;
     private StateManager mStateManager;
+    private XMPPServerConnection mXMPPServerConnection;
+    private ImageButton mRefreshConnectionButton;
+    private TextView mToolbarStateTextView;
 
 
     @Override
@@ -75,11 +81,14 @@ public class DialogActivity extends AppCompatActivity {
         mMessageEditText = findViewById(R.id.input_text_message);
         mSendMessageButton = findViewById(R.id.send_message_button);
         mMessagesRecyclerView = findViewById(R.id.messages_recycler_view);
+        mRefreshConnectionButton = findViewById(R.id.dialog_refresh_connection_toolbar);
+        mToolbarStateTextView = findViewById(R.id.connect_status_toolbar);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true); // Отображает список с конца.
         mMessagesRecyclerView.setLayoutManager(linearLayoutManager);
         mMessagesRecyclerView.setHasFixedSize(true);
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
         mStateManager = StateManager.getStateManager();
 
 
@@ -105,9 +114,6 @@ public class DialogActivity extends AppCompatActivity {
                         Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, contactJID);
-
-
-
 
 
                         mDialogManager.addMessage(mMessageEditText.getText().toString(), false, contactJID);
@@ -147,6 +153,32 @@ public class DialogActivity extends AppCompatActivity {
         });
 
 
+        OnStateCallback callbacck;
+
+
+//        mXMPPServerConnection.onXMPPStateConnectionChanged(callbacck = new OnStateCallback() {
+//            @Override
+//            public void onStateChanged() {
+//                updateState();
+//            }
+//        });
+//
+//        mStateManager.setEventListener(callbacck);
+//
+//
+//        mRefreshConnectionButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!isMyServiceRunning()) {
+//                    Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
+//                    startService(intent);
+//
+//                }
+//
+//            }
+//        });
+
+
     }
 
 
@@ -162,6 +194,53 @@ public class DialogActivity extends AppCompatActivity {
 
         return true;
     }
+
+
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (XMPPConnectionService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateState() {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (mStateManager.getConnectionXMPPState()) {
+
+                    case CONNECTED:
+                        mToolbarStateTextView.setText("Сообщения");
+                        mRefreshConnectionButton.setVisibility(View.GONE);
+                        break;
+                    case CONNECTING:
+                        mToolbarStateTextView.setText("Подключение");
+                        mRefreshConnectionButton.setVisibility(View.GONE);
+                        break;
+                    case DISCONNECTED:
+                        mToolbarStateTextView.setText("Потеря соединения");
+                        mRefreshConnectionButton.setVisibility(View.VISIBLE);
+                        break;
+                    case AUTHENTICATED:
+                        mToolbarStateTextView.setText("Аутификация");
+                        mRefreshConnectionButton.setVisibility(View.GONE);
+                        break;
+                    case DISCONNECTING:
+                        mToolbarStateTextView.setText("Ожидания подключения");
+                        mRefreshConnectionButton.setVisibility(View.VISIBLE);
+                        break;
+
+                }
+            }
+        });
+
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -256,8 +335,6 @@ public class DialogActivity extends AppCompatActivity {
         alertDialog.setCancelable(true);
         alertDialog.show();
     }
-
-
 
 
     private class DialogOutputHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {

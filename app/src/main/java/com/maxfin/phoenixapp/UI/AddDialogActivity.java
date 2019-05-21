@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class AddingDialogActivity extends AppCompatActivity {
-    private static final String TAG = "AddingDialogActivity";
+public class AddDialogActivity extends AppCompatActivity {
+    private static final String TAG = "AddDialogActivity";
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
     private RecyclerView mRecyclerView;
@@ -98,7 +98,7 @@ public class AddingDialogActivity extends AppCompatActivity {
             ContactManager contactManager = ContactManager.get(getApplicationContext());
             mDialogList = contactManager.getCheckedLoadList();
             if (mAdapter == null) {
-                mAdapter = new AddingDialogActivity.DialogAdapter(mDialogList);
+                mAdapter = new AddDialogActivity.DialogAdapter(mDialogList);
                 mRecyclerView.setAdapter(mAdapter);
             } else {
                 mAdapter.setContacts(mDialogList);
@@ -167,7 +167,7 @@ public class AddingDialogActivity extends AppCompatActivity {
             mDialogList.remove(mContact);
             messageManager.updateConact(mContact);
             messageManager.uploadMessageList(mContact);
-            Intent intent = new Intent(AddingDialogActivity.this, DialogActivity.class);
+            Intent intent = new Intent(AddDialogActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
             startActivity(intent);
 

@@ -77,7 +77,7 @@ public class DialogListActivity extends AppCompatActivity {
 
         mStateManager = StateManager.getStateManager();
         mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection();
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
 
 
         updateUI();
@@ -112,7 +112,7 @@ public class DialogListActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DialogListActivity.this, AddingDialogActivity.class);
+                Intent intent = new Intent(DialogListActivity.this, AddDialogActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
@@ -422,7 +422,6 @@ public class DialogListActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull DialogsHolder dialogHolder, int positions) {
             Contact contact = mContactList.get(positions);
             dialogHolder.bind(contact);
-
         }
 
         @Override

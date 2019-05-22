@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.maxfin.phoenixapp.OnStateCallback;
 
-
 import java.text.ParseException;
 
 public class SipServerManager {
@@ -31,9 +30,20 @@ public class SipServerManager {
     private static CallSIPState sCallSIPState;
     private StateManager mStateManager;
 
-
     private OnStateCallback mOnSIPCallStateCallback;
     private OnStateCallback mOnSIPConnectionStateCallback;
+
+    private SipServerManager(Context context) {
+        mContext = context.getApplicationContext();
+        initializeManager(context);
+    }
+
+    public static SipServerManager getSipServerManager(Context context) {
+        if (sSipServerManager == null) {
+            sSipServerManager = new SipServerManager(context);
+        }
+        return sSipServerManager;
+    }
 
     public void onSipStateCallChanged(OnStateCallback eventListener) {
         if (eventListener != null) {
@@ -44,7 +54,6 @@ public class SipServerManager {
 
     }
 
-
     public void onSipStateConnectionChanged(OnStateCallback eventListener) {
         logger("СМЕНА СОСТОЯНИЯ: " + sConnectionSIPState);
         if (eventListener != null) {
@@ -53,7 +62,6 @@ public class SipServerManager {
             mOnSIPConnectionStateCallback.onStateChanged();
         }
     }
-
 
     public enum ConnectionSIPState {
         CONNECTED, CONNECTION, FAILED
@@ -67,18 +75,6 @@ public class SipServerManager {
         BUSE, ENDED, ERROR, ESTABLISHED, CALLING, HELD, RINGING, RINGINGBACK, CHANGED
     }
 
-    public SipServerManager(Context context) {
-        mContext = context.getApplicationContext();
-        initializeManager(context);
-    }
-
-    public static SipServerManager getSipServerManager(Context context) {
-        if (sSipServerManager == null) {
-            sSipServerManager = new SipServerManager(context);
-        }
-        return sSipServerManager;
-    }
-
     public SipManager getManager() {
         return mManager;
     }
@@ -88,9 +84,7 @@ public class SipServerManager {
             mManager = SipManager.newInstance(context);
             mStateManager = StateManager.getStateManager();
         }
-
         initializeLocalProfile();
-
     }
 
     private void initializeLocalProfile() {
@@ -123,8 +117,6 @@ public class SipServerManager {
                     sConnectionSIPState = ConnectionSIPState.CONNECTED;
                     logger("AUTHENTICATION DONE " + expiryTime);
                     onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
-
-
                 }
 
                 @Override

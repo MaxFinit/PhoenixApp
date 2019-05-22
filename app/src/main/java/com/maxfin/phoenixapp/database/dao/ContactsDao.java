@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.database;
+package com.maxfin.phoenixapp.database.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;

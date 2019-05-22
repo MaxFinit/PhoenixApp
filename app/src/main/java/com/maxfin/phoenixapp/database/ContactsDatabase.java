@@ -3,6 +3,9 @@ package com.maxfin.phoenixapp.database;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
+import com.maxfin.phoenixapp.database.dao.CallDao;
+import com.maxfin.phoenixapp.database.dao.ContactsDao;
+import com.maxfin.phoenixapp.database.dao.MessagesDao;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;

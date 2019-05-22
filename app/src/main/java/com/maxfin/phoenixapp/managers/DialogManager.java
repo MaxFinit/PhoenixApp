@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.maxfin.phoenixapp.App;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
-import com.maxfin.phoenixapp.database.MessagesDao;
+import com.maxfin.phoenixapp.database.dao.MessagesDao;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
@@ -39,16 +39,10 @@ public class DialogManager {
     public void addMessage(String messagesText, boolean messageType, String id) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
-
         String date = dateFormat.format(Calendar.getInstance().getTime());
-
         mMessage = new Message(messagesText, messageType, date, id);
-
-
         mMessagesDao.insertMessage(mMessage);
 
-
-        //    mMessageList.add(mMessage);
     }
 
 
@@ -72,22 +66,15 @@ public class DialogManager {
     }
 
     public Message getLastMessage(String id) {
-
         try {
             mMessageList = mMessagesDao.loadHistory(id);
         } catch (Exception e) {
             Log.d(TAG, "fail");
             e.getStackTrace();
         }
-
-
         if (mMessageList.size() > 0)
             return mMessageList.get(mMessageList.size() - 1);
-
-
         return null;
-
-
     }
 
     public Contact getContact(String id) {

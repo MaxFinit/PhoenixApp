@@ -15,10 +15,6 @@
     <uses-permission android:name="android.permission.USE_SIP" />
 
 
-
-
-
-
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -27,37 +23,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".UI.MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.CallActivity" />
-        <activity android:name=".UI.DialogListActivity" />
+        <activity android:name=".activities.CallActivity" />
+        <activity android:name=".activities.DialogListActivity" />
+
         <activity
-            android:name=".UI.DialogActivity"
-            android:parentActivityName=".UI.DialogListActivity"
+            android:name=".activities.AddDialogActivity"
+            android:parentActivityName=".activities.DialogListActivity" />
+        <activity android:name=".activities.OutgoingCallActivity" />
+        <activity android:name=".activities.BlackListActivity" />
+        <activity
+            android:name=".activities.DialogActivity"
+            android:parentActivityName=".activities.DialogListActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".UI.AddDialogActivity"
-            android:parentActivityName=".UI.DialogListActivity" />
-        <activity android:name=".UI.OutgoingCallActivity" />
 
         <service android:name=".XMPPConnectionService" />
 
         <receiver
-        android:name=".IncomingCallReceiver"
-        android:enabled="true"
-        android:exported="true">
-        </receiver>
+            android:name=".IncomingCallReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver
             android:name=".StateConnectBroadcast"
-            android:enabled="true" >
+            android:enabled="true">
             <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CONNECTED" />
+                <action android:name="android.net.wifi.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 

@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.maxfin.phoenixapp.ConnectWorker;
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         receiverRegistration();
         sipRegistration();
         startService();
-       // startWorker();
+        // startWorker();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = bottomNavigationView.getMenu();
@@ -72,6 +74,16 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 return false;
+            }
+        });
+
+
+        Button blackListButton = findViewById(R.id.black_list_button);
+        blackListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toBlackListActivity = new Intent(MainActivity.this, BlackListActivity.class);
+                startActivity(toBlackListActivity);
             }
         });
 
@@ -113,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startService() {
-        Intent i1 = new Intent(this, XMPPConnectionService.class);
-        startService(i1);
+        Intent startXMPPConnectService = new Intent(this, XMPPConnectionService.class);
+        startService(startXMPPConnectService);
     }
 
     private void startWorker() {
@@ -132,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction("android.Sip.INCOMING_CALL");
         callReceiver = new IncomingCallReceiver();
         registerReceiver(callReceiver, filter);
-
-
     }
 
     private void sipRegistration() {

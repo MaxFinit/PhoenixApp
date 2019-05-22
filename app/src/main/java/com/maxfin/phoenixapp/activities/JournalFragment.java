@@ -1,13 +1,8 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
-import android.Manifest;
-import android.content.ContentUris;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,14 +22,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.maxfin.phoenixapp.R;
-import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

@@ -1,14 +1,11 @@
 package com.maxfin.phoenixapp.managers;
 
-import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import com.maxfin.phoenixapp.App;
-import com.maxfin.phoenixapp.database.ContactsDao;
+import com.maxfin.phoenixapp.database.dao.ContactsDao;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.models.Contact;
-import com.maxfin.phoenixapp.R;
 
 import java.util.ArrayList;
 import java.util.List;

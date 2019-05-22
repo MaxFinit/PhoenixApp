@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
 import android.Manifest;
 import android.content.ContentUris;
@@ -62,8 +62,12 @@ public class ContactFragment extends Fragment {
         if (savedInstanceState != null)
             isRefreshing = savedInstanceState.getBoolean(REFRESH_STATE);
 
-
-        updateUi();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
+                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
+        } else {
+            updateUi();
+        }
 
         mSearchContactsEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -98,30 +102,26 @@ public class ContactFragment extends Fragment {
 
 
     private void updateUi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
-                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
-        } else {
-            ContactManager contactManager = ContactManager.get(getContext());
-            if (isRefreshing) {
-                contactManager.uploadContacts(getContext());
-                isRefreshing = false;
-            }
-            contactList = contactManager.getSortedContactList();
-            if (mAdapter == null) {
-                mAdapter = new ContactAdapter(contactList);
-                mContactsRecyclerView.setAdapter(mAdapter);
-            } else {
-                mAdapter.setContacts(contactList);
-                mAdapter.notifyDataSetChanged();
-            }
+        ContactManager contactManager = ContactManager.get(getContext());
+        if (isRefreshing) {
+            contactManager.uploadContacts(getContext());
+            isRefreshing = false;
         }
+        contactList = contactManager.getSortedContactList();
+        if (mAdapter == null) {
+            mAdapter = new ContactAdapter(contactList);
+            mContactsRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setContacts(contactList);
+            mAdapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateUi();
+    //    updateUi();
     }
 
     @Override

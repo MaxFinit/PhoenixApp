@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.maxfin.phoenixapp.UI.DialogActivity;
+import com.maxfin.phoenixapp.activities.DialogActivity;
 import com.maxfin.phoenixapp.managers.DialogManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
@@ -35,7 +35,6 @@ import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.sm.StreamManagementException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -129,7 +128,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    void connect() throws IOException, XMPPException, SmackException {
+    public boolean isAlive() {
+        return mConnection.isSmAvailable();
+    }
+
+
+    public void connect() throws IOException, XMPPException, SmackException {
         Log.d(TAG, "CONNECTION TO SERVER");
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setXmppDomain(mServiceName);
@@ -287,7 +291,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                switch (Objects.requireNonNull(intent.getAction())){
+                switch (Objects.requireNonNull(intent.getAction())) {
                     case XMPPConnectionService.SEND_MESSAGE:
                         sendMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY),
                                 intent.getStringExtra(XMPPConnectionService.BUNDLE_TO));
@@ -347,10 +351,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 //                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
 //                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
         mContext.sendBroadcast(intent);
-
-
-
-
 
     }
 

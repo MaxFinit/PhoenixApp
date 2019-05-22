@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -9,10 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -37,14 +35,11 @@ import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.XMPPServerConnection;
-import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.DialogManager;
-import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.managers.StateManager;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -153,30 +148,25 @@ public class DialogActivity extends AppCompatActivity {
         });
 
 
-        OnStateCallback callbacck;
+        mXMPPServerConnection.onXMPPStateConnectionChanged(new OnStateCallback() {
+            @Override
+            public void onStateChanged() {
+                updateState();
+            }
+        });
 
 
-//        mXMPPServerConnection.onXMPPStateConnectionChanged(callbacck = new OnStateCallback() {
-//            @Override
-//            public void onStateChanged() {
-//                updateState();
-//            }
-//        });
-//
-//        mStateManager.setEventListener(callbacck);
-//
-//
-//        mRefreshConnectionButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!isMyServiceRunning()) {
-//                    Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
-//                    startService(intent);
-//
-//                }
-//
-//            }
-//        });
+        mRefreshConnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
+                startService(intent);
+
+            }
+
+
+        });
 
 
     }
@@ -258,6 +248,14 @@ public class DialogActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!mXMPPServerConnection.isAlive()) {
+            Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
+            startService(intent);
+            updateState();
+
+        }
+
+
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

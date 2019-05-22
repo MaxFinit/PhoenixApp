@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
 import android.content.Context;
 import android.content.Intent;

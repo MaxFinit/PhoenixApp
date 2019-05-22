@@ -9,7 +9,6 @@ import android.util.Log;
 
 public class StateConnectBroadcast extends BroadcastReceiver {
     private static final String TAG = "StateConnectBroadcast";
-    Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -24,7 +23,6 @@ public class StateConnectBroadcast extends BroadcastReceiver {
                 .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         if (wifi.isConnected()) {
-
 
             Log.d(TAG, "Restart service");
             Intent i1 = new Intent(context, XMPPConnectionService.class);

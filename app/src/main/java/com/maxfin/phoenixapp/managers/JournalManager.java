@@ -1,7 +1,7 @@
 package com.maxfin.phoenixapp.managers;
 
 import com.maxfin.phoenixapp.App;
-import com.maxfin.phoenixapp.database.CallDao;
+import com.maxfin.phoenixapp.database.dao.CallDao;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;

@@ -1,4 +1,4 @@
-package com.maxfin.phoenixapp.UI;
+package com.maxfin.phoenixapp.activities;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class DialogListActivity extends AppCompatActivity {
+    private static final String TAG = "DialogListActivity";
 
     private TextView mEmptyDialogsList;
     private EditText mSearchDialogsList;
@@ -140,8 +142,6 @@ public class DialogListActivity extends AppCompatActivity {
         OnStateCallback callbacck;
 
 
-
-
         mXMPPServerConnection.onXMPPStateConnectionChanged(callbacck = new OnStateCallback() {
             @Override
             public void onStateChanged() {
@@ -150,8 +150,6 @@ public class DialogListActivity extends AppCompatActivity {
         });
 
         mStateManager.setEventListener(callbacck);
-
-
 
 
         mRefreshConnectButton.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +178,15 @@ public class DialogListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+
+        if (!mXMPPServerConnection.isAlive()) {
+            Log.d(TAG,"RESTART CONNECTION");
+            Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
+            startService(intent);
+            updateState();
+        }
+
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -394,9 +401,6 @@ public class DialogListActivity extends AppCompatActivity {
 
         }
     }
-
-
-
 
 
     public class DialogsAdapter extends RecyclerView.Adapter<DialogsHolder> {

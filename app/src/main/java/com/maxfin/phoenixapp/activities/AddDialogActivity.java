@@ -39,27 +39,22 @@ public class AddDialogActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private DialogAdapter mAdapter;
-    private EditText mSearchDialogsList;
-    private Toolbar mDialogToolbar;
-    List<Contact> mDialogList;
+    private List<Contact> mDialogList;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding_dialog);
-        mDialogToolbar = findViewById(R.id.adding_dialog_tool_bar_menu);
-        setSupportActionBar(mDialogToolbar);
+        Toolbar dialogToolbar = findViewById(R.id.adding_dialog_tool_bar_menu);
+        setSupportActionBar(dialogToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-
         mRecyclerView = findViewById(R.id.add_dialog_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mSearchDialogsList = findViewById(R.id.search_message_contact_edit);
 
-        updateUi();
 
-        mSearchDialogsList.addTextChangedListener(new TextWatcher() {
+        EditText searchDialogsList = findViewById(R.id.search_message_contact_edit);
+        searchDialogsList.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -76,6 +71,7 @@ public class AddDialogActivity extends AppCompatActivity {
             }
         });
 
+        updateUi();
 
     }
 
@@ -165,7 +161,7 @@ public class AddDialogActivity extends AppCompatActivity {
             mContact.setJId(mContact.getNumber() + "@jabber.ru");
             mContact.setIsLoaded(true);
             mDialogList.remove(mContact);
-            messageManager.updateConact(mContact);
+            messageManager.updateContact(mContact);
             messageManager.uploadMessageList(mContact);
             Intent intent = new Intent(AddDialogActivity.this, DialogActivity.class);
             intent.putExtra("EXTRA_CONTACT_JID", mContact.getJId());
@@ -209,8 +205,6 @@ public class AddDialogActivity extends AppCompatActivity {
             mContactList = filteredList;
             notifyDataSetChanged();
         }
-
-
     }
 
 

@@ -22,36 +22,16 @@ public class XMPPConnectionService extends Service {
     private static final String TAG = "XMPPConnectionService";
 
     public static final String SEND_MESSAGE = "com.maxfin.phoenixapp.sendmessage";
-    public static final String RESEIVED_MESSAGE = "com.maxfin.phoenixapp.reseivedmessage";
+    public static final String RECEIVED_MESSAGE = "com.maxfin.phoenixapp.reseivedmessage";
+    public static final String NEW_MESSAGE = "com.maxfin.phoenixapp.newmessage";
     public static final String BUNDLE_MESSAGE_BODY = "b_body";
     public static final String BUNDLE_TO = "b_to";
-
-    public static final String NEW_MESSAGE = "com.maxfin.phoenixapp.newmessage";
 //    public static final String BUNDLE_FROM_JID = "b_from";
-
 
     private boolean mActive;
     private Thread mThread;
     private Handler mTHandler;
     private XMPPServerConnection mConnection;
-
-    public XMPPConnectionService() {
-    }
-
-//    public static XMPPServerConnection.ConnectionXMPPState getConnectionXMPPState() {
-//        if (sConnectionXMPPState == null) {
-//            return XMPPServerConnection.ConnectionXMPPState.DISCONNECTED;
-//        }
-//        return sConnectionXMPPState;
-//    }
-//
-//    public static XMPPServerConnection.LoggedInXMPPState getLoggedInXMPPState() {
-//        if (sLoggedInXMPPState == null) {
-//            return XMPPServerConnection.LoggedInXMPPState.LOGGED_OUT;
-//        }
-//        return sLoggedInXMPPState;
-//    }
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -66,18 +46,18 @@ public class XMPPConnectionService extends Service {
 
     private void initConnection() {
 
-        Log.d(TAG, "Init connection");
+        Log.d(TAG, "INIT CONNECTION");
 
         if (mConnection == null) {
+            Log.d(TAG, "CREATE CONNECTION OBJECT");
             mConnection = XMPPServerConnection.getXMPPServerConnection(this);
         }
 
         try {
             mConnection.connect();
         } catch (IOException | SmackException | XMPPException e) {
-            Log.d(TAG, "Something went wrong while connecting ,make sure the credentials are right and try again");
+            Log.d(TAG, "ERROR");
             e.printStackTrace();
-            //Stop the service all together.
             stopSelf();
         }
 
@@ -131,3 +111,18 @@ public class XMPPConnectionService extends Service {
 
     }
 }
+
+
+//    public static XMPPServerConnection.ConnectionXMPPState getConnectionXMPPState() {
+//        if (sConnectionXMPPState == null) {
+//            return XMPPServerConnection.ConnectionXMPPState.DISCONNECTED;
+//        }
+//        return sConnectionXMPPState;
+//    }
+//
+//    public static XMPPServerConnection.LoggedInXMPPState getLoggedInXMPPState() {
+//        if (sLoggedInXMPPState == null) {
+//            return XMPPServerConnection.LoggedInXMPPState.LOGGED_OUT;
+//        }
+//        return sLoggedInXMPPState;
+//    }

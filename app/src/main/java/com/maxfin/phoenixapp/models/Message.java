@@ -25,10 +25,6 @@ public class Message {
         return mContactId;
     }
 
-    public void setContactId(String contactId) {
-        mContactId = contactId;
-    }
-
     public Message(String textMessage, boolean typeMessage, String dateMessage, String contactId) {
         mTextMessage = textMessage;
         mTypeMessage = typeMessage;

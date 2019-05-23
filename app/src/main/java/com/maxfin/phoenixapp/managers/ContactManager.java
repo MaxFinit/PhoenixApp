@@ -45,10 +45,13 @@ public class ContactManager {
         mDialogContactList = new ArrayList<>();
         mContactList = new ArrayList<>();
         messageManager = MessageManager.get();
+
         ContentResolver contentResolver = mContext.getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
-                null, null);
+        Cursor cursor = contentResolver.
+                query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+
         assert cursor != null;
+
         if (cursor.moveToFirst()) {
             do {
                 mContact = new Contact();
@@ -57,7 +60,6 @@ public class ContactManager {
                 mContact.setContactId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
                 mContact.setPhoto(uploadImage(mContext));
                 mContact.setIsLoaded(false);
-                Log.d(TAG, "" + Uri.parse(mContact.getPhoto()));
                 /*
                 Ужасный костыль, из-за дублирования номеров, пофиксить потом
                 */
@@ -115,7 +117,7 @@ public class ContactManager {
     }
 
 
-    public void returnToChekedList(Contact contact) {
+    public void returnToCheckedList(Contact contact) {
         mDialogContactList.add(contact);
     }
 

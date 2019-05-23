@@ -1,16 +1,9 @@
 package com.maxfin.phoenixapp.models;
 
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-
-import com.maxfin.phoenixapp.R;
 
 @Entity(indices = {
         @Index("mName"),
@@ -18,15 +11,14 @@ import com.maxfin.phoenixapp.R;
 })
 public class Contact {
 
-    @PrimaryKey @NonNull
+    @PrimaryKey
+    @NonNull
     private String mJId;
-
     private String mPhoto;
     private String mName;
     private String mNumber;
     private String mContactId;
     private Boolean mIsLoaded;
-
 
     public Boolean getIsLoaded() {
         return mIsLoaded;
@@ -68,7 +60,6 @@ public class Contact {
         mContactId = contactId;
     }
 
-
     public String getJId() {
         return mJId;
     }
@@ -76,6 +67,4 @@ public class Contact {
     public void setJId(String JId) {
         mJId = JId;
     }
-
-
 }

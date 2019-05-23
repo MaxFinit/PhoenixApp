@@ -55,20 +55,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private static final String TAG = "XMPPServerConnection";
     private static final int NOTIFY_ID = 42;
     private static final String CHANEL_ID = "new message";
-    private static XMPPServerConnection mXMPPServerConnection;
     private final Context mApplicationContext;
     private final Context mContext;
     private final String mUsername;
-    private final String mPassword;
     private final String mServiceName;
     private User mUser;
     private XMPPTCPConnection mConnection;
-    private BroadcastReceiver uiThreadMessageReceiver;
     private StateManager mStateManager;
-    private DeliveryReceiptManager mDeliveryReceiptManager;
     private ConnectionXMPPState mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
     private OnStateCallback mOnXMPPConnectionStateCallback;
-
+    private static XMPPServerConnection mXMPPServerConnection;
 
     public enum ConnectionXMPPState {
         CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED
@@ -92,24 +88,16 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 //        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
 //        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
 
-
         Log.d(TAG, "XMPPServerConnection CONSTRUCTOR CALLED");
         mStateManager = StateManager.getStateManager();
         mApplicationContext = context.getApplicationContext();
         mContext = context;
-//        String jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext)
-//                .getString("xmpp_jid", null);
-//        mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext)
-//                .getString("xmpp_password", null);
 
         mUser = new User("maxfin@jabber.ru", "maxim4232", "44", "44", false);   // ВРЕМЕННЫЙ ПОЛЬЗОВАТЕЛЬ!!!!
-        String jid = mUser.getJId();
-        mPassword = mUser.getJPassword();
 
-
-        if (jid != null) {
-            mUsername = jid.split("@")[0];
-            mServiceName = jid.split("@")[1];
+        if (mUser.getJId() != null) {
+            mUsername = mUser.getJId().split("@")[0];
+            mServiceName = mUser.getJId().split("@")[1];
         } else {
             mUsername = "";
             mServiceName = "";
@@ -128,17 +116,11 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
 
-    public boolean isAlive() {
-        return mConnection.isSmAvailable();
-    }
-
-
     public void connect() throws IOException, XMPPException, SmackException {
         Log.d(TAG, "CONNECTION TO SERVER");
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setXmppDomain(mServiceName);
-        builder.setUsernameAndPassword(mUsername, mPassword);
-        //builder.setHostAddress()
+        builder.setUsernameAndPassword(mUsername, mUser.getJPassword());
         builder.setResource("Resource");
         builder.setKeystorePath("");
 
@@ -148,20 +130,18 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         mConnection.addConnectionListener(this);
 
 
-        if (mOnXMPPConnectionStateCallback == null) {
-            mOnXMPPConnectionStateCallback = mStateManager.getEventListener();
-        }
-
-
         try {
             Log.d(TAG, "TRY CONNECTING");
             mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
             onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
             mConnection.connect();
             mConnection.login();
-            mDeliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(mConnection);
-            mDeliveryReceiptManager.addReceiptReceivedListener(this);
+
+            DeliveryReceiptManager deliveryReceiptManager = DeliveryReceiptManager.getInstanceFor(mConnection);
+            deliveryReceiptManager.addReceiptReceivedListener(this);
+
             Log.d(TAG, "LOG IN, YAY");
+
         } catch (InterruptedException e) {
             e.printStackTrace();
             Toast.makeText(mApplicationContext, "DISCONNECT", Toast.LENGTH_SHORT).show();
@@ -171,7 +151,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         ChatManager.getInstanceFor(mConnection).addIncomingListener(new IncomingChatMessageListener() {
             @Override
             public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
-
 
                 message.addExtension(new DeliveryReceipt(message.getStanzaId()));
 
@@ -198,29 +177,20 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
                 Bitmap bitmap = null;
                 try {
-
                     bitmap = MediaStore.Images.Media.getBitmap(mApplicationContext.getContentResolver(), Uri.parse(contact.getPhoto()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-
                 createNotificationChannel(contactJid, "test");
-
-
                 createNotification(contactJid, message.getBody(), contact.getName(), bitmap);
 
 
                 Intent intent = new Intent(XMPPConnectionService.NEW_MESSAGE);
                 intent.setPackage(mContext.getPackageName());
-//                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
-//                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
                 mContext.sendBroadcast(intent);
 
-
                 Log.d(TAG, "RECEIVED MESSAGE FROM :" + contactJid + " BROADCAST SENT");
-
-
             }
         });
 
@@ -228,6 +198,31 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         ReconnectionManager.setEnabledPerDefault(true);
         reconnectionManager.enableAutomaticReconnection();
 
+    }
+
+    private void sendMessage(String stringBody, String stringJId) {
+        Log.d(TAG, "SENDING MESSAGE TO :" + stringJId);
+
+        EntityBareJid jid = null;
+
+        ChatManager chatManager = ChatManager.getInstanceFor(mConnection);
+        try {
+            jid = JidCreate.entityBareFrom(stringJId);
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+        Chat chat = chatManager.chatWith(jid);
+        try {
+            Message message = new Message(jid, Message.Type.chat);
+            DeliveryReceiptRequest.addTo(message);
+            message.setType(Message.Type.chat);
+            message.setBody(stringBody);
+            chat.send(message);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createNotification(String jId, String messageBody, String name, Bitmap bitmap) {
@@ -251,12 +246,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                 .setContentIntent(pendingIntent).build();
 
 
-        //  ? notification.contentView.setImageViewUri(android.R.id.icon,Uri.parse(photo));
-
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(NOTIFY_ID, notification);
-
-
     }
 
 
@@ -274,6 +265,10 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         }
     }
 
+    public boolean isAlive() {
+        return mConnection.isSmEnabled();
+    }
+
 
     void disconnect() {
         Log.d(TAG, "DISCONNECTING FROM SERVER" + mServiceName);
@@ -281,13 +276,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             mStateManager.setConnectionXMPPState(ConnectionXMPPState.DISCONNECTED);
             mConnection.disconnect();
         }
-
         mConnection = null;
     }
 
 
     private void setUiThreadMessageReceiver() {
-        uiThreadMessageReceiver = new BroadcastReceiver() {
+        BroadcastReceiver uiThreadMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -296,64 +290,28 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
                         sendMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY),
                                 intent.getStringExtra(XMPPConnectionService.BUNDLE_TO));
                         break;
-                    case XMPPConnectionService.RESEIVED_MESSAGE:
+                    case XMPPConnectionService.RECEIVED_MESSAGE:
                         break;
-
                 }
-
-
             }
         };
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(XMPPConnectionService.SEND_MESSAGE);
-        filter.addAction(XMPPConnectionService.RESEIVED_MESSAGE);
+        filter.addAction(XMPPConnectionService.RECEIVED_MESSAGE);
         mApplicationContext.registerReceiver(uiThreadMessageReceiver, filter);
-
-    }
-
-    private void sendMessage(String stringBody, String stringJId) {
-        Log.d(TAG, "SENDING MESSAGE TO :" + stringJId);
-
-        EntityBareJid jid = null;
-
-        ChatManager chatManager = ChatManager.getInstanceFor(mConnection);
-
-
-        try {
-            jid = JidCreate.entityBareFrom(stringJId);
-        } catch (XmppStringprepException e) {
-            e.printStackTrace();
-        }
-        Chat chat = chatManager.chatWith(jid);
-        try {
-            Message message = new Message(jid, Message.Type.chat);
-            DeliveryReceiptRequest.addTo(message);
-            message.setType(Message.Type.chat);
-            message.setBody(stringBody);
-            chat.send(message);
-
-
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     @Override
     public void onReceiptReceived(Jid fromJid, Jid toJid, String receiptId, Stanza receipt) {
         Log.d(TAG, "RECEIVER MESSAGE");
-        Intent intent = new Intent(XMPPConnectionService.RESEIVED_MESSAGE);
+        Intent intent = new Intent(XMPPConnectionService.RECEIVED_MESSAGE);
         intent.setPackage(mContext.getPackageName());
 //                intent.putExtra(XMPPConnectionService.BUNDLE_FROM_JID,contactJid);
 //                intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY,message.getBody());
         mContext.sendBroadcast(intent);
 
     }
-
 
     private void acknowledgementFromServer(final Message message) throws StreamManagementException.StreamManagementNotEnabledException {
         if (mConnection != null && mConnection.isSmEnabled()) {
@@ -389,10 +347,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     public void connectionClosed() {
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
         onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
-
-
         Log.d(TAG, "CONNECTION CLOSED");
-
         Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
         mApplicationContext.stopService(intent);
     }

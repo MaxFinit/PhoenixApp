@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.maxfin.phoenixapp.ConnectWorker;
 import com.maxfin.phoenixapp.IncomingCallReceiver;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
@@ -26,17 +25,10 @@ import com.maxfin.phoenixapp.managers.SipServerManager;
 import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_USE_SIP = 50;
-    IncomingCallReceiver callReceiver;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +41,20 @@ public class MainActivity extends AppCompatActivity {
         receiverRegistration();
         sipRegistration();
         startService();
-        // startWorker();
+
+        Button blackListButton = findViewById(R.id.black_list_button);
+        blackListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toBlackListActivity = new Intent(MainActivity.this, BlackListActivity.class);
+                startActivity(toBlackListActivity);
+            }
+        });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -74,16 +73,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 return false;
-            }
-        });
-
-
-        Button blackListButton = findViewById(R.id.black_list_button);
-        blackListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toBlackListActivity = new Intent(MainActivity.this, BlackListActivity.class);
-                startActivity(toBlackListActivity);
             }
         });
 
@@ -129,20 +118,11 @@ public class MainActivity extends AppCompatActivity {
         startService(startXMPPConnectService);
     }
 
-    private void startWorker() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(ConnectWorker.class, 15, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build();
-        WorkManager.getInstance().enqueue(myWorkRequest);
-    }
 
     private void receiverRegistration() {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.Sip.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
+        IncomingCallReceiver callReceiver = new IncomingCallReceiver();
         registerReceiver(callReceiver, filter);
     }
 

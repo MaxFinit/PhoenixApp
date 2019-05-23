@@ -8,9 +8,8 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
-import android.net.sip.SipSession;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import com.maxfin.phoenixapp.OnStateCallback;
 
@@ -19,49 +18,14 @@ import java.text.ParseException;
 public class SipServerManager {
     private static final String TAG = "SipServerManager";
 
-    private static SipServerManager sSipServerManager;
-    private SipManager mManager = null;
-    private SipProfile mLocalProfile = null;
-    private SipAudioCall mCall = null;
-    private SipSession mSipSession = null;
+    private SipManager mManager;
+    private SipProfile mLocalProfile;
+    private SipAudioCall mCall;
     private Context mContext;
     private static ConnectionSIPState sConnectionSIPState;
     private static LoggedInSIPState sLoggedInSIPState;
     private static CallSIPState sCallSIPState;
     private StateManager mStateManager;
-
-    private OnStateCallback mOnSIPCallStateCallback;
-    private OnStateCallback mOnSIPConnectionStateCallback;
-
-    private SipServerManager(Context context) {
-        mContext = context.getApplicationContext();
-        initializeManager(context);
-    }
-
-    public static SipServerManager getSipServerManager(Context context) {
-        if (sSipServerManager == null) {
-            sSipServerManager = new SipServerManager(context);
-        }
-        return sSipServerManager;
-    }
-
-    public void onSipStateCallChanged(OnStateCallback eventListener) {
-        if (eventListener != null) {
-            mStateManager.setCallSIPState(sCallSIPState);
-            mOnSIPCallStateCallback = eventListener;
-            mOnSIPCallStateCallback.onStateChanged();
-        }
-
-    }
-
-    public void onSipStateConnectionChanged(OnStateCallback eventListener) {
-        logger("СМЕНА СОСТОЯНИЯ: " + sConnectionSIPState);
-        if (eventListener != null) {
-            mStateManager.setConnectionSIPState(sConnectionSIPState);
-            mOnSIPConnectionStateCallback = eventListener;
-            mOnSIPConnectionStateCallback.onStateChanged();
-        }
-    }
 
     public enum ConnectionSIPState {
         CONNECTED, CONNECTION, FAILED
@@ -75,8 +39,21 @@ public class SipServerManager {
         BUSE, ENDED, ERROR, ESTABLISHED, CALLING, HELD, RINGING, RINGINGBACK, CHANGED
     }
 
-    public SipManager getManager() {
-        return mManager;
+    private OnStateCallback mOnSIPCallStateCallback;
+    private OnStateCallback mOnSIPConnectionStateCallback;
+
+    private static SipServerManager sSipServerManager;
+
+    private SipServerManager(Context context) {
+        mContext = context.getApplicationContext();
+        initializeManager(context);
+    }
+
+    public static SipServerManager getSipServerManager(Context context) {
+        if (sSipServerManager == null) {
+            sSipServerManager = new SipServerManager(context);
+        }
+        return sSipServerManager;
     }
 
     private void initializeManager(Context context) {
@@ -88,14 +65,10 @@ public class SipServerManager {
     }
 
     private void initializeLocalProfile() {
-        if (mManager == null) {
-            return;
-        }
 
         if (mLocalProfile != null) {
-            closeLocalProfile();
+           // closeLocalProfile();
         }
-
 
         try {
             SipProfile.Builder builder = new SipProfile.Builder("76920", "172.16.13.223");
@@ -106,8 +79,8 @@ public class SipServerManager {
             SipRegistrationListener listener = new SipRegistrationListener() {
                 @Override
                 public void onRegistering(String localProfileUri) {
-                    //                sLoggedInSIPState = LoggedInSIPState.AUTHENTICATION;
-                    //                 onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
+                    sLoggedInSIPState = LoggedInSIPState.AUTHENTICATION;
+                    onSipStateConnectionChanged(mOnSIPConnectionStateCallback);
                     logger("AUTHENTICATION..." + localProfileUri);
                 }
 
@@ -129,13 +102,12 @@ public class SipServerManager {
             };
 
 
-            Intent i = new Intent();
-            i.setAction("android.SipDemo.INCOMING_CALL");
-            PendingIntent pi = PendingIntent.getBroadcast(mContext, 0, i, Intent.FILL_IN_DATA);
+            Intent incomingCallIntent = new Intent();
+            incomingCallIntent.setAction("android.SipDemo.INCOMING_CALL");
+            PendingIntent pi = PendingIntent.getBroadcast(mContext, 0, incomingCallIntent, Intent.FILL_IN_DATA);
 
 
             mManager.open(mLocalProfile, pi, null);
-
             mManager.register(mLocalProfile, 30, listener);
 
 
@@ -160,11 +132,8 @@ public class SipServerManager {
 
     }
 
-    public void closeLocalProfile() {
-        if (mManager == null) {
-            return;
-        }
 
+    public void closeLocalProfile() {
         try {
             mManager.close(mLocalProfile.getUriString());
             sSipServerManager = null;
@@ -172,21 +141,35 @@ public class SipServerManager {
             e.printStackTrace();
             logger("FAILED TO CLOSE LOCAL PROFILE" + e.getMessage());
         }
+    }
 
+    public void onSipStateCallChanged(OnStateCallback eventListener) {
+        if (eventListener != null) {
+            mStateManager.setCallSIPState(sCallSIPState);
+            mOnSIPCallStateCallback = eventListener;
+            mOnSIPCallStateCallback.onStateChanged();
+        }
 
     }
 
-    public void initiateCall() {
+    public void onSipStateConnectionChanged(OnStateCallback eventListener) {
+        logger("СМЕНА СОСТОЯНИЯ: " + sConnectionSIPState);
+        if (eventListener != null) {
+            mStateManager.setConnectionSIPState(sConnectionSIPState);
+            mOnSIPConnectionStateCallback = eventListener;
+            mOnSIPConnectionStateCallback.onStateChanged();
+        }
+    }
+
+    public void initiateCall(String number) {
+
+//        if (mCall != null && mCall.isInCall()) {
+//            Toast.makeText(mContext, "You're currently busy...", Toast.LENGTH_SHORT);
+//            return;
+//        }
 
         sCallSIPState = CallSIPState.CALLING;
         logger("INIT CALL");
-
-        if (mCall != null && mCall.isInCall()) {
-            Toast.makeText(mContext, "You're currently busy...", Toast.LENGTH_SHORT);
-            return;
-        }
-
-
         SipAudioCall.Listener listener = new SipAudioCall.Listener() {
 
             @Override
@@ -222,8 +205,6 @@ public class SipServerManager {
                 logger("CALL ERROR" + errorCode + errorMessage + call.getState());
                 endCall();
                 onSipStateCallChanged(mOnSIPCallStateCallback);
-
-
             }
 
             @Override
@@ -258,9 +239,7 @@ public class SipServerManager {
         };
 
         try {
-
-
-            SipProfile.Builder builder = new SipProfile.Builder("+380713222303", "172.16.13.223");
+            SipProfile.Builder builder = new SipProfile.Builder(number, "172.16.13.223");
             SipProfile profile = builder.build();
 
             mCall = mManager.makeAudioCall(mLocalProfile,
@@ -273,7 +252,7 @@ public class SipServerManager {
             onSipStateCallChanged(mOnSIPCallStateCallback);
             e.printStackTrace();
             if (mLocalProfile != null)
-                closeLocalProfile();
+                //closeLocalProfile();
             if (mCall != null) {
                 mCall.close();
             }
@@ -294,19 +273,23 @@ public class SipServerManager {
                 e.printStackTrace();
             }
             mCall.close();
+            mCall = null;
+
         }
     }
 
+
+    public SipManager getManager() {
+        return mManager;
+    }
 
     public boolean isInCall() {
         return mCall != null;
     }
 
-
     public void refreshConnection() {
         initializeLocalProfile();
     }
-
 
     private void logger(String logMessage) {
         Log.d(TAG, logMessage);

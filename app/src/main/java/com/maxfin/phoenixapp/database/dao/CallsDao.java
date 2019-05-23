@@ -11,7 +11,7 @@ import com.maxfin.phoenixapp.models.Contact;
 import java.util.List;
 
 @Dao
-public interface CallDao {
+public interface CallsDao {
 
     @Query("SELECT * FROM Call")
     List<Call> loadHistory();

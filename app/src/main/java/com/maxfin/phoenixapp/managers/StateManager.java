@@ -7,22 +7,19 @@ import static com.maxfin.phoenixapp.managers.SipServerManager.*;
 
 public class StateManager {
 
-    private static StateManager sStateManager;
-
-    OnStateCallback eventListener;
-
-    public OnStateCallback getEventListener() {
-        return eventListener;
-    }
-
-    public void setEventListener(OnStateCallback eventListener) {
-        this.eventListener = eventListener;
-    }
-
     private CallSIPState mCallSIPState;
     private ConnectionSIPState mConnectionSIPState;
     private ConnectionXMPPState mConnectionXMPPState;
     private LoggedInXMPPState mLoggedInXMPPState;
+
+    private static StateManager sStateManager;
+
+    public static StateManager getStateManager() {
+        if (sStateManager == null) {
+            sStateManager = new StateManager();
+        }
+        return sStateManager;
+    }
 
     public CallSIPState getCallSIPState() {
         return mCallSIPState;
@@ -54,13 +51,6 @@ public class StateManager {
 
     public void setLoggedInXMPPState(LoggedInXMPPState loggedInXMPPState) {
         mLoggedInXMPPState = loggedInXMPPState;
-    }
-
-    public static StateManager getStateManager() {
-        if (sStateManager == null) {
-            sStateManager = new StateManager();
-        }
-        return sStateManager;
     }
 
 

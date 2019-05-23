@@ -40,9 +40,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactFragment extends Fragment {
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
     private static final String REFRESH_STATE = "refresh state";
+    private static final String NAME_KEY = "name_key";
+    private static final String NUMBER_KEY = "number_key";
+    private static final String PHOTO_KEY = "photo_key";
 
-    private EditText mSearchContactsEditText;
-    private FloatingActionButton mAddContactButton;
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;
     private List<Contact> contactList;
@@ -55,21 +56,14 @@ public class ContactFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mSearchContactsEditText = view.findViewById(R.id.search_contact_edit);
-        mAddContactButton = view.findViewById(R.id.add_contact_in_book_button);
 
 
         if (savedInstanceState != null)
             isRefreshing = savedInstanceState.getBoolean(REFRESH_STATE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
-                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
-        } else {
-            updateUi();
-        }
 
-        mSearchContactsEditText.addTextChangedListener(new TextWatcher() {
+        EditText searchContactsEditText = view.findViewById(R.id.search_contact_edit);
+        searchContactsEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,7 +80,8 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        mAddContactButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton addContactButton = view.findViewById(R.id.add_contact_in_book_button);
+        addContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isRefreshing = true;
@@ -96,7 +91,7 @@ public class ContactFragment extends Fragment {
             }
         });
 
-
+        checkPermissions();
         return view;
     }
 
@@ -118,10 +113,21 @@ public class ContactFragment extends Fragment {
 
     }
 
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
+                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
+        } else {
+            updateUi();
+        }
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
-    //    updateUi();
+        //    updateUi();
     }
 
     @Override
@@ -135,7 +141,6 @@ public class ContactFragment extends Fragment {
             }
         }
     }
-
 
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
@@ -179,7 +184,7 @@ public class ContactFragment extends Fragment {
 
         @Override
         public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-            MenuInflater inflater = getActivity().getMenuInflater();
+            MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
             inflater.inflate(R.menu.contex_contact_menu, contextMenu);
             MenuItem call = contextMenu.getItem(0);
             MenuItem edit = contextMenu.getItem(1);
@@ -194,6 +199,11 @@ public class ContactFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
+                        Intent makeCallIntent = new Intent(getActivity(), OutgoingCallActivity.class);
+                        makeCallIntent.putExtra(NAME_KEY, mContact.getName());
+                        makeCallIntent.putExtra(NUMBER_KEY, mContact.getNumber());
+                        makeCallIntent.putExtra(PHOTO_KEY, mContact.getPhoto());
+                        startActivity(makeCallIntent);
                         break;
                     case R.id.block_contact_context_menu:
                         break;

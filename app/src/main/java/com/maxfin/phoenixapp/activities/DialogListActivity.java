@@ -61,7 +61,6 @@ public class DialogListActivity extends AppCompatActivity {
     private List<Contact> dialogList;
     private BroadcastReceiver mBroadcastReceiver;
     private XMPPServerConnection mXMPPServerConnection;
-    private Toolbar mDialogListToolbar;
     private StateManager mStateManager;
 
 
@@ -69,26 +68,18 @@ public class DialogListActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog_list);
-        mSearchDialogsList = findViewById(R.id.search_message_edit);
+
+        Toolbar dialogListToolbar = findViewById(R.id.dialog_list_tool_bar);
+        setSupportActionBar(dialogListToolbar);
         mEmptyDialogsList = findViewById(R.id.empty_list_item);
         mDialogsRecyclerView = findViewById(R.id.message_recycler_view);
-        mDialogListToolbar = findViewById(R.id.dialog_list_tool_bar);
-        setSupportActionBar(mDialogListToolbar);
         mToolBarStateText = findViewById(R.id.dialog_list_state_toolbar);
-        mRefreshConnectButton = findViewById(R.id.dialog_list_refresh_connection_toolbar);
 
-        mStateManager = StateManager.getStateManager();
-        mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
-
-
-        updateUI();
 
         BottomNavigationView mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = mBottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
-
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -118,10 +109,22 @@ public class DialogListActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
-
             }
         });
 
+        mRefreshConnectButton = findViewById(R.id.dialog_list_refresh_connection_toolbar);
+        mRefreshConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isMyServiceRunning()) {
+                    Intent startXMPPConnectService = new Intent(getApplicationContext(), XMPPConnectionService.class);
+                    startService(startXMPPConnectService);
+                }
+            }
+        });
+
+
+        mSearchDialogsList = findViewById(R.id.search_message_edit);
         mSearchDialogsList.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -139,39 +142,23 @@ public class DialogListActivity extends AppCompatActivity {
             }
         });
 
-        OnStateCallback callbacck;
 
 
-        mXMPPServerConnection.onXMPPStateConnectionChanged(callbacck = new OnStateCallback() {
+        //      OnStateCallback callbacck;
+
+        mStateManager = StateManager.getStateManager();
+        mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
+        mXMPPServerConnection.onXMPPStateConnectionChanged(new OnStateCallback() {
             @Override
             public void onStateChanged() {
                 updateState();
             }
         });
 
-        mStateManager.setEventListener(callbacck);
+        //  mStateManager.setEventListener(callbacck);
 
-
-        mRefreshConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isMyServiceRunning()) {
-                    Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
-                    startService(intent);
-
-                }
-
-            }
-        });
-
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        return true;
+        updateUI();
     }
 
 
@@ -179,9 +166,8 @@ public class DialogListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
         if (!mXMPPServerConnection.isAlive()) {
-            Log.d(TAG,"RESTART CONNECTION");
+            Log.d(TAG, "RESTART CONNECTION");
             Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
             startService(intent);
             updateState();
@@ -190,10 +176,8 @@ public class DialogListActivity extends AppCompatActivity {
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                switch (Objects.requireNonNull(action)) {
+                switch (Objects.requireNonNull(intent.getAction())) {
                     case XMPPConnectionService.NEW_MESSAGE:
-                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,contactJID);
                         updateUI();
                         break;
                     default:
@@ -204,12 +188,9 @@ public class DialogListActivity extends AppCompatActivity {
 
             }
         };
-
-
-        IntentFilter filter = new IntentFilter(XMPPConnectionService.NEW_MESSAGE);
-        registerReceiver(mBroadcastReceiver, filter);
+        IntentFilter newMesssageFilter = new IntentFilter(XMPPConnectionService.NEW_MESSAGE);
+        registerReceiver(mBroadcastReceiver, newMesssageFilter);
         updateUI();
-
     }
 
 
@@ -279,13 +260,11 @@ public class DialogListActivity extends AppCompatActivity {
 
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
-
         for (Contact item : dialogList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         mAdapter.filterList(filteredList);
     }
 
@@ -302,7 +281,6 @@ public class DialogListActivity extends AppCompatActivity {
 
     private void showDialog(final Contact contact) {
         AlertDialog.Builder alertDialog;
-
         alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Удалить диалог");
         alertDialog.setMessage("Вы уверены?");
@@ -311,11 +289,10 @@ public class DialogListActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 MessageManager messageManager = MessageManager.get();
                 contact.setIsLoaded(false);
-                messageManager.updateConact(contact);
+                messageManager.updateContact(contact);
                 messageManager.deleteFromMessageList(contact);
-                ContactManager.get(getApplicationContext()).returnToChekedList(contact);
+                ContactManager.get(getApplicationContext()).returnToCheckedList(contact);
                 updateUI();
-
             }
         });
         alertDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {

@@ -223,12 +223,9 @@ public class DialogActivity extends AppCompatActivity {
                         mToolbarStateTextView.setText("Ожидания подключения");
                         mRefreshConnectionButton.setVisibility(View.VISIBLE);
                         break;
-
                 }
             }
         });
-
-
     }
 
 
@@ -239,7 +236,8 @@ public class DialogActivity extends AppCompatActivity {
                 showDialog();
                 break;
             case android.R.id.home:
-                onBackPressed();
+                Intent toDialogList = new Intent(DialogActivity.this, DialogListActivity.class);
+                startActivity(toDialogList);
                 break;
         }
         return true;
@@ -252,7 +250,6 @@ public class DialogActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
             startService(intent);
             updateState();
-
         }
 
 
@@ -269,14 +266,11 @@ public class DialogActivity extends AppCompatActivity {
                         updateUi();
                         break;
                 }
-
-
             }
         };
         IntentFilter filter = new IntentFilter(XMPPConnectionService.NEW_MESSAGE);
         registerReceiver(mBroadcastReceiver, filter);
         updateUi();
-
     }
 
     @Override

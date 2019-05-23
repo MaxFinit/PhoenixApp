@@ -1,7 +1,7 @@
 package com.maxfin.phoenixapp.managers;
 
-import com.maxfin.phoenixapp.App;
-import com.maxfin.phoenixapp.database.dao.CallDao;
+import com.maxfin.phoenixapp.Application;
+import com.maxfin.phoenixapp.database.dao.CallsDao;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
@@ -9,13 +9,13 @@ import com.maxfin.phoenixapp.models.Contact;
 import java.util.List;
 
 public class JournalManager {
+    private CallsDao mCallsDao;
+
     private static JournalManager sJournalManager;
-    private CallDao mCallDao;
-    private List<Call> mCallsList;
 
     private JournalManager() {
-        ContactsDatabase contactsDatabase = App.getInstance().getDatabase();
-        mCallDao = contactsDatabase.mCallDao();
+        ContactsDatabase contactsDatabase = Application.getInstance().getDatabase();
+        mCallsDao = contactsDatabase.mCallDao();
     }
 
     public static JournalManager getJournalManager() {
@@ -26,24 +26,23 @@ public class JournalManager {
     }
 
     public List<Call> getCalls() {
-        mCallsList = mCallDao.loadHistory();
-        return mCallsList;
+        return mCallsDao.loadHistory();
     }
 
     public Contact getContact(String id) {
-        return mCallDao.getContact(id);
+        return mCallsDao.getContact(id);
     }
 
     public void clearJournal() {
-        mCallDao.clearHistory();
+        mCallsDao.clearHistory();
     }
 
     public void clearCall(Call call) {
-        mCallDao.deleteCall(call);
+        mCallsDao.deleteCall(call);
     }
 
     public void addCall(Call call) {
-        mCallDao.insertCall(call);
+        mCallsDao.insertCall(call);
     }
 
 

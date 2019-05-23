@@ -4,7 +4,7 @@ package com.maxfin.phoenixapp.managers;
 import android.util.Log;
 
 
-import com.maxfin.phoenixapp.App;
+import com.maxfin.phoenixapp.Application;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.database.dao.MessagesDao;
 import com.maxfin.phoenixapp.models.Contact;
@@ -17,15 +17,15 @@ import java.util.List;
 
 public class DialogManager {
     private static final String TAG = "DialogManager";
-    private Message mMessage;
+
     private List<Message> mMessageList;
-    private static DialogManager sDialogManager;
     private MessagesDao mMessagesDao;
 
+    private static DialogManager sDialogManager;
 
     private DialogManager() {
         mMessageList = new ArrayList<>();
-        ContactsDatabase contactsDatabase = App.getInstance().getDatabase();
+        ContactsDatabase contactsDatabase = Application.getInstance().getDatabase();
         mMessagesDao = contactsDatabase.mMessagesDao();
     }
 
@@ -40,16 +40,13 @@ public class DialogManager {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
         String date = dateFormat.format(Calendar.getInstance().getTime());
-        mMessage = new Message(messagesText, messageType, date, id);
-        mMessagesDao.insertMessage(mMessage);
-
+        Message message = new Message(messagesText, messageType, date, id);
+        mMessagesDao.insertMessage(message);
     }
-
 
     public void deleteMessage(Message message) {
         mMessagesDao.deleteMessage(message);
     }
-
 
     public void deleteMessageList(String id) {
         mMessagesDao.clearHistory(id);
@@ -59,7 +56,6 @@ public class DialogManager {
         try {
             mMessageList = mMessagesDao.loadHistory(id);
         } catch (Exception e) {
-            Log.d(TAG, "fail");
             e.getStackTrace();
         }
         return mMessageList;
@@ -68,19 +64,17 @@ public class DialogManager {
     public Message getLastMessage(String id) {
         try {
             mMessageList = mMessagesDao.loadHistory(id);
+            if (mMessageList.size() > 0)
+                return mMessageList.get(mMessageList.size() - 1);
         } catch (Exception e) {
             Log.d(TAG, "fail");
             e.getStackTrace();
         }
-        if (mMessageList.size() > 0)
-            return mMessageList.get(mMessageList.size() - 1);
         return null;
     }
 
     public Contact getContact(String id) {
-
         return mMessagesDao.getContact(id);
-
     }
 
 }

@@ -13,17 +13,12 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         indices = {@Index("contact_id")})
 public class Call {
 
-   public enum CallType {
-        INCOMING, OUTCOMING, CANCEL
-    }
-
     @PrimaryKey(autoGenerate = true)
     public long id;
     @ColumnInfo(name = "contact_id")
     private String mContactId;
     private byte mCallType;
     private String mData;
-
 
     public String getContactId() {
         return mContactId;

@@ -33,8 +33,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class JournalFragment extends Fragment {
-    private FloatingActionButton mFloatingActionButton;
-    private EditText mSearchJournalEditText;
     private RecyclerView mJournalRecyclerView;
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
@@ -48,39 +46,32 @@ public class JournalFragment extends Fragment {
         mJournalRecyclerView = view.findViewById(R.id.journal_recycler_view);
         mJournalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
+/////////////////////////////////////временный код
         contact = new Contact();
         contact.setJId("maxfin2@jabber.ru");
         contact.setName("Max");
         contact.setNumber("+8945554");
         Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
         contact.setPhoto(path.toString());
+////////////////////////////////////////////////////
 
-
-        mFloatingActionButton = view.findViewById(R.id.call_button);
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.call_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 Call call = new Call();
                 call.setCallType((byte) 1);
                 call.setContactId(contact.getContactId());
                 call.setData("15:54");
                 mJournalManager.addCall(call);
 
-
                 Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
-
             }
         });
 
-        updateUi();
-
-        mSearchJournalEditText = view.findViewById(R.id.search_journal_edit);
-        mSearchJournalEditText.addTextChangedListener(new TextWatcher() {
+        EditText searchJournalEditText = view.findViewById(R.id.search_journal_edit);
+        searchJournalEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -97,6 +88,7 @@ public class JournalFragment extends Fragment {
             }
         });
 
+        updateUi();
 
         return view;
     }

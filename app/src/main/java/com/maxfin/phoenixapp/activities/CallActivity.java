@@ -31,8 +31,8 @@ import java.util.Objects;
 
 public class CallActivity extends AppCompatActivity {
     private static final String TAG = "CallActivity";
+
     private View mStateSipView;
-    private Button mRefreshConnectionButton;
     private SipServerManager mSipConnectionManager;
     private StateManager mStateManager;
 
@@ -40,20 +40,17 @@ public class CallActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
-        mStateManager = StateManager.getStateManager();
         mStateSipView = findViewById(R.id.sip_call_state_view);
-        mRefreshConnectionButton = findViewById(R.id.refresh_connection_button);
-        mSipConnectionManager = SipServerManager.getSipServerManager(Objects.requireNonNull(getApplicationContext()));
 
 
         ViewPager viewPager = findViewById(R.id.container_vp);
         setUpViewPager(viewPager);
-
-
         TabLayout tabLayout = findViewById(R.id.call_tabs);
         tabLayout.setupWithViewPager(viewPager);
-        Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.call_text);
+
+        Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.call_text);      //из-за viewPager я немогу менять подписи в xml
         Objects.requireNonNull(tabLayout.getTabAt(1)).setText(R.string.contact_text);
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         Menu menu = bottomNavigationView.getMenu();
@@ -81,8 +78,8 @@ public class CallActivity extends AppCompatActivity {
             }
         });
 
-
-        mRefreshConnectionButton.setOnClickListener(new View.OnClickListener() {
+        Button refreshConnectionButton = findViewById(R.id.refresh_connection_button);
+        refreshConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSipConnectionManager.refreshConnection();
@@ -90,6 +87,8 @@ public class CallActivity extends AppCompatActivity {
         });
 
 
+        mStateManager = StateManager.getStateManager();
+        mSipConnectionManager = SipServerManager.getSipServerManager(Objects.requireNonNull(getApplicationContext()));
         mSipConnectionManager.onSipStateConnectionChanged(new OnStateCallback() {
             @Override
             public void onStateChanged() {
@@ -103,7 +102,7 @@ public class CallActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSipConnectionManager.closeLocalProfile();
+    //    mSipConnectionManager.closeLocalProfile();
     }
 
     @Override
@@ -116,8 +115,6 @@ public class CallActivity extends AppCompatActivity {
             mStateManager.setConnectionSIPState(SipServerManager.ConnectionSIPState.FAILED);
             updateState();
         }
-
-
         Log.d(TAG, "FOCUS CHANGED");
     }
 

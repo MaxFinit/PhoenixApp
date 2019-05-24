@@ -67,7 +67,7 @@ public class SipServerManager {
     private void initializeLocalProfile() {
 
         if (mLocalProfile != null) {
-           // closeLocalProfile();
+            // closeLocalProfile();
         }
 
         try {
@@ -245,6 +245,10 @@ public class SipServerManager {
             mCall = mManager.makeAudioCall(mLocalProfile,
                     profile, listener, 30);
 
+            logger(mCall.toString());
+
+
+
 
         } catch (SipException e) {
             logger("ERROR WHEN TRYING CALL");
@@ -253,9 +257,9 @@ public class SipServerManager {
             e.printStackTrace();
             if (mLocalProfile != null)
                 //closeLocalProfile();
-            if (mCall != null) {
-                mCall.close();
-            }
+                if (mCall != null) {
+                    mCall.close();
+                }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -266,6 +270,8 @@ public class SipServerManager {
 
         if (mCall != null) {
             logger("ENDING CALL");
+            logger(mCall.toString());
+
             try {
                 mCall.endCall();
                 logger("CALL ENDED");
@@ -273,7 +279,6 @@ public class SipServerManager {
                 e.printStackTrace();
             }
             mCall.close();
-            mCall = null;
 
         }
     }
@@ -281,10 +286,6 @@ public class SipServerManager {
 
     public SipManager getManager() {
         return mManager;
-    }
-
-    public boolean isInCall() {
-        return mCall != null;
     }
 
     public void refreshConnection() {

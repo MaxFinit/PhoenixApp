@@ -11,7 +11,7 @@ import com.maxfin.phoenixapp.models.Contact;
 import java.util.List;
 
 @Dao
-public interface ContactsDao {
+public interface DialogsDao {
 
     @Query("SELECT * FROM Contact")
     List<Contact> getAll();

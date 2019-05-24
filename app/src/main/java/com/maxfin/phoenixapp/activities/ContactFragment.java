@@ -1,11 +1,8 @@
 package com.maxfin.phoenixapp.activities;
 
-import android.Manifest;
 import android.content.ContentUris;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -24,12 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.Utils;
+import com.maxfin.phoenixapp.managers.BlackListManagers;
 import com.maxfin.phoenixapp.managers.ContactManager;
+import com.maxfin.phoenixapp.managers.JournalManager;
+import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +37,11 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactFragment extends Fragment {
-    private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
     private static final String REFRESH_STATE = "refresh state";
-    private static final String NAME_KEY = "name_key";
-    private static final String NUMBER_KEY = "number_key";
-    private static final String PHOTO_KEY = "photo_key";
 
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;
-    private List<Contact> contactList;
+    private List<Contact> mContactList;
     private boolean isRefreshing = false;
 
 
@@ -91,7 +86,7 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        checkPermissions();
+        updateUi();
         return view;
     }
 
@@ -102,50 +97,29 @@ public class ContactFragment extends Fragment {
             contactManager.uploadContacts(getContext());
             isRefreshing = false;
         }
-        contactList = contactManager.getSortedContactList();
+        mContactList = contactManager.getSortedContactList();
         if (mAdapter == null) {
-            mAdapter = new ContactAdapter(contactList);
+            mAdapter = new ContactAdapter(mContactList);
             mContactsRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.setContacts(contactList);
+            mAdapter.setContacts(mContactList);
             mAdapter.notifyDataSetChanged();
         }
 
     }
 
 
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getContext()).
-                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
-        } else {
-            updateUi();
-        }
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-        //    updateUi();
+        updateUi();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                updateUi();
-            } else {
-                Toast.makeText(getActivity(), "Пока вы не приймите запрос мы не можем показать вам список контактов", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
 
-        for (Contact item : contactList) {
+        for (Contact item : mContactList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase()) || item.getNumber().contains(text)) {
                 filteredList.add(item);
             }
@@ -199,13 +173,28 @@ public class ContactFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
+
+
+                        Call call = new Call(
+                                mContact.getName(),
+                                mContact.getNumber(),
+                                (byte) 2,
+                                "15:45",
+                                mContact.getPhoto(),
+                                mContact.getContactId()
+                        );
+                        JournalManager.getJournalManager().addCall(call);
+
+
                         Intent makeCallIntent = new Intent(getActivity(), OutgoingCallActivity.class);
-                        makeCallIntent.putExtra(NAME_KEY, mContact.getName());
-                        makeCallIntent.putExtra(NUMBER_KEY, mContact.getNumber());
-                        makeCallIntent.putExtra(PHOTO_KEY, mContact.getPhoto());
+                        makeCallIntent.putExtra(Utils.NAME_KEY, mContact.getName());
+                        makeCallIntent.putExtra(Utils.NUMBER_KEY, mContact.getNumber());
+                        makeCallIntent.putExtra(Utils.PHOTO_KEY, mContact.getPhoto());
                         startActivity(makeCallIntent);
                         break;
                     case R.id.block_contact_context_menu:
+                        BlackListManagers blackListManagers = BlackListManagers.getBlackListManagers();
+                        blackListManagers.addToBlackList(mContact);
                         break;
                     case R.id.edit_dialog_context_menu:
 

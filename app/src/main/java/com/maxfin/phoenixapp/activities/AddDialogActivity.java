@@ -1,10 +1,7 @@
 package com.maxfin.phoenixapp.activities;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.managers.ContactManager;
@@ -35,11 +31,10 @@ import java.util.Objects;
 
 public class AddDialogActivity extends AppCompatActivity {
     private static final String TAG = "AddDialogActivity";
-    private static final int PERMISSION_REQUEST_READ_CONTACTS = 100;
 
     private RecyclerView mRecyclerView;
     private DialogAdapter mAdapter;
-    private List<Contact> mDialogList;
+    private List<Contact> mContactList;
 
 
     @Override
@@ -87,47 +82,26 @@ public class AddDialogActivity extends AppCompatActivity {
     }
 
     private void updateUi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getApplicationContext().
-                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSION_REQUEST_READ_CONTACTS);
+        ContactManager contactManager = ContactManager.get(getApplicationContext());
+        mContactList = contactManager.getCheckedLoadList();
+        if (mAdapter == null) {
+            mAdapter = new AddDialogActivity.DialogAdapter(mContactList);
+            mRecyclerView.setAdapter(mAdapter);
         } else {
-            ContactManager contactManager = ContactManager.get(getApplicationContext());
-            mDialogList = contactManager.getCheckedLoadList();
-            if (mAdapter == null) {
-                mAdapter = new AddDialogActivity.DialogAdapter(mDialogList);
-                mRecyclerView.setAdapter(mAdapter);
-            } else {
-                mAdapter.setContacts(mDialogList);
-                mAdapter.notifyDataSetChanged();
-            }
+            mAdapter.setContacts(mContactList);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
 
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
-
-        for (Contact item : mDialogList) {
+        for (Contact item : mContactList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         mAdapter.filterList(filteredList);
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                updateUi();
-            } else {
-                Toast.makeText(this, "Пока вы не приймите запрос мы не можем показать вам список контактов",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
 
@@ -143,7 +117,6 @@ public class AddDialogActivity extends AppCompatActivity {
             mNameContactTextView = itemView.findViewById(R.id.name_contact_item);
             mNumberContactTextView = itemView.findViewById(R.id.number_contact_item);
             mNumberContactImageView = itemView.findViewById(R.id.image_contact_item);
-
         }
 
         void bind(Contact contact) {
@@ -151,8 +124,6 @@ public class AddDialogActivity extends AppCompatActivity {
             mNameContactTextView.setText(contact.getName());
             mNumberContactTextView.setText(contact.getNumber());
             mNumberContactImageView.setImageURI(Uri.parse(contact.getPhoto()));
-
-
         }
 
         @Override
@@ -160,7 +131,7 @@ public class AddDialogActivity extends AppCompatActivity {
             MessageManager messageManager = MessageManager.get();
             mContact.setJId(mContact.getNumber() + "@jabber.ru");
             mContact.setIsLoaded(true);
-            mDialogList.remove(mContact);
+            mContactList.remove(mContact);
             messageManager.updateContact(mContact);
             messageManager.uploadMessageList(mContact);
             Intent intent = new Intent(AddDialogActivity.this, DialogActivity.class);

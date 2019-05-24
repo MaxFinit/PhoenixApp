@@ -58,7 +58,7 @@ public class DialogListActivity extends AppCompatActivity {
     private ImageButton mRefreshConnectButton;
     private RecyclerView mDialogsRecyclerView;
     private DialogsAdapter mAdapter;
-    private List<Contact> dialogList;
+    private List<Contact> mContactList;
     private BroadcastReceiver mBroadcastReceiver;
     private XMPPServerConnection mXMPPServerConnection;
     private StateManager mStateManager;
@@ -144,8 +144,6 @@ public class DialogListActivity extends AppCompatActivity {
 
 
 
-        //      OnStateCallback callbacck;
-
         mStateManager = StateManager.getStateManager();
         mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
@@ -156,7 +154,6 @@ public class DialogListActivity extends AppCompatActivity {
             }
         });
 
-        //  mStateManager.setEventListener(callbacck);
 
         updateUI();
     }
@@ -202,16 +199,16 @@ public class DialogListActivity extends AppCompatActivity {
 
     private void updateUI() {
         MessageManager messageManager = MessageManager.get();
-        dialogList = messageManager.getContactList();
-        if (dialogList.size() > 0) {
+        mContactList = messageManager.getContactList();
+        if (mContactList.size() > 0) {
             mDialogsRecyclerView.setVisibility(View.VISIBLE);
             mSearchDialogsList.setVisibility(View.VISIBLE);
             mEmptyDialogsList.setVisibility(View.GONE);
             if (mAdapter == null) {
-                mAdapter = new DialogsAdapter(dialogList);
+                mAdapter = new DialogsAdapter(mContactList);
                 mDialogsRecyclerView.setAdapter(mAdapter);
             } else {
-                mAdapter.setContacts(dialogList);
+                mAdapter.setContacts(mContactList);
                 mAdapter.notifyDataSetChanged();
             }
         } else {
@@ -260,7 +257,7 @@ public class DialogListActivity extends AppCompatActivity {
 
     private void filter(String text) {
         List<Contact> filteredList = new ArrayList<>();
-        for (Contact item : dialogList) {
+        for (Contact item : mContactList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }

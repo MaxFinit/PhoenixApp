@@ -49,57 +49,50 @@ public class DialogActivity extends AppCompatActivity {
     private static final String TAG = "DialogActivity";
 
     private TextView mEmptyDialogTextView;
-    private RecyclerView mMessagesRecyclerView;
-    private DialogAdapter mAdapter;
+    private TextView mToolbarStateTextView;
     private EditText mMessageEditText;
-    private Button mSendMessageButton;
+    private ImageButton mRefreshConnectionButton;
+    private RecyclerView mMessagesRecyclerView;
+
+
+    private DialogAdapter mAdapter;
     private DialogManager mDialogManager;
-    private String contactJID;
-    private BroadcastReceiver mBroadcastReceiver;
-    private Toolbar mDialogToolbar;
-    private Contact mContact;
     private StateManager mStateManager;
     private XMPPServerConnection mXMPPServerConnection;
-    private ImageButton mRefreshConnectionButton;
-    private TextView mToolbarStateTextView;
+
+    private BroadcastReceiver mBroadcastReceiver;
+
+    private String contactJID;
+    private Contact mContact;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog);
-        mDialogToolbar = findViewById(R.id.dialog_tool_bar);
-        setSupportActionBar(mDialogToolbar);
+        Toolbar dialogToolbar = findViewById(R.id.dialog_tool_bar);
+        setSupportActionBar(dialogToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mEmptyDialogTextView = findViewById(R.id.empty_dialog);
         mMessageEditText = findViewById(R.id.input_text_message);
-        mSendMessageButton = findViewById(R.id.send_message_button);
-        mMessagesRecyclerView = findViewById(R.id.messages_recycler_view);
-        mRefreshConnectionButton = findViewById(R.id.dialog_refresh_connection_toolbar);
         mToolbarStateTextView = findViewById(R.id.connect_status_toolbar);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setStackFromEnd(true); // Отображает список с конца.
-        mMessagesRecyclerView.setLayoutManager(linearLayoutManager);
-        mMessagesRecyclerView.setHasFixedSize(true);
+
         mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
         mStateManager = StateManager.getStateManager();
 
 
         Intent intent = getIntent();
         contactJID = intent.getStringExtra("EXTRA_CONTACT_JID");
-
         mDialogManager = DialogManager.getDialogManager();
         mContact = mDialogManager.getContact(contactJID);
 
-        updateUi();
 
-
-        mSendMessageButton.setOnClickListener(new View.OnClickListener() {
+        Button sendMessageButton = findViewById(R.id.send_message_button);
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 if (!mMessageEditText.getText().toString().equals("")) {
 
@@ -110,25 +103,26 @@ public class DialogActivity extends AppCompatActivity {
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, contactJID);
 
-
                         mDialogManager.addMessage(mMessageEditText.getText().toString(), false, contactJID);
                         mMessageEditText.setText("");
 
-
                         sendBroadcast(intent);
                         updateUi();
-
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 "CLIENT NOT CONNECTED TO SERVER, MESSAGE NOT SENT!",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
-
-
             }
         });
 
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true); // Отображает список с конца.
+        mMessagesRecyclerView = findViewById(R.id.messages_recycler_view);
+        mMessagesRecyclerView.setLayoutManager(linearLayoutManager);
+        mMessagesRecyclerView.setHasFixedSize(true);
         mMessagesRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int left, int top, int right, int bottom,
@@ -148,14 +142,7 @@ public class DialogActivity extends AppCompatActivity {
         });
 
 
-        mXMPPServerConnection.onXMPPStateConnectionChanged(new OnStateCallback() {
-            @Override
-            public void onStateChanged() {
-                updateState();
-            }
-        });
-
-
+        mRefreshConnectionButton = findViewById(R.id.dialog_refresh_connection_toolbar);
         mRefreshConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +154,17 @@ public class DialogActivity extends AppCompatActivity {
 
 
         });
+
+
+        mXMPPServerConnection.onXMPPStateConnectionChanged(new OnStateCallback() {
+            @Override
+            public void onStateChanged() {
+                updateState();
+            }
+        });
+
+
+        updateUi();
 
 
     }
@@ -507,8 +505,6 @@ public class DialogActivity extends AppCompatActivity {
         public int getItemCount() {
             return mMessageList.size();
         }
-
-
     }
 
 

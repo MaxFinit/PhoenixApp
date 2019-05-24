@@ -26,9 +26,11 @@ import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
 
+import static com.maxfin.phoenixapp.Utils.*;
+
 
 public class MainActivity extends AppCompatActivity {
-    private static final int PERMISSION_REQUEST_USE_SIP = 50;
+    private boolean mPermissionGranted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar mainToolbar = findViewById(R.id.main_tool_bar_menu);
         setSupportActionBar(mainToolbar);
 
+        checkPermissions();
+
         receiverRegistration();
-        sipRegistration();
         startService();
+
 
         Button blackListButton = findViewById(R.id.black_list_button);
         blackListButton.setOnClickListener(new View.OnClickListener() {
@@ -58,20 +62,17 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_call:
-                        Intent callIntent = new Intent(MainActivity.this, CallActivity.class);
-                        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        callIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(callIntent);
-                        break;
-                    case R.id.menu_message:
-                        Intent messageIntent = new Intent(MainActivity.this, DialogListActivity.class);
-                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        messageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(messageIntent);
-                        break;
-                }
+                if (mPermissionGranted)
+                    switch (menuItem.getItemId()) {
+                        case R.id.menu_call:
+                            startCallIntent();
+                            break;
+                        case R.id.menu_message:
+                            startMessageIntent();
+                            break;
+                    }
+                else
+                    Toast.makeText(getApplicationContext(), "Вы не приняли разрешения", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -103,13 +104,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_USE_SIP) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Пока вы не приймите запрос вы не сможете звонить", Toast.LENGTH_SHORT).show();
-            } else {
-                SipServerManager.getSipServerManager(getApplicationContext());
+        try {
+            if (requestCode == PERMISSION_REQUEST_CODE) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Для корректной работы приложения рекомендуется принять разрешение", Toast.LENGTH_SHORT).show();
+                    mPermissionGranted = false;
+                } else {
+                    mPermissionGranted = true;
+                    SipServerManager.getSipServerManager(getApplicationContext());
+                }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
         }
+
+
     }
 
 
@@ -126,13 +135,29 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(callReceiver, filter);
     }
 
-    private void sipRegistration() {
+    private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
-                checkSelfPermission(Manifest.permission.USE_SIP) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.USE_SIP}, PERMISSION_REQUEST_USE_SIP);
+                checkSelfPermission(PERMISSION_SIP) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(PERMISSION_READ_CONTACT) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.USE_SIP}, PERMISSION_REQUEST_CODE);
         } else {
+            mPermissionGranted = true;
             SipServerManager.getSipServerManager(getApplicationContext());
         }
+    }
+
+    private void startCallIntent() {
+        Intent callIntent = new Intent(MainActivity.this, CallActivity.class);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(callIntent);
+    }
+
+    private void startMessageIntent() {
+        Intent messageIntent = new Intent(MainActivity.this, DialogListActivity.class);
+        messageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        messageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(messageIntent);
     }
 
 

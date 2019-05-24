@@ -3,7 +3,7 @@ package com.maxfin.phoenixapp.managers;
 import android.util.Log;
 
 import com.maxfin.phoenixapp.Application;
-import com.maxfin.phoenixapp.database.dao.ContactsDao;
+import com.maxfin.phoenixapp.database.dao.DialogsDao;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.models.Contact;
 
@@ -14,7 +14,7 @@ public class MessageManager {
     private static final String TAG = "MessageManager";
     private List<Contact> mContactList;
     private ContactsDatabase mContactsDatabase;
-    private ContactsDao mContactsDao;
+    private DialogsDao mDialogsDao;
 
     private static MessageManager sMessageManager;
 
@@ -30,20 +30,20 @@ public class MessageManager {
     }
 
     public void uploadMessageList(Contact contact) {
-        mContactsDao = mContactsDatabase.mContactsDao();
-        mContactsDao.insert(contact);
+        mDialogsDao = mContactsDatabase.mContactsDao();
+        mDialogsDao.insert(contact);
     }
 
     public void deleteFromMessageList(Contact contact) {
-        mContactsDao = mContactsDatabase.mContactsDao();
-        mContactsDao.delete(contact);
+        mDialogsDao = mContactsDatabase.mContactsDao();
+        mDialogsDao.delete(contact);
     }
 
 
     public List<Contact> getContactList() {
-        mContactsDao = mContactsDatabase.mContactsDao();
+        mDialogsDao = mContactsDatabase.mContactsDao();
         try {
-            mContactList = mContactsDao.getAll();
+            mContactList = mDialogsDao.getAll();
         } catch (Exception e) {
             Log.d(TAG, "fail");
             e.getStackTrace();
@@ -53,8 +53,8 @@ public class MessageManager {
 
 
     public void updateContact(Contact contact) {
-        mContactsDao = mContactsDatabase.mContactsDao();
-        mContactsDao.update(contact);
+        mDialogsDao = mContactsDatabase.mContactsDao();
+        mDialogsDao.update(contact);
     }
 
 

@@ -5,43 +5,29 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
-public class Call {
+public class BlockContact {
 
     @PrimaryKey(autoGenerate = true)
-    public long id;
+    private int mId;
     private String mName;
     private String mNumber;
-    private String mData;
     private String mPhoto;
-    private String mContactId;
-    private byte mCallType;
+    private String mDate;
 
-
-    public Call(String name, String number, byte callType, String data, String photo, String contactId) {
+    public BlockContact(String name, String number, String photo, String date) {
         mName = name;
         mNumber = number;
-        mCallType = callType;
-        mData = data;
         mPhoto = photo;
-        mContactId = contactId;
+        mDate = date;
     }
 
-    public byte getCallType() {
-        return mCallType;
+    public int getId() {
+        return mId;
     }
 
-    public void setCallType(byte callType) {
-        mCallType = callType;
+    public void setId(int id) {
+        mId = id;
     }
-
-    public String getData() {
-        return mData;
-    }
-
-    public void setData(String data) {
-        mData = data;
-    }
-
 
     public String getName() {
         return mName;
@@ -67,11 +53,11 @@ public class Call {
         mPhoto = photo;
     }
 
-    public String getContactId() {
-        return mContactId;
+    public String getDate() {
+        return mDate;
     }
 
-    public void setContactId(String contactId) {
-        mContactId = contactId;
+    public void setDate(String date) {
+        mDate = date;
     }
 }

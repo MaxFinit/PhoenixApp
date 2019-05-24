@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.Utils;
 import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
@@ -36,8 +37,8 @@ public class JournalFragment extends Fragment {
     private RecyclerView mJournalRecyclerView;
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
-    private List<Call> mCallList;
-    private Contact contact;
+    List<Call> mCallList;
+
 
     @Nullable
     @Override
@@ -46,25 +47,23 @@ public class JournalFragment extends Fragment {
         mJournalRecyclerView = view.findViewById(R.id.journal_recycler_view);
         mJournalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-/////////////////////////////////////временный код
-        contact = new Contact();
-        contact.setJId("maxfin2@jabber.ru");
-        contact.setName("Max");
-        contact.setNumber("+8945554");
-        Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
-        contact.setPhoto(path.toString());
-////////////////////////////////////////////////////
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.call_button);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Call call = new Call();
-                call.setCallType((byte) 1);
-                call.setContactId(contact.getContactId());
-                call.setData("15:54");
-                mJournalManager.addCall(call);
 
+/////////////////////////////////////временный код
+                Contact contact = new Contact();
+                contact.setJId("maxfin2@jabber.ru");
+                contact.setName("Max");
+                contact.setNumber("+380713222303");
+                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
+                contact.setPhoto(path.toString());
+
+                Call call = new Call("Max", contact.getNumber(), (byte) 0, "15-00", path.toString(), "23");
+                mJournalManager.addCall(call);
+////////////////////////////////////////////////////
                 Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
                 startActivity(intent);
             }
@@ -84,7 +83,7 @@ public class JournalFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                filter(s.toString());
             }
         });
 
@@ -116,13 +115,13 @@ public class JournalFragment extends Fragment {
     private void filter(String text) {
         List<Call> filteredList = new ArrayList<>();
 
-//        for (Call item : mCallList) {
-//            if (item.getName().toLowerCase().contains(text.toLowerCase()) || item.getNumber().contains(text)) {
-//                filteredList.add(item);
-//            }
-//        }
-//
-//        mAdapter.filterList(filteredList);
+        for (Call item : mCallList) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase()) || item.getNumber().contains(text)) {
+                filteredList.add(item);
+            }
+        }
+
+        mAdapter.filterList(filteredList);
     }
 
 
@@ -150,10 +149,9 @@ public class JournalFragment extends Fragment {
 
         void bind(Call call) {
             mCall = call;
-            //Contact contact = mJournalManager.getContact(call.getContactId());
-            mNameJournalTextView.setText(contact.getName());
-            mNumberJournalTextView.setText(contact.getNumber());
-            mPhotoJournalImageView.setImageURI(Uri.parse(contact.getPhoto()));
+            mNameJournalTextView.setText(call.getName());
+            mNumberJournalTextView.setText(call.getNumber());
+            mPhotoJournalImageView.setImageURI(Uri.parse(call.getPhoto()));
             mDataJournalTextView.setText(call.getData());
 
             switch (call.getCallType()) {
@@ -195,6 +193,17 @@ public class JournalFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
+
+
+                        Call call = new Call(mCall.getName(), mCall.getNumber(), (byte) 0, "15-23", mCall.getPhoto(), mCall.getContactId());
+
+
+                        mJournalManager.addCall(call);
+                        Intent makeCallIntent = new Intent(getActivity(), OutgoingCallActivity.class);
+                        makeCallIntent.putExtra(Utils.NAME_KEY, call.getName());
+                        makeCallIntent.putExtra(Utils.NUMBER_KEY, call.getNumber());
+                        makeCallIntent.putExtra(Utils.PHOTO_KEY, call.getPhoto());
+                        startActivity(makeCallIntent);
                         break;
                     case R.id.block_contact_context_menu:
                         break;
@@ -212,7 +221,6 @@ public class JournalFragment extends Fragment {
                 return true;
             }
         };
-
 
     }
 
@@ -249,8 +257,8 @@ public class JournalFragment extends Fragment {
             return mCallList.size();
         }
 
-        public void filterList(List<Contact> filteredList) {
-            //    mCallList = filteredList;
+        void filterList(List<Call> filteredList) {
+            mCallList = filteredList;
             notifyDataSetChanged();
         }
 

@@ -7,6 +7,10 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
+
+
+
+
     <EditText
         android:id="@+id/search_journal_edit"
         android:layout_width="match_parent"
@@ -38,15 +42,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_journal_edit" />
 
+    <TextView
+        android:id="@+id/empty_journal_text_view"
+        style="@style/EmptyListStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/empty_journal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/journal_recycler_view"
+        app:layout_constraintVertical_bias="0.36" />
+
+
+
+    <FrameLayout
+        android:id="@+id/input_number_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_rounded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </FrameLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/call_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:backgroundTint="@color/colorPurple100"
+        app:layout_constraintBottom_toTopOf="@+id/input_number_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_call" />
+        app:srcCompat="@drawable/ic_input_number" />
+
+
+
+
 
 </android.support.constraint.ConstraintLayout>

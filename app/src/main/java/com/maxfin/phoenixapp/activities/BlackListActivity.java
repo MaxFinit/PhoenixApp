@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -29,6 +30,8 @@ public class BlackListActivity extends AppCompatActivity {
     private BlackListAdapter mBlackListAdapter;
     private List<BlockContact> mBlockContacts;
     private BlackListManagers mBlackListManagers;
+    private TextView mEmptyListTextView;
+    private EditText mSearchEditView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +42,8 @@ public class BlackListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        mEmptyListTextView = findViewById(R.id.black_list_empty_text);
+        mSearchEditView = findViewById(R.id.search_black_list_edit);
         mBlackListRecyclerView = findViewById(R.id.black_list_recycler_view);
         mBlackListRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
@@ -51,6 +56,18 @@ public class BlackListActivity extends AppCompatActivity {
     private void updateUi() {
         mBlackListManagers = BlackListManagers.getBlackListManagers();
         mBlockContacts = mBlackListManagers.getBlackList();
+
+        if (mBlockContacts.size() <= 0) {
+            mEmptyListTextView.setVisibility(View.VISIBLE);
+//            mSearchEditView.setVisibility(View.GONE);
+//            mBlackListRecyclerView.setVisibility(View.GONE);
+        } else {
+            mEmptyListTextView.setVisibility(View.GONE);
+//            mSearchEditView.setVisibility(View.VISIBLE);
+//            mBlackListRecyclerView.setVisibility(View.VISIBLE);
+        }
+
+
         if (mBlackListAdapter == null) {
             mBlackListAdapter = new BlackListAdapter(mBlockContacts);
             mBlackListRecyclerView.setAdapter(mBlackListAdapter);

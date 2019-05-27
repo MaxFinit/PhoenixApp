@@ -213,7 +213,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         }
         Chat chat = chatManager.chatWith(jid);
         try {
-            Message message = new Message(jid, Message.Type.chat);
+            Message message;
+            message = new Message(jid, Message.Type.chat);
             DeliveryReceiptRequest.addTo(message);
             message.setType(Message.Type.chat);
             message.setBody(stringBody);
@@ -357,8 +358,8 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         mConnectionXMPPState = ConnectionXMPPState.DISCONNECTED;
         onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
-//        Intent intent = new Intent(mContext.getApplicationContext(), XMPPConnectionService.class);
-//        mApplicationContext.stopService(intent);
+
+
 
 
     }

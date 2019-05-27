@@ -23,6 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,25 +31,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activities.CallActivity" />
+
         <activity android:name=".activities.DialogListActivity" />
 
         <activity
             android:name=".activities.AddDialogActivity"
             android:parentActivityName=".activities.DialogListActivity" />
+
         <activity android:name=".activities.OutgoingCallActivity" />
-        <activity android:name=".activities.BlackListActivity" />
+
+        <activity
+            android:name=".activities.BlackListActivity"
+            android:parentActivityName=".activities.MainActivity" />
+
         <activity
             android:name=".activities.DialogActivity"
             android:parentActivityName=".activities.DialogListActivity"
             android:windowSoftInputMode="adjustResize" />
 
-        <service android:name=".XMPPConnectionService" />
 
         <receiver
             android:name=".IncomingCallReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.USE_SIP" />
 
         <receiver
             android:name=".StateConnectBroadcast"
@@ -58,7 +66,9 @@
             </intent-filter>
         </receiver>
 
-
+        <service
+            android:name=".XMPPConnectionService"
+            android:enabled="true" />
     </application>
 
 </manifest>

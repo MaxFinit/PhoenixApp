@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -25,7 +27,6 @@ import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.Utils;
 import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.models.Call;
-import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class JournalFragment extends Fragment {
+    private static final String TAG = "JournalFragment";
     private RecyclerView mJournalRecyclerView;
+    private TextView mEmptyJournalTextView;
+    private FloatingActionButton mFloatingActionButton;
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
+    private InputNumberFragment mInputNumberFragment;
+    private FragmentTransaction mFragmentTransaction;
+    private FragmentManager mFragmentManager;
     List<Call> mCallList;
 
 
@@ -46,26 +53,44 @@ public class JournalFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_journal, container, false);
         mJournalRecyclerView = view.findViewById(R.id.journal_recycler_view);
         mJournalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEmptyJournalTextView = view.findViewById(R.id.empty_journal_text_view);
+        mFragmentManager = getFragmentManager();
+        mInputNumberFragment = new InputNumberFragment();
 
 
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.call_button);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mFloatingActionButton = view.findViewById(R.id.call_button);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-/////////////////////////////////////временный код
-                Contact contact = new Contact();
-                contact.setJId("maxfin2@jabber.ru");
-                contact.setName("Max");
-                contact.setNumber("+380713222303");
-                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
-                contact.setPhoto(path.toString());
+                mFragmentTransaction = mFragmentManager.beginTransaction();
+                if (!mInputNumberFragment.isAdded()) {
+                    mFragmentTransaction.add(R.id.input_number_container, mInputNumberFragment);
+                    mFragmentTransaction.addToBackStack(null);
 
-                Call call = new Call("Max", contact.getNumber(), (byte) 0, "15-00", path.toString(), "23");
-                mJournalManager.addCall(call);
+                } else {
+                    mFragmentTransaction.remove(mInputNumberFragment);
+                }
+
+
+                mFragmentTransaction.commit();
+
+
+/////////////////////////////////////временный код
+//                Contact contact = new Contact();
+//                contact.setJId("maxfin2@jabber.ru");
+//                contact.setName("Max");
+//                contact.setNumber("+380713222303");
+//                Uri path = Uri.parse("android.resource://com.maxfin.phoenixapp/" + R.drawable.ic_contact_circle_api2);
+//                contact.setPhoto(path.toString());
+//
+//                Call call = new Call("Max", contact.getNumber(), (byte) 0, "15-00", path.toString(), "23");
+//                mJournalManager.addCall(call);
+//
+//                Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
+//                startActivity(intent);
 ////////////////////////////////////////////////////
-                Intent intent = new Intent(getActivity(), OutgoingCallActivity.class);
-                startActivity(intent);
+
             }
         });
 
@@ -87,7 +112,7 @@ public class JournalFragment extends Fragment {
             }
         });
 
-        updateUi();
+        // updateUi();
 
         return view;
     }
@@ -95,6 +120,13 @@ public class JournalFragment extends Fragment {
     private void updateUi() {
         mJournalManager = JournalManager.getJournalManager();
         mCallList = mJournalManager.getCalls();
+
+        if (mCallList.size() == 0)
+            mEmptyJournalTextView.setVisibility(View.VISIBLE);
+        else
+            mEmptyJournalTextView.setVisibility(View.GONE);
+
+
         if (mAdapter == null) {
             mAdapter = new JournalFragment.JournalAdapter(mCallList);
             mJournalRecyclerView.setAdapter(mAdapter);
@@ -109,8 +141,10 @@ public class JournalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         updateUi();
     }
+
 
     private void filter(String text) {
         List<Call> filteredList = new ArrayList<>();

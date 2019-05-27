@@ -16,41 +16,6 @@
         <item name="android:layout_height">60dp</item>
     </style>
 
-
-    <style name="Toolbar">
-
-        <item name="android:background">@color/colorPurple100</item>
-        <item name="android:textColorPrimary">@color/colorPurple100</item>
-        <item name="android:windowBackground">@color/colorGray20</item>
-        <item name="android:colorForeground">@color/colorPurple100</item>
-        <item name="android:textColorHint">@color/colorGray20</item>
-
-
-
-
-        <item name="android:textColorSecondary">@color/colorGray20</item>
-        <item name="android:textColorSecondaryInverse">@color/colorGray20</item>
-        <item name="android:textColorTertiary">@color/colorGray20</item>
-
-
-
-        <item name="android:textColorHintInverse">@color/colorGray20</item>
-
-
-
-
-
-
-
-
-    </style>
-    
-    
-    <style name="test">
-        <item name="android:background">@color/colorGray20</item>
-    </style>
-
-
     <style name="MainScreenLableStyle">
         <item name="android:fontFamily">@font/font_pf_display_regular</item>
         <item name="android:textColor">@color/colorPurple100</item>
@@ -62,5 +27,45 @@
         <item name="android:textColor">@color/colorPurple100</item>
 
     </style>
+
+    <style name="EmptyListStyle">
+        <item name="android:fontFamily">@font/font_pf_display_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPurple100</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:visibility">gone</item>
+
+
+
+
+    </style>
+
+    <style name="RecyclerViewStyle">
+
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@drawable/rectangle_rounded</item>
+    </style>
+
+
+    <style name="Toolbar">
+
+        <item name="android:background">@color/colorPurple100</item>
+        <item name="android:textColorPrimary">@color/colorPurple100</item>
+        <item name="android:windowBackground">@color/colorGray20</item>
+        <item name="android:colorForeground">@color/colorPurple100</item>
+        <item name="android:textColorHint">@color/colorGray20</item>
+        <item name="android:textColorSecondary">@color/colorGray20</item>
+        <item name="android:textColorSecondaryInverse">@color/colorGray20</item>
+        <item name="android:textColorTertiary">@color/colorGray20</item>
+        <item name="android:textColorHintInverse">@color/colorGray20</item>
+    </style>
+
+
+    <style name="test">
+        <item name="android:background">@color/colorGray20</item>
+    </style>
+
 
 </resources>

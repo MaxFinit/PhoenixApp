@@ -93,19 +93,14 @@ public class DialogActivity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (!mMessageEditText.getText().toString().equals("")) {
-
                     if (mStateManager.getConnectionXMPPState().equals(XMPPServerConnection.ConnectionXMPPState.CONNECTED)) {
                         Log.d(TAG, "SEND MESSAGE, CLIENT IS CONNECTING");
-
                         Intent intent = new Intent(XMPPConnectionService.SEND_MESSAGE);
                         intent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, mMessageEditText.getText().toString());
                         intent.putExtra(XMPPConnectionService.BUNDLE_TO, contactJID);
-
                         mDialogManager.addMessage(mMessageEditText.getText().toString(), false, contactJID);
                         mMessageEditText.setText("");
-
                         sendBroadcast(intent);
                         updateUi();
                     } else {

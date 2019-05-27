@@ -12,8 +12,6 @@
     <string name="message_text">Сообщения</string>
     <string name="search_text">Поиск</string>
     <string name="input_text">Сообщение</string>
-    <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
-    <string name="empty_dialog">Нет сообщений</string>
     <string name="make_call_text">Позвонить</string>
     <string name="block_contact_text">Заблокировать</string>
     <string name="delete_dialog_history_text">Очистить историю</string>
@@ -29,4 +27,9 @@
     <string name="edit_contact_text">Редактировать</string>
     <string name="avatar_text">Аватар</string>
     <string name="call_type_text">Тип звонка</string>
+    <string name="number_text">Номер</string>
+    <string name="empty_black_list">Черный список пуст</string>
+    <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
+    <string name="empty_dialog">Нет сообщений</string>
+    <string name="empty_journal">Журнал звонков пуст</string>
 </resources>

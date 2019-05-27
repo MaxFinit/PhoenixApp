@@ -94,6 +94,7 @@ public class XMPPConnectionService extends Service {
                 }
             }
         });
+
     }
 
     @Override

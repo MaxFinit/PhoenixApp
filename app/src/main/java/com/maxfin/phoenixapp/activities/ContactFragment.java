@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.Utils;
@@ -194,7 +195,10 @@ public class ContactFragment extends Fragment {
                         break;
                     case R.id.block_contact_context_menu:
                         BlackListManagers blackListManagers = BlackListManagers.getBlackListManagers();
-                        blackListManagers.addToBlackList(mContact);
+                        if (blackListManagers.addToBlackList(mContact))
+                            Toast.makeText(getContext(), "Контакт добавлен в черный список", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getContext(), "Контакт уже добавлен в черный список", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.edit_dialog_context_menu:
 

@@ -119,7 +119,6 @@ public class CallActivity extends AppCompatActivity {
     }
 
     private void updateState() {
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -134,10 +133,7 @@ public class CallActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
-
 
     public boolean checkForInternet() {
         ConnectivityManager cm =

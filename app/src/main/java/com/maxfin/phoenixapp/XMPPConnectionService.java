@@ -113,17 +113,3 @@ public class XMPPConnectionService extends Service {
     }
 }
 
-
-//    public static XMPPServerConnection.ConnectionXMPPState getConnectionXMPPState() {
-//        if (sConnectionXMPPState == null) {
-//            return XMPPServerConnection.ConnectionXMPPState.DISCONNECTED;
-//        }
-//        return sConnectionXMPPState;
-//    }
-//
-//    public static XMPPServerConnection.LoggedInXMPPState getLoggedInXMPPState() {
-//        if (sLoggedInXMPPState == null) {
-//            return XMPPServerConnection.LoggedInXMPPState.LOGGED_OUT;
-//        }
-//        return sLoggedInXMPPState;
-//    }

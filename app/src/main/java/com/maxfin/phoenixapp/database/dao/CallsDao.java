@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
@@ -16,8 +17,9 @@ public interface CallsDao {
     @Query("SELECT * FROM Call")
     List<Call> loadHistory();
 
-    @Query("SELECT * FROM Contact WHERE mJId = :contactId")
-    Contact getContact(String contactId);
+    @Query("SELECT * FROM Call WHERE id = :contactId")
+    Call getCall(String contactId);
+
 
     @Query("DELETE FROM Call")
     void clearHistory();
@@ -27,6 +29,11 @@ public interface CallsDao {
 
     @Delete
     void deleteCall(Call call);
+
+    @Update
+    void updateCall(Call call);
+
+
 
 
 }

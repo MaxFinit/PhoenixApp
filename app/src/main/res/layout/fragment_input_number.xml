@@ -1,42 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/input_number_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:focusable="true"
-        android:hint="@string/number_text"
-        android:textColorHint="@color/colorPurple60"
         android:fontFamily="@font/font_pf_display_regular"
-        android:textSize="16sp"
+        android:hint="@string/number_text"
+        android:inputType="phone"
+        android:textColorHint="@color/colorPurple60"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
-    <android.support.design.widget.FloatingActionButton
+    <GridLayout
+        android:id="@+id/gridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_number_edit_text">
+
+        <Button
+            android:id="@+id/key1"
+            style="@style/KeyboardButton"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/key2"
+            style="@style/KeyboardButton"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/key3"
+            style="@style/KeyboardButton"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/key4"
+            style="@style/KeyboardButton"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/key5"
+            style="@style/KeyboardButton"
+            android:text="5" />
+
+        <Button
+            android:id="@+id/key6"
+            style="@style/KeyboardButton"
+            android:text="6" />
+
+        <Button
+            android:id="@+id/key7"
+            style="@style/KeyboardButton"
+            android:text="7" />
+
+        <Button
+            android:id="@+id/key8"
+            style="@style/KeyboardButton"
+            android:text="8" />
+
+        <Button
+            android:id="@+id/key9"
+            style="@style/KeyboardButton"
+            android:text="9" />
+
+        <Button
+            android:id="@+id/keyPlus"
+            style="@style/KeyboardButton"
+            android:text="+" />
+
+        <Button
+            android:id="@+id/key0"
+            style="@style/KeyboardButton"
+            android:text="0" />
+
+        <ImageButton
+            android:id="@+id/keyRemove"
+            style="@style/KeyboardButton"
+            app:srcCompat="@drawable/ic_backspace" />
+
+    </GridLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/custom_call_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_weight="1"
         app:backgroundTint="@color/colorPurple100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout"
         app:srcCompat="@drawable/ic_call" />
-
-
 
 
 </android.support.constraint.ConstraintLayout>

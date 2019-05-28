@@ -34,19 +34,28 @@
         <item name="android:textColor">@color/colorPurple100</item>
         <item name="android:textSize">30sp</item>
         <item name="android:visibility">gone</item>
-
-
-
-
     </style>
 
     <style name="RecyclerViewStyle">
-
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="android:background">@drawable/rectangle_rounded</item>
     </style>
+
+
+    <style name="KeyboardButton">
+
+        <item name="android:background">@drawable/button_state</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">94dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_margin">4dp</item>
+
+
+    </style>
+
+
 
 
     <style name="Toolbar">

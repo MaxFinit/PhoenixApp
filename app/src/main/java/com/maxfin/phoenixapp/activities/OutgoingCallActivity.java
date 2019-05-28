@@ -16,8 +16,10 @@ import android.widget.TextView;
 import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.Utils;
+import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.managers.SipServerManager;
 import com.maxfin.phoenixapp.managers.StateManager;
+import com.maxfin.phoenixapp.models.Call;
 
 public class OutgoingCallActivity extends AppCompatActivity {
     private static final String TAG = "OutgoingCallActivity";
@@ -26,6 +28,7 @@ public class OutgoingCallActivity extends AppCompatActivity {
     private SipServerManager mSipConnectionManager;
     private TextView mStateTextView;
     private Chronometer mChronometer;
+    private String mId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,15 +40,9 @@ public class OutgoingCallActivity extends AppCompatActivity {
         String name = intent.getStringExtra(Utils.NAME_KEY);
         String number = intent.getStringExtra(Utils.NUMBER_KEY);
         String photo = intent.getStringExtra(Utils.PHOTO_KEY);
+        mId = String.valueOf(intent.getStringExtra(Utils.ID_KEY));
 
-//////////
-        if (number == null) {
-            number = "071  322 23 03";
-        }
-//////////
-
-
-        number = number.replaceAll("\\s", "");
+        number = number.replaceAll("[^\\d+]" , "");
         Log.d(TAG, number);
 
         if (name != null || photo != null) {
@@ -106,6 +103,10 @@ public class OutgoingCallActivity extends AppCompatActivity {
 
                     case ERROR:
                         updateTextView("Ошибка");
+                        JournalManager journalManager = JournalManager.getJournalManager();
+                        Call call = journalManager.getContact(mId);
+                        call.setCallType((byte) 2);
+                        journalManager.updateCall(call);
                         Intent intent2 = new Intent(OutgoingCallActivity.this, CallActivity.class);
                         startActivity(intent2);
                         break;

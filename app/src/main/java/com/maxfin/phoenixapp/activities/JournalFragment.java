@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maxfin.phoenixapp.R;
@@ -35,16 +36,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class JournalFragment extends Fragment {
-    private static final String TAG = "JournalFragment";
+   // private static final String TAG = "JournalFragment";
     private RecyclerView mJournalRecyclerView;
     private TextView mEmptyJournalTextView;
-    private FloatingActionButton mFloatingActionButton;
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
     private InputNumberFragment mInputNumberFragment;
     private FragmentTransaction mFragmentTransaction;
     private FragmentManager mFragmentManager;
-    List<Call> mCallList;
+    private List<Call> mCallList;
 
 
     @Nullable
@@ -52,14 +52,15 @@ public class JournalFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_journal, container, false);
         mJournalRecyclerView = view.findViewById(R.id.journal_recycler_view);
-        mJournalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mJournalRecyclerView.setLayoutManager(linearLayoutManager);
         mEmptyJournalTextView = view.findViewById(R.id.empty_journal_text_view);
         mFragmentManager = getFragmentManager();
         mInputNumberFragment = new InputNumberFragment();
 
 
-        mFloatingActionButton = view.findViewById(R.id.call_button);
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.call_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

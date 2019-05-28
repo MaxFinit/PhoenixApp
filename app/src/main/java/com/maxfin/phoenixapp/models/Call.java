@@ -3,12 +3,19 @@ package com.maxfin.phoenixapp.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
+import java.util.UUID;
+
+
 
 @Entity
 public class Call {
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+
+    @PrimaryKey
+    @NonNull
+    public String id;
     private String mName;
     private String mNumber;
     private String mData;
@@ -17,7 +24,9 @@ public class Call {
     private byte mCallType;
 
 
+
     public Call(String name, String number, byte callType, String data, String photo, String contactId) {
+        id = UUID.randomUUID().toString();
         mName = name;
         mNumber = number;
         mCallType = callType;
@@ -73,5 +82,10 @@ public class Call {
 
     public void setContactId(String contactId) {
         mContactId = contactId;
+    }
+
+
+    public String getId() {
+        return id;
     }
 }

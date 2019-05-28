@@ -1,6 +1,6 @@
 package com.maxfin.phoenixapp.activities;
 
-import android.app.ActivityManager;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -178,16 +178,6 @@ public class DialogActivity extends AppCompatActivity {
         return true;
     }
 
-
-    private boolean isMyServiceRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (XMPPConnectionService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void updateState() {
 

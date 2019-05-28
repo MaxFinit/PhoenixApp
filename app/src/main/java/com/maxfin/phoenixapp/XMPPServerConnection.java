@@ -267,7 +267,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     }
 
     public boolean isAlive() {
+        if (mConnection!=null)
         return mConnection.isSmEnabled();
+
+
+        return false;
+
     }
 
 

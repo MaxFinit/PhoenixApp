@@ -3,6 +3,7 @@ package com.maxfin.phoenixapp.activities;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,8 @@ public class ContactFragment extends Fragment {
     private ContactAdapter mAdapter;
     private List<Contact> mContactList;
     private boolean isRefreshing = false;
+    private ContactManager mContactManager;
+    private ProgressBar mProgressBar;
 
 
     @Nullable
@@ -52,7 +56,7 @@ public class ContactFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactsRecyclerView = view.findViewById(R.id.contact_recycler_view);
         mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        mProgressBar = view.findViewById(R.id.progress_contact_bar);
 
         if (savedInstanceState != null)
             isRefreshing = savedInstanceState.getBoolean(REFRESH_STATE);
@@ -87,18 +91,20 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        updateUi();
+        mContactManager = ContactManager.get(getContext());
+
+
+        //
         return view;
     }
 
 
     private void updateUi() {
-        ContactManager contactManager = ContactManager.get(getContext());
-        if (isRefreshing) {
-            contactManager.uploadContacts(getContext());
-            isRefreshing = false;
-        }
-        mContactList = contactManager.getSortedContactList();
+//        if (isRefreshing) {
+//            mContactManager.uploadContacts(getContext());
+//            isRefreshing = false;
+//        }
+//        mContactList = mContactManager.getSortedContactList();
         if (mAdapter == null) {
             mAdapter = new ContactAdapter(mContactList);
             mContactsRecyclerView.setAdapter(mAdapter);
@@ -113,7 +119,10 @@ public class ContactFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUi();
+        LoadContactsTask task = new LoadContactsTask();
+        task.execute();
+
+        //   updateUi();
     }
 
 
@@ -179,7 +188,7 @@ public class ContactFragment extends Fragment {
                         Call call = new Call(
                                 mContact.getName(),
                                 mContact.getNumber(),
-                                (byte) 2,
+                                (byte) 0,
                                 "15:45",
                                 mContact.getPhoto(),
                                 mContact.getContactId()
@@ -191,6 +200,7 @@ public class ContactFragment extends Fragment {
                         makeCallIntent.putExtra(Utils.NAME_KEY, mContact.getName());
                         makeCallIntent.putExtra(Utils.NUMBER_KEY, mContact.getNumber());
                         makeCallIntent.putExtra(Utils.PHOTO_KEY, mContact.getPhoto());
+                        makeCallIntent.putExtra(Utils.ID_KEY, call.getId());
                         startActivity(makeCallIntent);
                         break;
                     case R.id.block_contact_context_menu:
@@ -252,6 +262,42 @@ public class ContactFragment extends Fragment {
             mContactList = filteredList;
             notifyDataSetChanged();
         }
+
+    }
+
+
+    private class LoadContactsTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... voids) {
+            super.onProgressUpdate(voids);
+            mProgressBar.setMax(1);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (isRefreshing) {
+                mContactManager.uploadContacts(getContext());
+                isRefreshing = false;
+            }
+            mContactList = mContactManager.getSortedContactList();
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mProgressBar.setVisibility(View.GONE);
+            updateUi();
+        }
+
 
     }
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:ignore="Autofill">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/adding_dialog_tool_bar_menu"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/test"
+        app:theme="@style/Toolbar">
+
+        <TextView
+            android:id="@+id/adding_dialog_tool_bar_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/add_new_dialog"
+            android:textColor="@color/colorGray20"
+            android:fontFamily="@font/font_pf_display_medium"
+            android:textSize="20sp"
+            android:gravity="center|start"/>
+
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <EditText
+        android:id="@+id/search_message_contact_edit"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+
+        android:background="@drawable/rectangle_shadow"
+        android:drawableStart="@drawable/ic_search_api"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:hint="@string/search_text"
+        android:inputType="text"
+        android:paddingStart="12dp"
+        android:paddingEnd="0dp"
+        android:textColorHint="@color/colorPurple60"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adding_dialog_tool_bar_menu" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_dialog_recycler_view"
+        style="@style/RecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_message_contact_edit" />
+
+
+</android.support.constraint.ConstraintLayout>

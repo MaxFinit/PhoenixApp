@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">PhoenixApp</string>
+    <string name="balance_text">Текущий баланс</string>
+    <string name="internet_text">Интернет</string>
+    <string name="call_internet_text">Звонки через\n интернет</string>
+    <string name="setting_call">Настройки звонков</string>
+    <string name="call_recorded">Записи звонков</string>
+    <string name="black_list">Черный список</string>
+    <string name="call_text">Звонки</string>
+    <string name="contact_text">Контакты</string>
+    <string name="home_text">Домой</string>
+    <string name="message_text">Сообщения</string>
+    <string name="search_text">Поиск</string>
+    <string name="input_text">Сообщение</string>
+    <string name="make_call_text">Позвонить</string>
+    <string name="block_contact_text">Заблокировать</string>
+    <string name="delete_dialog_history_text">Очистить историю</string>
+    <string name="disable_notification_text">Отключить уведомения</string>
+    <string name="add_contact_text">Отключить уведомения</string>
+    <string name="change_contact_text">Отключить уведомения</string>
+    <string name="delete_text">Удалить</string>
+    <string name="copy_to_buffer_text">Скопировать текст</string>
+    <string name="add_new_dialog">Добавте новый диалог</string>
+    <string name="sip_connection_error">Подключение отсутсвует</string>
+    <string name="refresh_text">Повторить</string>
+    <string name="delete_dialog_text">Удалить диалог</string>
+    <string name="edit_contact_text">Редактировать</string>
+    <string name="avatar_text">Аватар</string>
+    <string name="call_type_text">Тип звонка</string>
+    <string name="number_text">Номер</string>
+    <string name="empty_black_list">Черный список пуст</string>
+    <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
+    <string name="empty_dialog">Нет сообщений</string>
+    <string name="empty_journal">Журнал звонков пуст</string>
 </resources>

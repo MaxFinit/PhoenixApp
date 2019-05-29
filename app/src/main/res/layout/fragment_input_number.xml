@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/input_number_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textColor="@color/colorPurple100"
+        android:textSize="36sp"
+        android:gravity="center"
+        android:maxLength="16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_number_text_view">
+
+        <Button
+            android:id="@+id/key1"
+            style="@style/KeyboardButton"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/key2"
+            style="@style/KeyboardButton"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/key3"
+            style="@style/KeyboardButton"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/key4"
+            style="@style/KeyboardButton"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/key5"
+            style="@style/KeyboardButton"
+            android:text="5" />
+
+        <Button
+            android:id="@+id/key6"
+            style="@style/KeyboardButton"
+            android:text="6" />
+
+        <Button
+            android:id="@+id/key7"
+            style="@style/KeyboardButton"
+            android:text="7" />
+
+        <Button
+            android:id="@+id/key8"
+            style="@style/KeyboardButton"
+            android:text="8" />
+
+        <Button
+            android:id="@+id/key9"
+            style="@style/KeyboardButton"
+            android:text="9" />
+
+        <Button
+            android:id="@+id/keyPlus"
+            style="@style/KeyboardButton"
+            android:text="+" />
+
+        <Button
+            android:id="@+id/key0"
+            style="@style/KeyboardButton"
+            android:text="0" />
+
+        <ImageButton
+            android:id="@+id/keyRemove"
+            style="@style/KeyboardButton"
+            app:srcCompat="@drawable/ic_backspace" />
+
+    </GridLayout>
+
+    <ImageButton
+        android:id="@+id/custom_call_button"
+        style="@style/KeyboardButton"
+        app:backgroundTint="@color/colorPurple100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout"
+        app:srcCompat="@drawable/ic_call" />
+
+
+</android.support.constraint.ConstraintLayout>

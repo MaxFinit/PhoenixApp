@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_contacts_states"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_contact_item"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:civ_border_color="@color/colorPurple100"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_contact_item"
+        style="@style/MainScreenLableStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/image_contact_item"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/message_text" />
+
+    <TextView
+        android:id="@+id/number_contact_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/font_pf_display_regular"
+        android:textColor="@color/colorPurple60"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/image_contact_item"
+        app:layout_constraintTop_toBottomOf="@+id/name_contact_item"
+        tools:text="@string/message_text" />
+
+</android.support.constraint.ConstraintLayout>

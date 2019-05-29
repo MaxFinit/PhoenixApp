@@ -50,9 +50,7 @@ public class JournalManager {
     }
 
     public void addCall(Call call) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
-        String date = dateFormat.format(Calendar.getInstance().getTime());
-        call.setData(date);
+
         mCallsDao.insertCall(call);
     }
 

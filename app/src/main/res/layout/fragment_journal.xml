@@ -8,9 +8,6 @@
     android:focusableInTouchMode="true">
 
 
-
-
-
     <EditText
         android:id="@+id/search_journal_edit"
         android:layout_width="match_parent"
@@ -49,13 +46,37 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/empty_journal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/input_number_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/journal_recycler_view"
-        app:layout_constraintVertical_bias="0.36" />
+        app:layout_constraintVertical_bias="0.38" />
 
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/custom_number_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:backgroundTint="@color/colorPurple100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_input_number" />
+
+    <ProgressBar
+        android:id="@+id/journal_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.41000003" />
 
     <FrameLayout
         android:id="@+id/input_number_container"
@@ -67,21 +88,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
     </FrameLayout>
-
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/call_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:backgroundTint="@color/colorPurple100"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_input_number" />
-
-
-
 
 
 </android.support.constraint.ConstraintLayout>

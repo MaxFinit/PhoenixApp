@@ -33,10 +33,13 @@ import android.widget.Toast;
 
 import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.Utils;
 import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.XMPPServerConnection;
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.managers.StateManager;
+import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
@@ -79,7 +82,7 @@ public class DialogActivity extends AppCompatActivity {
         mToolbarStateTextView = findViewById(R.id.connect_status_toolbar);
 
 
-        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(getApplicationContext());
         mStateManager = StateManager.getStateManager();
 
 
@@ -215,6 +218,22 @@ public class DialogActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.make_call_dialog_menu:
+                Call call = new Call(
+                        mContact.getName(),
+                        mContact.getNumber(),
+                        (byte) 0,
+                        mContact.getPhoto(),
+                        mContact.getContactId()
+                );
+                JournalManager.getJournalManager().addCall(call);
+                Intent makeCallIntent = new Intent(this, OutgoingCallActivity.class);
+                makeCallIntent.putExtra(Utils.NAME_KEY, mContact.getName());
+                makeCallIntent.putExtra(Utils.NUMBER_KEY, mContact.getNumber());
+                makeCallIntent.putExtra(Utils.PHOTO_KEY, mContact.getPhoto());
+                makeCallIntent.putExtra(Utils.ID_KEY, call.getId());
+                startActivity(makeCallIntent);
+                break;
             case R.id.delete_history_dialog_menu:
                 showDialog();
                 break;
@@ -470,8 +489,6 @@ public class DialogActivity extends AppCompatActivity {
                     DialogOutputHolder dialogOutputHolder = (DialogOutputHolder) viewHolder;
                     dialogOutputHolder.bind(message);
                     break;
-
-
             }
 
         }
@@ -491,6 +508,5 @@ public class DialogActivity extends AppCompatActivity {
             return mMessageList.size();
         }
     }
-
 
 }

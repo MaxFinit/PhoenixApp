@@ -95,14 +95,14 @@
                 android:id="@+id/sip_call_state_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#CCB1B3B6"
+                android:background="#CCF1F2F2"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/sip_call_state_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_pf_text_bold"
+                    android:fontFamily="@font/font_pf_display_regular"
                     android:gravity="center"
                     android:text="@string/sip_connection_error"
                     android:textColor="@color/colorPurple100"
@@ -111,7 +111,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.45" />
+                    app:layout_constraintVertical_bias="0.39" />
 
 
                 <Button

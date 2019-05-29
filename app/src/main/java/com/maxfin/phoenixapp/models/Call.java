@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.UUID;
 
 
@@ -25,12 +27,13 @@ public class Call {
 
 
 
-    public Call(String name, String number, byte callType, String data, String photo, String contactId) {
+    public Call(String name, String number, byte callType,String photo, String contactId) {
         id = UUID.randomUUID().toString();
         mName = name;
         mNumber = number;
         mCallType = callType;
-        mData = data;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
+        mData = dateFormat.format(Calendar.getInstance().getTime());
         mPhoto = photo;
         mContactId = contactId;
     }

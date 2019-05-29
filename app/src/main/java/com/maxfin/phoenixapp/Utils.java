@@ -10,4 +10,5 @@ public class Utils {
     public static final int PERMISSION_REQUEST_CODE = 42;
     public static final String PERMISSION_SIP = Manifest.permission.USE_SIP;
     public static final String PERMISSION_READ_CONTACT = Manifest.permission.READ_CONTACTS;
+    public static final String PERMISSION_RECORD_CALL = Manifest.permission.RECORD_AUDIO;
 }

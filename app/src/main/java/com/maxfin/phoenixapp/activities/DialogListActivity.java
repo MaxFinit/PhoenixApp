@@ -34,12 +34,15 @@ import android.widget.TextView;
 
 import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.R;
+import com.maxfin.phoenixapp.Utils;
 import com.maxfin.phoenixapp.XMPPConnectionService;
 import com.maxfin.phoenixapp.XMPPServerConnection;
 import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.DialogManager;
+import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.managers.StateManager;
+import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 import com.maxfin.phoenixapp.models.Message;
 
@@ -143,7 +146,7 @@ public class DialogListActivity extends AppCompatActivity {
 
         mStateManager = StateManager.getStateManager();
         mDialogsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(this);
+        mXMPPServerConnection = XMPPServerConnection.getXMPPServerConnection(getApplicationContext());
         mXMPPServerConnection.onXMPPStateConnectionChanged(new OnStateCallback() {
             @Override
             public void onStateChanged() {
@@ -342,6 +345,22 @@ public class DialogListActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
+                        Call call = new Call(
+                                mContact.getName(),
+                                mContact.getNumber(),
+                                (byte) 0,
+                                mContact.getPhoto(),
+                                mContact.getContactId()
+                        );
+                        JournalManager.getJournalManager().addCall(call);
+
+
+                        Intent makeCallIntent = new Intent(getApplicationContext(), OutgoingCallActivity.class);
+                        makeCallIntent.putExtra(Utils.NAME_KEY, mContact.getName());
+                        makeCallIntent.putExtra(Utils.NUMBER_KEY, mContact.getNumber());
+                        makeCallIntent.putExtra(Utils.PHOTO_KEY, mContact.getPhoto());
+                        makeCallIntent.putExtra(Utils.ID_KEY, call.getId());
+                        startActivity(makeCallIntent);
                         break;
                     case R.id.block_contact_context_menu:
                         break;
@@ -403,6 +422,4 @@ public class DialogListActivity extends AppCompatActivity {
 
 
     }
-
-
 }

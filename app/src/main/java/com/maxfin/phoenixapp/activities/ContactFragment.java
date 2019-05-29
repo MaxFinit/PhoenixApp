@@ -91,8 +91,6 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        mContactManager = ContactManager.get(getContext());
-
 
         //
         return view;
@@ -183,13 +181,10 @@ public class ContactFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
-
-
                         Call call = new Call(
                                 mContact.getName(),
                                 mContact.getNumber(),
                                 (byte) 0,
-                                "15:45",
                                 mContact.getPhoto(),
                                 mContact.getContactId()
                         );
@@ -282,6 +277,7 @@ public class ContactFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            mContactManager = ContactManager.get(getContext());
             if (isRefreshing) {
                 mContactManager.uploadContacts(getContext());
                 isRefreshing = false;

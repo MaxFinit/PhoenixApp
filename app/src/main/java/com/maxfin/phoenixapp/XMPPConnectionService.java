@@ -50,7 +50,7 @@ public class XMPPConnectionService extends Service {
 
         if (mConnection == null) {
             Log.d(TAG, "CREATE CONNECTION OBJECT");
-            mConnection = XMPPServerConnection.getXMPPServerConnection(this);
+            mConnection = XMPPServerConnection.getXMPPServerConnection(getApplicationContext());
         }
 
         try {

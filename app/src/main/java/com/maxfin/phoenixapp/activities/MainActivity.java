@@ -6,10 +6,10 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,13 +20,18 @@ import android.widget.Toast;
 import com.maxfin.phoenixapp.IncomingCallReceiver;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
+import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.managers.SipServerManager;
+import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
 
-import static com.maxfin.phoenixapp.Utils.*;
+import static com.maxfin.phoenixapp.Utils.PERMISSION_READ_CONTACT;
+import static com.maxfin.phoenixapp.Utils.PERMISSION_RECORD_CALL;
+import static com.maxfin.phoenixapp.Utils.PERMISSION_REQUEST_CODE;
+import static com.maxfin.phoenixapp.Utils.PERMISSION_SIP;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+//
+
         Toolbar mainToolbar = findViewById(R.id.main_tool_bar_menu);
         setSupportActionBar(mainToolbar);
 
@@ -44,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
 
         receiverRegistration();
         startService();
+
+        Button recordCallButton = findViewById(R.id.recorded_call_button);
+        recordCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toRecordCallActivity = new Intent(MainActivity.this, RecordCallsActivity.class);
+                startActivity(toRecordCallActivity);
+            }
+        });
 
 
         Button blackListButton = findViewById(R.id.black_list_button);
@@ -136,10 +154,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Objects.requireNonNull(getApplicationContext()).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (Objects.requireNonNull(getApplicationContext()).
                 checkSelfPermission(PERMISSION_SIP) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(PERMISSION_READ_CONTACT) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.USE_SIP}, PERMISSION_REQUEST_CODE);
+                checkSelfPermission(PERMISSION_READ_CONTACT) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(PERMISSION_RECORD_CALL) != PackageManager.PERMISSION_GRANTED)) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.USE_SIP, Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
         } else {
             mPermissionGranted = true;
             SipServerManager.getSipServerManager(getApplicationContext());

@@ -2,6 +2,7 @@ package com.maxfin.phoenixapp.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.maxfin.phoenixapp.R;
@@ -36,9 +37,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class JournalFragment extends Fragment {
-   // private static final String TAG = "JournalFragment";
+    // private static final String TAG = "JournalFragment";
     private RecyclerView mJournalRecyclerView;
     private TextView mEmptyJournalTextView;
+    private ProgressBar mProgressBar;
     private JournalAdapter mAdapter;
     private JournalManager mJournalManager;
     private InputNumberFragment mInputNumberFragment;
@@ -57,9 +59,9 @@ public class JournalFragment extends Fragment {
         mEmptyJournalTextView = view.findViewById(R.id.empty_journal_text_view);
         mFragmentManager = getFragmentManager();
         mInputNumberFragment = new InputNumberFragment();
+        mProgressBar = view.findViewById(R.id.journal_progress_bar);
 
-
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.call_button);
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.custom_number_fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,6 +117,9 @@ public class JournalFragment extends Fragment {
 
         // updateUi();
 
+
+
+
         return view;
     }
 
@@ -142,8 +147,8 @@ public class JournalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        updateUi();
+        LoadJournalTask task = new LoadJournalTask();
+        task.execute();
     }
 
 
@@ -228,11 +233,12 @@ public class JournalFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.make_call_context_menu:
-
-
-                        Call call = new Call(mCall.getName(), mCall.getNumber(), (byte) 0, "15-23", mCall.getPhoto(), mCall.getContactId());
-
-
+                        Call call = new Call(
+                                mCall.getName(),
+                                mCall.getNumber(),
+                                (byte) 0,
+                                mCall.getPhoto(),
+                                mCall.getContactId());
                         mJournalManager.addCall(call);
                         Intent makeCallIntent = new Intent(getActivity(), OutgoingCallActivity.class);
                         makeCallIntent.putExtra(Utils.NAME_KEY, call.getName());
@@ -295,6 +301,38 @@ public class JournalFragment extends Fragment {
         void filterList(List<Call> filteredList) {
             mCallList = filteredList;
             notifyDataSetChanged();
+        }
+
+
+    }
+
+    private class LoadJournalTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... voids) {
+            super.onProgressUpdate(voids);
+            mProgressBar.setMax(1);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mJournalManager = JournalManager.getJournalManager();
+            mCallList = mJournalManager.getCalls();
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mProgressBar.setVisibility(View.GONE);
+            updateUi();
         }
 
 

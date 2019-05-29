@@ -90,7 +90,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
 
         Log.d(TAG, "XMPPServerConnection CONSTRUCTOR CALLED");
         mStateManager = StateManager.getStateManager();
-        mApplicationContext = context.getApplicationContext();
+        mApplicationContext = context;
         mContext = context;
 
         mUser = new User("maxfin@jabber.ru", "maxim4232", "44", "44", false);   // ВРЕМЕННЫЙ ПОЛЬЗОВАТЕЛЬ!!!!

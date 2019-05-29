@@ -30,10 +30,8 @@
 
     <style name="EmptyListStyle">
         <item name="android:fontFamily">@font/font_pf_display_regular</item>
-        <item name="android:gravity">center</item>
         <item name="android:textColor">@color/colorPurple100</item>
         <item name="android:textSize">30sp</item>
-        <item name="android:visibility">gone</item>
     </style>
 
     <style name="RecyclerViewStyle">

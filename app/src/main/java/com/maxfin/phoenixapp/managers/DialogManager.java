@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class DialogManager {
     private static final String TAG = "DialogManager";
@@ -38,7 +39,7 @@ public class DialogManager {
 
     public void addMessage(String messagesText, boolean messageType, String id) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm", Locale.getDefault());
         String date = dateFormat.format(Calendar.getInstance().getTime());
         Message message = new Message(messagesText, messageType, date, id);
         mMessagesDao.insertMessage(message);

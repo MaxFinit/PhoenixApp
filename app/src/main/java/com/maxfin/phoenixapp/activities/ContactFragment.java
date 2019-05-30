@@ -33,6 +33,7 @@ import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +47,6 @@ public class ContactFragment extends Fragment {
     private ContactAdapter mAdapter;
     private List<Contact> mContactList;
     private boolean isRefreshing = false;
-    private ContactManager mContactManager;
     private ProgressBar mProgressBar;
 
 
@@ -92,17 +92,12 @@ public class ContactFragment extends Fragment {
         });
 
 
-        //
         return view;
     }
 
 
     private void updateUi() {
-//        if (isRefreshing) {
-//            mContactManager.uploadContacts(getContext());
-//            isRefreshing = false;
-//        }
-//        mContactList = mContactManager.getSortedContactList();
+
         if (mAdapter == null) {
             mAdapter = new ContactAdapter(mContactList);
             mContactsRecyclerView.setAdapter(mAdapter);
@@ -117,7 +112,7 @@ public class ContactFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LoadContactsTask task = new LoadContactsTask();
+        LoadContactsTask task = new LoadContactsTask(this);
         task.execute();
 
         //   updateUi();
@@ -261,28 +256,27 @@ public class ContactFragment extends Fragment {
     }
 
 
-    private class LoadContactsTask extends AsyncTask<Void, Void, Void> {
+    private static class LoadContactsTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        private WeakReference<ContactFragment> activityReference;
 
+        LoadContactsTask(ContactFragment context) {
+            activityReference = new WeakReference<>(context);
         }
 
-        @Override
-        protected void onProgressUpdate(Void... voids) {
-            super.onProgressUpdate(voids);
-            mProgressBar.setMax(1);
-        }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            mContactManager = ContactManager.get(getContext());
-            if (isRefreshing) {
-                mContactManager.uploadContacts(getContext());
-                isRefreshing = false;
+
+            ContactFragment activity = activityReference.get();
+
+
+            ContactManager contactManager = ContactManager.get(activity.getContext());
+            if (activity.isRefreshing) {
+                contactManager.uploadContacts(activity.getContext());
+                activity.isRefreshing = false;
             }
-            mContactList = mContactManager.getSortedContactList();
+            activity.mContactList = contactManager.getSortedContactList();
             return null;
 
         }
@@ -290,8 +284,9 @@ public class ContactFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mProgressBar.setVisibility(View.GONE);
-            updateUi();
+            ContactFragment activity = activityReference.get();
+            activity.mProgressBar.setVisibility(View.GONE);
+            activity.updateUi();
         }
 
 

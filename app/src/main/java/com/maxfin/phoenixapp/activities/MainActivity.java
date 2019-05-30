@@ -20,10 +20,8 @@ import android.widget.Toast;
 import com.maxfin.phoenixapp.IncomingCallReceiver;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.XMPPConnectionService;
-import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.managers.SipServerManager;
-import com.maxfin.phoenixapp.models.Call;
 import com.maxfin.phoenixapp.models.Contact;
 
 import java.util.Objects;
@@ -43,14 +41,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
-//
-
         Toolbar mainToolbar = findViewById(R.id.main_tool_bar_menu);
         setSupportActionBar(mainToolbar);
 
         checkPermissions();
-
         receiverRegistration();
         startService();
 
@@ -135,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
-
-
     }
 
 

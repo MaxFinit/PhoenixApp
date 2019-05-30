@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.maxfin.phoenixapp.R;
 import com.maxfin.phoenixapp.managers.BlackListManagers;
 import com.maxfin.phoenixapp.models.BlockContact;
-import com.maxfin.phoenixapp.models.Contact;
+
 
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +28,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class BlackListActivity extends AppCompatActivity {
     private RecyclerView mBlackListRecyclerView;
     private BlackListAdapter mBlackListAdapter;
-    private List<BlockContact> mBlockContacts;
     private BlackListManagers mBlackListManagers;
     private TextView mEmptyListTextView;
     private EditText mSearchEditView;
@@ -55,9 +54,9 @@ public class BlackListActivity extends AppCompatActivity {
 
     private void updateUi() {
         mBlackListManagers = BlackListManagers.getBlackListManagers();
-        mBlockContacts = mBlackListManagers.getBlackList();
+        List<BlockContact> blockContacts = mBlackListManagers.getBlackList();
 
-        if (mBlockContacts.size() <= 0) {
+        if (blockContacts.size() <= 0) {
             mEmptyListTextView.setVisibility(View.VISIBLE);
 //            mSearchEditView.setVisibility(View.GONE);
 //            mBlackListRecyclerView.setVisibility(View.GONE);
@@ -69,10 +68,10 @@ public class BlackListActivity extends AppCompatActivity {
 
 
         if (mBlackListAdapter == null) {
-            mBlackListAdapter = new BlackListAdapter(mBlockContacts);
+            mBlackListAdapter = new BlackListAdapter(blockContacts);
             mBlackListRecyclerView.setAdapter(mBlackListAdapter);
         } else {
-            mBlackListAdapter.setContacts(mBlockContacts);
+            mBlackListAdapter.setContacts(blockContacts);
             mBlackListAdapter.notifyDataSetChanged();
         }
     }
@@ -141,10 +140,10 @@ public class BlackListActivity extends AppCompatActivity {
             return mBlackList.size();
         }
 
-        void filterList(List<Contact> filteredList) {
-            //   mBlackList = filteredList;
-            notifyDataSetChanged();
-        }
+//        void filterList(List<Contact> filteredList) {
+//            //   mBlackList = filteredList;
+//            notifyDataSetChanged();
+//        }
     }
 
 

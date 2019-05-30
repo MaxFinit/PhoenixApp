@@ -1,6 +1,5 @@
 package com.maxfin.phoenixapp.managers;
 
-import com.maxfin.phoenixapp.OnStateCallback;
 import com.maxfin.phoenixapp.XMPPServerConnection.*;
 
 import static com.maxfin.phoenixapp.managers.SipServerManager.*;

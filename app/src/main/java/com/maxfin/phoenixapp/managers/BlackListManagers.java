@@ -9,6 +9,7 @@ import com.maxfin.phoenixapp.models.Contact;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class BlackListManagers {
 
@@ -35,14 +36,14 @@ public class BlackListManagers {
 
     public boolean addToBlackList(Contact contact) {
         if (!checkForEquals(contact)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm", Locale.getDefault());
             String date = dateFormat.format(Calendar.getInstance().getTime());
             BlockContact blockContact = new BlockContact(contact.getName(), contact.getNumber(), contact.getPhoto(), date);
             mBlackListDao.insertToBlackList(blockContact);
             return true;
         }
         if (mBlockContacts.size() == 0) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm",Locale.getDefault());
             String date = dateFormat.format(Calendar.getInstance().getTime());
             BlockContact blockContact = new BlockContact(contact.getName(), contact.getNumber(), contact.getPhoto(), date);
             mBlackListDao.insertToBlackList(blockContact);

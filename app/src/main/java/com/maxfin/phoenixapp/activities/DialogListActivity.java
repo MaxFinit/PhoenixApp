@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,7 +51,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class DialogListActivity extends AppCompatActivity {
-    private static final String TAG = "DialogListActivity";
 
     private TextView mEmptyDialogsList;
     private EditText mSearchDialogsList;
@@ -155,6 +153,9 @@ public class DialogListActivity extends AppCompatActivity {
         });
 
 
+
+        mXMPPServerConnection.isAlive(getApplicationContext());
+
         updateUI();
     }
 
@@ -163,23 +164,16 @@ public class DialogListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!mXMPPServerConnection.isAlive()) {
-            Log.d(TAG, "RESTART CONNECTION");
-            Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
-            startService(intent);
+        mXMPPServerConnection.isAlive(getApplicationContext());
             updateState();
-        }
 
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                switch (Objects.requireNonNull(intent.getAction())) {
-                    case XMPPConnectionService.NEW_MESSAGE:
-                        updateUI();
-                        break;
-                    default:
-                        updateUI();
-                        break;
+                if (XMPPConnectionService.NEW_MESSAGE.equals(Objects.requireNonNull(intent.getAction()))) {
+                    updateUI();
+                } else {
+                    updateUI();
                 }
 
 
@@ -217,6 +211,8 @@ public class DialogListActivity extends AppCompatActivity {
             mEmptyDialogsList.setVisibility(View.VISIBLE);
         }
     }
+
+
 
 
     private void updateState() {

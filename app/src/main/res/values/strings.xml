@@ -32,4 +32,6 @@
     <string name="empty_dialogs_list">Вы еще не добавили ни одного диалога</string>
     <string name="empty_dialog">Нет сообщений</string>
     <string name="empty_journal">Журнал звонков пуст</string>
+    <string name="code_text">Код из СМС</string>
+    <string name="send_text">Отправить</string>
 </resources>

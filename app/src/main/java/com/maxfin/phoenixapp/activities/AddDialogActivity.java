@@ -2,6 +2,7 @@ package com.maxfin.phoenixapp.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.maxfin.phoenixapp.R;
@@ -24,6 +26,7 @@ import com.maxfin.phoenixapp.managers.ContactManager;
 import com.maxfin.phoenixapp.managers.MessageManager;
 import com.maxfin.phoenixapp.models.Contact;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +38,7 @@ public class AddDialogActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private DialogAdapter mAdapter;
     private List<Contact> mContactList;
+    private ProgressBar mProgressBar;
 
 
     @Override
@@ -43,9 +47,12 @@ public class AddDialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_adding_dialog);
         Toolbar dialogToolbar = findViewById(R.id.adding_dialog_tool_bar_menu);
         setSupportActionBar(dialogToolbar);
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mRecyclerView = findViewById(R.id.add_dialog_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        mProgressBar = findViewById(R.id.add_dialog_progress_barr);
 
 
         EditText searchDialogsList = findViewById(R.id.search_message_contact_edit);
@@ -66,7 +73,8 @@ public class AddDialogActivity extends AppCompatActivity {
             }
         });
 
-        updateUi();
+        LoadContactsTask task = new LoadContactsTask(this);
+        task.execute();
 
     }
 
@@ -82,8 +90,7 @@ public class AddDialogActivity extends AppCompatActivity {
     }
 
     private void updateUi() {
-        ContactManager contactManager = ContactManager.get(getApplicationContext());
-        mContactList = contactManager.getCheckedLoadList();
+
         if (mAdapter == null) {
             mAdapter = new AddDialogActivity.DialogAdapter(mContactList);
             mRecyclerView.setAdapter(mAdapter);
@@ -176,6 +183,36 @@ public class AddDialogActivity extends AppCompatActivity {
             mContactList = filteredList;
             notifyDataSetChanged();
         }
+    }
+
+
+    private static class LoadContactsTask extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<AddDialogActivity> activityReference;
+
+        LoadContactsTask(AddDialogActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AddDialogActivity activity = activityReference.get();
+            ContactManager contactManager = ContactManager.get(activity);
+            activity.mContactList = contactManager.getSortedContactList();
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            AddDialogActivity activity = activityReference.get();
+            activity.mProgressBar.setVisibility(View.GONE);
+            activity.updateUi();
+        }
+
+
     }
 
 

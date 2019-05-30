@@ -47,7 +47,6 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -67,7 +66,7 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
     private static XMPPServerConnection mXMPPServerConnection;
 
     public enum ConnectionXMPPState {
-        CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED
+        CONNECTED, AUTHENTICATED, CONNECTING, DISCONNECTING, DISCONNECTED, RECONNECTED
     }
 
     public enum LoggedInXMPPState {
@@ -226,6 +225,15 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         }
     }
 
+
+    public void isAlive(Context context) {
+        Intent isAliveIntent = new Intent(XMPPConnectionService.SEND_MESSAGE);
+        isAliveIntent.putExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY, "");
+        isAliveIntent.putExtra(XMPPConnectionService.BUNDLE_TO, "maxfin@jabber.ru");
+        context.sendBroadcast(isAliveIntent);
+    }
+
+
     private void createNotification(String jId, String messageBody, String name, Bitmap bitmap) {
 
         Intent dialogIntent = new Intent(mContext, DialogActivity.class);
@@ -264,15 +272,6 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
             NotificationManager notificationManager = mApplicationContext.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-    }
-
-    public boolean isAlive() {
-        if (mConnection!=null)
-        return mConnection.isSmEnabled();
-
-
-        return false;
-
     }
 
 
@@ -365,14 +364,12 @@ public class XMPPServerConnection implements ConnectionListener, ReconnectionLis
         Log.d(TAG, "CONNECTION CLOSED ON ERROR" + e.toString());
 
 
-
-
     }
 
 
     @Override
     public void reconnectingIn(int seconds) {
-        mConnectionXMPPState = ConnectionXMPPState.CONNECTING;
+        mConnectionXMPPState = ConnectionXMPPState.RECONNECTED;
         onXMPPStateConnectionChanged(mOnXMPPConnectionStateCallback);
         Log.d(TAG, "RECONNECTION");
 

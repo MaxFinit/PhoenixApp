@@ -30,8 +30,10 @@ import com.maxfin.phoenixapp.Utils;
 import com.maxfin.phoenixapp.managers.JournalManager;
 import com.maxfin.phoenixapp.models.Call;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -118,8 +120,6 @@ public class JournalFragment extends Fragment {
         // updateUi();
 
 
-
-
         return view;
     }
 
@@ -147,7 +147,7 @@ public class JournalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LoadJournalTask task = new LoadJournalTask();
+        LoadJournalTask task = new LoadJournalTask(this);
         task.execute();
     }
 
@@ -212,7 +212,7 @@ public class JournalFragment extends Fragment {
 
         @Override
         public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-            MenuInflater inflater = getActivity().getMenuInflater();
+            MenuInflater inflater = Objects.requireNonNull(getActivity()).getMenuInflater();
             inflater.inflate(R.menu.context_journal_menu, contextMenu);
             MenuItem call = contextMenu.getItem(0);
             MenuItem edit = contextMenu.getItem(1);
@@ -306,33 +306,29 @@ public class JournalFragment extends Fragment {
 
     }
 
-    private class LoadJournalTask extends AsyncTask<Void, Void, Void> {
+    private static class LoadJournalTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        private WeakReference<JournalFragment> activityReference;
 
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... voids) {
-            super.onProgressUpdate(voids);
-            mProgressBar.setMax(1);
+        LoadJournalTask(JournalFragment context) {
+            activityReference = new WeakReference<>(context);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            mJournalManager = JournalManager.getJournalManager();
-            mCallList = mJournalManager.getCalls();
+            JournalFragment activity = activityReference.get();
+            activity.mJournalManager = JournalManager.getJournalManager();
+            activity.mCallList = activity.mJournalManager.getCalls();
             return null;
 
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            JournalFragment activity = activityReference.get();
             super.onPostExecute(aVoid);
-            mProgressBar.setVisibility(View.GONE);
-            updateUi();
+            activity.mProgressBar.setVisibility(View.GONE);
+            activity.updateUi();
         }
 
 

@@ -46,11 +46,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/empty_journal"
-        app:layout_constraintBottom_toTopOf="@+id/input_number_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/journal_recycler_view"
-        app:layout_constraintVertical_bias="0.38" />
+        app:layout_constraintVertical_bias="0.36" />
 
 
     <android.support.design.widget.FloatingActionButton
@@ -75,8 +75,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.41000003" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/input_number_container"

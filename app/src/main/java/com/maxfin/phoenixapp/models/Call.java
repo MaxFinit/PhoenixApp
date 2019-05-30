@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -32,7 +33,7 @@ public class Call {
         mName = name;
         mNumber = number;
         mCallType = callType;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm", Locale.getDefault());
         mData = dateFormat.format(Calendar.getInstance().getTime());
         mPhoto = photo;
         mContactId = contactId;

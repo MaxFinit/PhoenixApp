@@ -162,6 +162,8 @@ public class DialogActivity extends AppCompatActivity {
         });
 
 
+        mXMPPServerConnection.isAlive(getApplicationContext());
+
         updateUi();
 
 
@@ -209,6 +211,9 @@ public class DialogActivity extends AppCompatActivity {
                         mToolbarStateTextView.setText("Ожидания подключения");
                         mRefreshConnectionButton.setVisibility(View.VISIBLE);
                         break;
+                    case RECONNECTED:
+                        mToolbarStateTextView.setText("Переподключение");
+                        mRefreshConnectionButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -248,25 +253,18 @@ public class DialogActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mXMPPServerConnection.isAlive()) {
-            Intent intent = new Intent(getApplicationContext(), XMPPConnectionService.class);
-            startService(intent);
-            updateState();
-        }
+        mXMPPServerConnection.isAlive(getApplicationContext());
+        updateState();
 
 
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                switch (Objects.requireNonNull(action)) {
-                    case XMPPConnectionService.NEW_MESSAGE:
-                        //    mDialogManager.addMessage(intent.getStringExtra(XMPPConnectionService.BUNDLE_MESSAGE_BODY), true,contactJID);
-                        updateUi();
-                        break;
-                    default:
-                        updateUi();
-                        break;
+                if (XMPPConnectionService.NEW_MESSAGE.equals(Objects.requireNonNull(action))) {
+                    updateUi();
+                } else {
+                    updateUi();
                 }
             }
         };

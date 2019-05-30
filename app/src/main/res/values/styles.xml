@@ -54,8 +54,6 @@
     </style>
 
 
-
-
     <style name="Toolbar">
 
         <item name="android:background">@color/colorPurple100</item>
@@ -74,5 +72,11 @@
         <item name="android:background">@color/colorGray20</item>
     </style>
 
+    <style name="LogInStyle">
+
+        <item name="android:fontFamily">@font/font_pf_display_regular</item>
+
+
+    </style>
 
 </resources>

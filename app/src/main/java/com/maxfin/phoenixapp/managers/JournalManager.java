@@ -4,12 +4,7 @@ import com.maxfin.phoenixapp.Application;
 import com.maxfin.phoenixapp.database.ContactsDatabase;
 import com.maxfin.phoenixapp.database.dao.CallsDao;
 import com.maxfin.phoenixapp.models.Call;
-import com.maxfin.phoenixapp.models.Contact;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
